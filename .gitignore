@@ -1,0 +1,9 @@
+.vs
+Library
+Logs
+Temp
+Build
+obj
+Ressources_FromTFE
+*.sln
+*.csproj
