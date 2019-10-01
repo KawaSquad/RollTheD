@@ -22,7 +22,7 @@ public class LoadingScreen : MonoBehaviour
         StopLoading();
     }
 
-    public static void ActiveLoading(string content)
+    public static void ActiveLoading(string content , bool isLoading = true)//isloading to keep the text "loading :"
     {
         if (instance == null)
             return;
@@ -32,7 +32,10 @@ public class LoadingScreen : MonoBehaviour
             instance.canvasFade.alpha = 1f;
             instance.canvasFade.blocksRaycasts = true;
 
-            instance.textLoading.text = "Loading : " + content;
+            if(isLoading)
+                instance.textLoading.text = "Loading : " + content;
+            else
+                instance.textLoading.text = content;
         }
     }
     public static void StopLoading()

@@ -8,14 +8,14 @@ using UnityEngine.UI;
 public class PlayerManager : MonoBehaviour
 {
     [Header("Player")]
-    public InputField inpPlayerName;
-    public InputField inpPlayerPassword;
+    public Inputfield_Form inpPlayerName;
+    public Inputfield_Form inpPlayerPassword;
 
     [Header("New Player Account")]
-    public InputField inpNewPlayerName;
-    public InputField inpNewPlayerPassword;
+    public Inputfield_Form inpNewPlayerName;
+    public Inputfield_Form inpNewPlayerPassword;
 
-    [Header("New Player Account")]
+    [Header("SObject Player Data")]
     [SerializeField]
     private SObject_Player playerData;
 
@@ -42,7 +42,10 @@ public class PlayerManager : MonoBehaviour
     Coroutine coWebReq;
     public void CheckPlayerAccount()
     {
-        if (inpPlayerName.text != "" && inpPlayerPassword.text != "")
+        inpPlayerName.DisplayError("");
+        inpPlayerPassword.DisplayError("");
+
+        if (inpPlayerName.Validate() && inpPlayerPassword.Validate())
         {
             if (coWebReq != null)
                 StopCoroutine(coWebReq);
@@ -56,8 +59,8 @@ public class PlayerManager : MonoBehaviour
         string url = DATABASE + "Login.php";
 
         WWWForm forms = new WWWForm();
-        forms.AddField("loginPost", inpPlayerName.text);
-        string encodedPswd = inpPlayerPassword.text.GetHashCode().ToString();
+        forms.AddField("loginPost", inpPlayerName.Content);
+        string encodedPswd = inpPlayerPassword.Content.GetHashCode().ToString();
         forms.AddField("passwordPost", encodedPswd);
 
         UnityWebRequest webRequest = UnityWebRequest.Post(url, forms);
@@ -80,9 +83,9 @@ public class PlayerManager : MonoBehaviour
         }
 
         //fakeDelay
-        float maxTime = 3f;
+        float maxTime = 1f;
         if(timeIn< maxTime)
-            yield return new WaitForSeconds(maxTime - maxTime);
+            yield return new WaitForSeconds(maxTime - timeIn);
 
         LoadingScreen.StopLoading();
 
@@ -105,6 +108,10 @@ public class PlayerManager : MonoBehaviour
 
                 MenuManager.Instance.ActiveState(EMenuState.Player_Session);
             }
+            else
+            {
+                inpPlayerPassword.DisplayError(request.error);
+            }
         }
 
 
@@ -120,11 +127,14 @@ public class PlayerManager : MonoBehaviour
     }
     public void CreateNewPlayer()
     {
-        if(inpNewPlayerName.text != "" && inpNewPlayerPassword.text != "")
+        inpNewPlayerName.DisplayError("");
+        inpNewPlayerPassword.DisplayError("");
+
+        if (inpNewPlayerName.Validate() && inpNewPlayerPassword.Validate())
         {
             if (coWebReq != null)
                 StopCoroutine(coWebReq);
-            coWebReq = StartCoroutine(CheckOnWeb());
+            coWebReq = StartCoroutine(AddOnWeb());
         }
     }
 
@@ -134,8 +144,8 @@ public class PlayerManager : MonoBehaviour
         string url = DATABASE + "NewAccount.php";
 
         WWWForm forms = new WWWForm();
-        forms.AddField("loginPost", inpPlayerName.text);
-        string encodedPswd = inpPlayerPassword.text.GetHashCode().ToString();
+        forms.AddField("loginPost", inpNewPlayerName.Content);
+        string encodedPswd = inpNewPlayerPassword.Content.GetHashCode().ToString();
         forms.AddField("passwordPost", encodedPswd);
 
         UnityWebRequest webRequest = UnityWebRequest.Post(url, forms);
@@ -158,11 +168,10 @@ public class PlayerManager : MonoBehaviour
         }
 
         //fakeDelay
-        float maxTime = 3f;
+        float maxTime = 1f;
         if (timeIn < maxTime)
-            yield return new WaitForSeconds(maxTime - maxTime);
+            yield return new WaitForSeconds(maxTime - timeIn);
 
-        LoadingScreen.StopLoading();
 
         if (webRequest.isNetworkError || webRequest.isHttpError)
         {
@@ -182,14 +191,32 @@ public class PlayerManager : MonoBehaviour
                 playerData.Name_Account = contentAccount.Name_Account;
                 playerData.Password_Account = contentAccount.Password_Account;
                  */
+                LoadingScreen.ActiveLoading("New Account Created",false);
+                yield return new WaitForSeconds(1f);
 
                 MenuManager.Instance.ActiveState(EMenuState.Player_Connection);
             }
+            else
+            {
+                inpNewPlayerPassword.DisplayError(request.error);
+            }
         }
+
+        LoadingScreen.StopLoading();
 
 
         yield break;
     }
-
     #endregion
+
+    public void ResetForms_NewAccount()
+    {
+        inpNewPlayerName.ResetField();
+        inpNewPlayerPassword.ResetField();
+    }
+    public void ResetForms_Connection()
+    {
+        inpPlayerName.ResetField();
+        inpPlayerPassword.ResetField();
+    }
 }

@@ -65,31 +65,44 @@ class RequestManager
         $loginPost = "";
 		$passwordPost = "";
 
+
         if(isset($_POST['loginPost']) && isset($_POST['passwordPost']))
 		{
             $loginPost = $_POST['loginPost'];
 			$passwordPost = $_POST['passwordPost'];
     
 			if($this->ConnectToDB())
-			{			
-                $req = self::$bdd->prepare('INSERT INTO t_Roll_Account ( Name_Account, Password_Account) VALUES (:loginPost,:passwordPost)');
-				$req->bindParam('loginPost',$loginPost);
-				$req->bindParam('passwordPost',$passwordPost);
-				
-				$req->execute();
+			{	
+				//Check If exist 
 
+				$req = self::$bdd->prepare('SELECT * FROM t_Roll_Account WHERE Name_Account = :loginPost');
+                
+				$req->bindParam('loginPost',$loginPost);
+				$req->execute();
 				$result = $req->fetch();
 				$req->closeCursor();
-                
+				
+				$loginClear = true;
+				
 				if($result)
 				{
-                    $jsonRequest->content = json_encode($result);
-					$success = true;
+					$loginClear = false;
+					$jsonRequest->error= "Login already exist";
 				}
-				else
+
+				//Create new
+				if($loginClear)
 				{
-                    $jsonRequest->error= "Login don't exist";
-				}
+					$req = self::$bdd->prepare('INSERT INTO t_Roll_Account ( Name_Account, Password_Account) VALUES (:loginPost,:passwordPost)');
+					$req->bindParam('loginPost',$loginPost);
+					$req->bindParam('passwordPost',$passwordPost);
+
+					$req->execute(array('loginPost' => $loginPost,'passwordPost' => $passwordPost));
+					$req->closeCursor();
+
+					$this->RequestLogin();
+					return;
+				}   
 			}
 			else
             {
