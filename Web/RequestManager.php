@@ -97,10 +97,11 @@ class RequestManager
 					$req->bindParam('loginPost',$loginPost);
 					$req->bindParam('passwordPost',$passwordPost);
 
-					$req->execute(array('loginPost' => $loginPost,'passwordPost' => $passwordPost));
+					$req->execute();
+					//$req->execute(array('loginPost' => $loginPost,'passwordPost' => $passwordPost));
 					$req->closeCursor();
 
-					$this->RequestLogin();
+					// $this->RequestLogin();
 					return;
 				}   
 			}
@@ -118,7 +119,106 @@ class RequestManager
 		$jsonEncode =  (json_encode($jsonRequest));
         echo $jsonEncode;
     }
+	
+	function RequestSessionsList()
+    {
+        $jsonRequest = new JsonFormat();
+        $success = false;
+        
+			if($this->ConnectToDB())
+			{			
+				$req = self::$bdd->prepare('SELECT * FROM t_Roll_Session');
+				$req->execute();
+
+				$result = $req->fetchall();
+				$req->closeCursor();
+                
+				if($result)
+				{
+					$sessionsList = new SessionList();
+					$sessionsList->sessions = $result;
+                    $jsonRequest->content = json_encode($sessionsList);
+					$success = true;
+				}
+				else
+				{
+                    $jsonRequest->error= "No sessions created yet";
+				}
+			}
+			else
+            {
+                $jsonRequest->error= "Connection Fail";
+			}
+        
+        $jsonRequest->success= $success;
+		$jsonEncode =  (json_encode($jsonRequest));
+        echo $jsonEncode;
+	}
+  
+	function NewSession()
+    {
+        $jsonRequest = new JsonFormat();
+        $success = false;
+		
+		$nameSessionPost = "";
+		$masterSessionPost = "";
+		$ipSessionPost = "";
+
+        if(isset($_POST['nameSessionPost']) && isset($_POST['masterSessionPost']) && isset($_POST['ipSessionPost']))
+		{
+            $nameSessionPost = $_POST['nameSessionPost'];
+			$masterSessionPost = $_POST['masterSessionPost'];
+			$ipSessionPost = $_POST['ipSessionPost'];
     
+			if($this->ConnectToDB())
+			{	
+				//Check If exist 
+
+				$req = self::$bdd->prepare('SELECT * FROM t_Roll_Session WHERE Name_Session = :nameSessionPost');
+				$req->bindParam('nameSessionPost',$nameSessionPost);
+
+				$req->execute();
+				$result = $req->fetch();
+				$req->closeCursor();
+				
+				$sessionClear = true;
+				
+				if($result)
+				{
+					$sessionClear = false;
+					$jsonRequest->error= "Session already created";
+				}
+
+				//Create new
+				if($sessionClear)
+				{
+					$req = self::$bdd->prepare('INSERT INTO t_Roll_Session ( Name_Session, Master_Session,IP_Session) VALUES (:nameSessionPost,:masterSessionPost)');
+					$req->bindParam('nameSessionPost',$nameSessionPost);
+					$req->bindParam('masterSessionPost',$masterSessionPost);
+					$req->bindParam('ipSessionPost',$ipSessionPost);
+	
+					$req->execute();
+					$req->closeCursor();
+					return;
+				}   
+			}
+			else
+            {
+                $jsonRequest->error= "Connection Fail";
+			}
+        }
+        else
+		{
+            $jsonRequest->error= "Post error";
+        }
+        
+        $jsonRequest->success= $success;
+		$jsonEncode =  (json_encode($jsonRequest));
+        echo $jsonEncode;
+    }
+	
+
+
     //Database
     
     function ConnectToDB()

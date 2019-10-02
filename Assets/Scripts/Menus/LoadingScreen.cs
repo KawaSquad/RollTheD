@@ -10,7 +10,13 @@ public class LoadingScreen : MonoBehaviour
     public Text textLoading;
     CanvasGroup canvasFade;
 
-        private void Awake()
+    static bool sWaitToStop = false;
+    static float sTimeToStop = 10f;
+
+    public delegate void OnDurationStop();
+    private static OnDurationStop onDurationStop = null;
+
+    private void Awake()
     {
         if (instance != null)
             Debug.LogError("Instance already assigned");
@@ -21,8 +27,29 @@ public class LoadingScreen : MonoBehaviour
         canvasFade = this.GetComponent<CanvasGroup>();
         StopLoading();
     }
+    private void Update()
+    {
+        if (sWaitToStop)
+        {
+            sTimeToStop -= Time.deltaTime;
+            if (sTimeToStop < 0f)
+            {
+                if (onDurationStop != null)
+                    onDurationStop();
+                StopLoading();
+                sWaitToStop = false;
+            }
+        }
+    }
 
-    public static void ActiveLoading(string content , bool isLoading = true)//isloading to keep the text "loading :"
+    private static void SetDurationStop(float duration)
+    {
+        sWaitToStop = true;
+        sTimeToStop = duration;
+    }
+
+
+    public static void ActiveLoading(string content , bool isLoading = true, float duration = 0f, OnDurationStop onDurationStop = null)//isloading to keep the text "loading :"
     {
         if (instance == null)
             return;
@@ -37,7 +64,15 @@ public class LoadingScreen : MonoBehaviour
             else
                 instance.textLoading.text = content;
         }
+
+        if (duration != 0f)
+            SetDurationStop(duration);
+
+        LoadingScreen.onDurationStop = onDurationStop;
     }
+
+
+
     public static void StopLoading()
     {
         if (instance == null)

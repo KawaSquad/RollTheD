@@ -4,11 +4,9 @@ class Characters
 {
     public $characterList;
 }
-class Character
+class SessionList
 {
-    public $character_name;
-    public $user_login;
-    public $url_picture;
+    public $sessions;
 }
 
 class JsonFormat

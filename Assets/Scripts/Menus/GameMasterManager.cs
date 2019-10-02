@@ -16,10 +16,10 @@ public class GameMasterManager : MonoBehaviour
      */
 
     #region Session
-    public void OpenSession()
-    {
-        MenuManager.Instance.ActiveState(EMenuState.GameMaster_Session);
-    }
+    //public void OpenSession()
+    //{
+    //    MenuManager.Instance.ActiveState(EMenuState.GameMaster_Session);
+    //}
     #endregion
 
     #region Map editor

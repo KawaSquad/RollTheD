@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "Player_Data", menuName = "Kawasquad/PlayerData")]
+[CreateAssetMenu(fileName = "Player_Data", menuName = "KawaSquad/PlayerData")]
 public class SObject_Player : ScriptableObject
 {
     //ACCOUNT
@@ -8,6 +8,7 @@ public class SObject_Player : ScriptableObject
     public int ID_Account = 0;
     public string Name_Account = "name";
     public string Password_Account = "pswd";
+    public bool Game_Master = false;
  
     //Character
     [Header("Character")]

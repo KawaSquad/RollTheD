@@ -4,9 +4,9 @@ class Characters
 {
     public $characterList;
 }
-class Character
+class Account
 {
-    public $character_name;
+    public $account_name;
     public $user_login;
     public $url_picture;
 }

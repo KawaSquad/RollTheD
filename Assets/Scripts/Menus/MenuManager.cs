@@ -22,6 +22,9 @@ public class MenuManager : MonoBehaviour
     public List<MenuPanel> menus;
     MenuPanel currentMenu;
 
+    [SerializeField]
+    private SObject_Player mConfig_PlayerData;
+
     private void Awake()
     {
         instance = this;
@@ -79,29 +82,63 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+    public void ActiveOpenAccount(bool isMaster)
+    {
+        mConfig_PlayerData.Game_Master = isMaster;
+        ActiveState(EMenuState.Account_Connection);
+    }
 
-    public void ActivePlayer()
+    public void PreviousPanel()
     {
-        ActiveState(EMenuState.Player_Connection);
+        switch (currentMenuState)
+        {
+            case EMenuState.Account_Connection:
+                ActiveState(EMenuState.MainMenu);
+                break;
+            case EMenuState.Account_NewAccount:
+                ActiveState(EMenuState.Account_Connection);
+                break;
+            case EMenuState.Account_Session:
+                ActiveState(EMenuState.Account_Connection);
+                //logout
+                break;
+            case EMenuState.Player_Character:
+                ActiveState(EMenuState.Account_Connection);
+                //Disconnected
+                break;
+            case EMenuState.GameMaster_Mode:
+                ActiveState(EMenuState.Account_Connection);
+                //logout
+                break;
+            case EMenuState.GameMaster_New_Session:
+                ActiveState(EMenuState.Account_Session);
+                //logout
+                break;
+
+            //case EMenuState.GameMaster_Session:
+            //    break;
+            //case EMenuState.GameMaster_Editor:
+            //    break;
+            default:
+                Debug.LogError(currentMenuState.ToString() + " is not SET");
+                break;
+        }
     }
-    public void ActiveGameMaster()
-    {
-        ActiveState(EMenuState.GameMaster_Mode);
-    }
+
 }
 
 public enum EMenuState
 {
     Unknow = 0,
     MainMenu = 1,
+    Account_Connection = 2,
+    Account_NewAccount = 3,
+    Account_Session = 4,
 
-    Player_Connection = 10,
-    Player_Account = 11,
-    Player_Session = 12,
     Player_Character = 13,
 
     GameMaster_Mode = 20,
-    GameMaster_Session = 21,
-    GameMaster_Editor = 22,
+    GameMaster_Editor = 21,
+    GameMaster_New_Session = 22,
 
 }
