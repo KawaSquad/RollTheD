@@ -164,7 +164,7 @@ public class PlayerManager : MonoBehaviour
 
     public void ActiveMenuSessions()
     {
-        MenuManager.Instance.ActiveState(EMenuState.Account_Session);
+        MenuManager.Instance.ActiveState(EMenuState.Account_Sessions_List);
     }
 
     /*

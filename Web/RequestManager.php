@@ -94,15 +94,10 @@ class RequestManager
 				if($loginClear)
 				{
 					$req = self::$bdd->prepare('INSERT INTO t_Roll_Account ( Name_Account, Password_Account) VALUES (:loginPost,:passwordPost)');
-					$req->bindParam('loginPost',$loginPost);
-					$req->bindParam('passwordPost',$passwordPost);
-
-					$req->execute();
-					//$req->execute(array('loginPost' => $loginPost,'passwordPost' => $passwordPost));
+					$req->execute(array('loginPost' => $loginPost,'passwordPost' => $passwordPost));
 					$req->closeCursor();
 
-					// $this->RequestLogin();
-					return;
+					$success = true;					
 				}   
 			}
 			else
@@ -192,14 +187,11 @@ class RequestManager
 				//Create new
 				if($sessionClear)
 				{
-					$req = self::$bdd->prepare('INSERT INTO t_Roll_Session ( Name_Session, Master_Session,IP_Session) VALUES (:nameSessionPost,:masterSessionPost)');
-					$req->bindParam('nameSessionPost',$nameSessionPost);
-					$req->bindParam('masterSessionPost',$masterSessionPost);
-					$req->bindParam('ipSessionPost',$ipSessionPost);
+					$req = self::$bdd->prepare('INSERT INTO t_Roll_Session ( Name_Session, Master_Session,IP_Session) VALUES (:nameSessionPost,:masterSessionPost,:ipSessionPost)');
 	
-					$req->execute();
+					$req->execute(array('nameSessionPost' => $nameSessionPost,'masterSessionPost' => $masterSessionPost,'ipSessionPost' => $ipSessionPost));
 					$req->closeCursor();
-					return;
+					$success = true;					
 				}   
 			}
 			else
@@ -216,10 +208,52 @@ class RequestManager
 		$jsonEncode =  (json_encode($jsonRequest));
         echo $jsonEncode;
     }
-	
 
+	function RequestCharactersList()
+    {
+        $jsonRequest = new JsonFormat();
+        $success = false;
+		
+		$idSessionPost = "";
 
-    //Database
+        if(isset($_POST['SessionIDPost']))
+		{
+
+			$idSessionPost = $_POST['SessionIDPost'];
+			
+			if($this->ConnectToDB())
+			{			
+				$req = self::$bdd->prepare('SELECT * FROM t_Roll_Character WHERE ID_Session = :ID_SessionPost');
+				$req->bindParam('ID_SessionPost',$idSessionPost);
+				$req->execute();
+				
+				$result = $req->fetchall();
+				$req->closeCursor();
+                
+				if($result)
+				{
+					$sessionsList = new SessionList();
+					$sessionsList->sessions = $result;
+                    $jsonRequest->content = json_encode($sessionsList);
+					$success = true;
+				}
+				else
+				{
+					$jsonRequest->error= "No characters created yet";
+				}
+			}
+			else
+            {
+				$jsonRequest->error= "Connection Fail";
+			}
+		}
+
+        $jsonRequest->success= $success;
+		$jsonEncode =  (json_encode($jsonRequest));
+        echo $jsonEncode;
+	}
+
+	//Database
     
     function ConnectToDB()
 	{

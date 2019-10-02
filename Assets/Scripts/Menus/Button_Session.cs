@@ -14,19 +14,27 @@ public class Button_Session : MonoBehaviour
     //[SerializeField]
     //private Text mSessionIP;
 
-    private Content_Session mSessionData;
+    [SerializeField]
+    private SObject_Session mSessionData;
+
+    private Content_Session mSessionContent;
 
     public void SetSessionData(Content_Session sessionData)
     {
-        mSessionData = sessionData;
+        mSessionContent = sessionData;
 
-        mSessionIndex.text = mSessionData.ID_Session.ToString();
-        mSessionName.text = mSessionData.Name_Session;
-        mSessionMaster.text = mSessionData.Master_Session;
+        mSessionIndex.text = mSessionContent.ID_Session.ToString();
+        mSessionName.text = mSessionContent.Name_Session;
+        mSessionMaster.text = mSessionContent.Master_Session;
     }
 
     public void OnClick()
     {
+        mSessionData.ID_Session = mSessionContent.ID_Session;
+        mSessionData.Name_Session = mSessionContent.Name_Session;
+        mSessionData.Master_Session = mSessionContent.Master_Session;
+
+        MenuManager.Instance.ActiveState(EMenuState.Lobby_Session);
         Debug.Log("OPEN Session " + mSessionData.Name_Session);
     }
 }

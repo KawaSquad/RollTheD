@@ -98,12 +98,19 @@ public class MenuManager : MonoBehaviour
             case EMenuState.Account_NewAccount:
                 ActiveState(EMenuState.Account_Connection);
                 break;
-            case EMenuState.Account_Session:
+            case EMenuState.Account_Sessions_List:
                 ActiveState(EMenuState.Account_Connection);
                 //logout
                 break;
-            case EMenuState.Player_Character:
-                ActiveState(EMenuState.Account_Connection);
+            case EMenuState.Lobby_Session:
+                ActiveState(EMenuState.Account_Sessions_List);
+                break;
+            case EMenuState.Lobby_Player_Character_Creation:
+                ActiveState(EMenuState.Lobby_Session);
+                //Disconnected
+                break;
+            case EMenuState.Lobby_Player_Character_Preview:
+                ActiveState(EMenuState.Lobby_Session);
                 //Disconnected
                 break;
             case EMenuState.GameMaster_Mode:
@@ -111,7 +118,7 @@ public class MenuManager : MonoBehaviour
                 //logout
                 break;
             case EMenuState.GameMaster_New_Session:
-                ActiveState(EMenuState.Account_Session);
+                ActiveState(EMenuState.Account_Sessions_List);
                 //logout
                 break;
 
@@ -133,9 +140,11 @@ public enum EMenuState
     MainMenu = 1,
     Account_Connection = 2,
     Account_NewAccount = 3,
-    Account_Session = 4,
+    Account_Sessions_List = 4,
 
-    Player_Character = 13,
+    Lobby_Session = 10,
+    Lobby_Player_Character_Creation = 11,
+    Lobby_Player_Character_Preview = 12,
 
     GameMaster_Mode = 20,
     GameMaster_Editor = 21,

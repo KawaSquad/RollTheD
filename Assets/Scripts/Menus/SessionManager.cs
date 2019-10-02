@@ -13,13 +13,15 @@ public class SessionManager : MonoBehaviour
     [Header("New session")]
     public Inputfield_Form inpSessionName;
     public Inputfield_Form inpSessionMaster;
+    
     [Header("Player data")]
     public SObject_Player playerData;
+    public SObject_Session sessionData;
+
     public void Open_SessionsList()
     {
         bCreateSessionButton.gameObject.SetActive(playerData.Game_Master);
     }
-
     public void Refresh_Sessions()
     {
         Button_Session[] sessionsData = listSessionParent.GetComponentsInChildren<Button_Session>();
@@ -31,7 +33,6 @@ public class SessionManager : MonoBehaviour
         if (DataBaseManager.Instance != null)
             DataBaseManager.Instance.Session_List(new DataBaseManager.OnRequestEnd(OnRequestSession));
     }
-
     public void OnRequestSession(JsonRequest requested)
     {
         if (requested.success == "true")
@@ -55,19 +56,15 @@ public class SessionManager : MonoBehaviour
         }
     }
 
-
     public void OpenNewSession()
     {
         MenuManager.Instance.ActiveState(EMenuState.GameMaster_New_Session);
     }
-
     public void ResetForms_Session()
     {
         inpSessionName.ResetField();
         inpSessionMaster.ResetField();
     }
-
-
     public void Create_Session()
     {
         bCreateSessionButton.gameObject.SetActive(false);
@@ -80,12 +77,13 @@ public class SessionManager : MonoBehaviour
         if (DataBaseManager.Instance != null)
             DataBaseManager.Instance.CreateNewSession(inpSessionName.Content, inpSessionMaster.Content, "127.0.0.1", new DataBaseManager.OnRequestEnd(OnRequestSessionCreated));
     }
-
     public void OnRequestSessionCreated(JsonRequest requested)
     {
         if (requested.success == "true")
         {
-            MenuManager.Instance.ActiveState(EMenuState.Player_Character);
+            Json_Content_Session jsonContent = JsonUtility.FromJson<Json_Content_Session>(requested.content);
+//            sessionData.ID_Session = 
+            MenuManager.Instance.ActiveState(EMenuState.Account_Sessions_List);
             LoadingScreen.StopLoading();
         }
         else
@@ -93,5 +91,4 @@ public class SessionManager : MonoBehaviour
             Debug.Log(requested.error);
         }
     }
-
 }

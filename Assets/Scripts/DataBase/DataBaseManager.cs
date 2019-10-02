@@ -84,6 +84,17 @@ public class DataBaseManager : MonoBehaviour
             StopCoroutine(coWebReq);
         coWebReq = StartCoroutine(RequestWeb(url, forms, 10f, "Create new session", onRequestEnd));
     }
+    public void CharacterList(int idSession,OnRequestEnd onRequestEnd)
+    {
+        string url = DATABASE + "CharactersLobby.php";
+
+        WWWForm forms = new WWWForm();
+        forms.AddField("SessionIDPost", idSession);
+
+        if (coWebReq != null)
+            StopCoroutine(coWebReq);
+        coWebReq = StartCoroutine(RequestWeb(url, forms, 10f, "Refresh character", onRequestEnd));
+    }
 
     IEnumerator RequestWeb(string url, WWWForm forms, float timeOut,string loadingFeedback,OnRequestEnd onRequestEnd)
     {
