@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using KawaSquad.Tween;
+using UnityEngine.EventSystems;
 
 public class ED_MapManager : MonoBehaviour
 {
@@ -38,6 +39,8 @@ public class ED_MapManager : MonoBehaviour
     Vector3 mousePos;
     public int currentIndexTexture = 0;
 
+    public EventSystem ui_Eventsystem;
+
     private void Awake()
     {
         if (instance != null)
@@ -61,6 +64,9 @@ public class ED_MapManager : MonoBehaviour
             //left mouse click
             if (Input.GetKey(KeyCode.Mouse0))
             {
+                if (ui_Eventsystem.IsPointerOverGameObject())
+                    return;
+
                 Ray ray = cameraControl.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hitInfo;
 

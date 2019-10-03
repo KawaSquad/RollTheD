@@ -25,5 +25,7 @@ public class SObject_Player : ScriptableObject
     public int Number_Player_Max = 8;
     public string Password_Session = "psw";
     public string IP_Session = "127.0.0.1";
+    public string Save_Url = "";
 
+    public Json_Content_Lobby Content_Lobby;
 }

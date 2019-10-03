@@ -21,6 +21,7 @@ public class MenuManager : MonoBehaviour
 
     public List<MenuPanel> menus;
     MenuPanel currentMenu;
+    MenuPanel currentPopup;
 
     [SerializeField]
     private SObject_Player mConfig_PlayerData;
@@ -72,8 +73,17 @@ public class MenuManager : MonoBehaviour
         {
             if(menus[i].menuState == eMenuState)
             {
-                if (!menus[i].mIsPopup && currentMenu != null)
+                if(menus[i].mIsPopup)
+                {
+                    currentPopup = menus[i];
+                    currentPopup.ActiveAlpha(true);
+                    break;
+                }
+
+                if (currentMenu != null)
                     currentMenu.ActiveAlpha(false);
+                if (currentPopup != null)
+                    currentPopup.ActiveAlpha(false);
 
                 currentMenu = menus[i];
                 currentMenu.ActiveAlpha(true);
@@ -110,7 +120,6 @@ public class MenuManager : MonoBehaviour
                 break;
             case EMenuState.Lobby_Player_Character_Creation:
                 ActiveState(EMenuState.Lobby_Session);
-                //Disconnected
                 break;
             case EMenuState.Lobby_Player_Character_Preview:
                 ActiveState(EMenuState.Lobby_Session);
@@ -122,6 +131,10 @@ public class MenuManager : MonoBehaviour
                 break;
             case EMenuState.GameMaster_New_Session:
                 ActiveState(EMenuState.Account_Sessions_List);
+                //logout
+                break;
+            case EMenuState.Adventure_Start_Session:
+                ActiveState(EMenuState.MainMenu);
                 //logout
                 break;
 
@@ -154,4 +167,5 @@ public enum EMenuState
     GameMaster_Editor = 21,
     GameMaster_New_Session = 22,
 
+    Adventure_Start_Session = 30,
 }

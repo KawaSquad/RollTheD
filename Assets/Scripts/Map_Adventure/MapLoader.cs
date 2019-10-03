@@ -35,33 +35,47 @@ public class MapLoader : MonoBehaviour
         instance = this;
     }
 
-    public void LoadMap(string mapPath)
+    public void LoadMap(string mapPath, bool isLocalSave = true)
     {
-        if (!File.Exists(mapPath))
+        if (isLocalSave)
         {
-            return;
+            if (!File.Exists(mapPath))
+            {
+                return;
+            }
+            string json = File.ReadAllText(mapPath);
+            MapDataMof.JsonMapData jsonMapData = JsonUtility.FromJson<MapDataMof.JsonMapData>(json);
+            GenrateMap(jsonMapData);
         }
-        string json = File.ReadAllText(mapPath);
+        else
+        {
+            DataBaseManager.Instance.DownloadSave(mapPath,new DataBaseManager.OnTextLoaded(MapDownloaded),null);
+        }
+    }
+    void MapDownloaded(string json)
+    {
         MapDataMof.JsonMapData jsonMapData = JsonUtility.FromJson<MapDataMof.JsonMapData>(json);
+        GenrateMap(jsonMapData);
+    }
 
+    public void GenrateMap(MapDataMof.JsonMapData jsonMapData)
+    {
         if (currentMap != null)
         {
             Debug.Log("Existing map");
             Destroy(currentMap.gameObject);
         }
+
         GameObject inst = new GameObject("MapDataModif");
         inst.transform.parent = this.transform;
         currentMap = inst.AddComponent<MapDataMof>();
         currentMap.isMapEditor = false;
-        //currentMap.LoadMap(jsonMapData);
         currentMap.GenerateMap(jsonMapData, tilesetMat);
-        //currentMap.CreateMap(new Vector2Int(jsonMapData.sizeMap.x, jsonMapData.sizeMap.y), tilesetMat);
 
         CenterMap();
         //UpdateToolsButtons();
         CloseLoadMap();
     }
-
 
     public void OpenLoadMap()
     {

@@ -40,6 +40,7 @@ public class Button_Session : MonoBehaviour
         mSessionData.Number_Player = mSessionContent.Number_Player;
         mSessionData.Number_Player_Max = mSessionContent.Number_Player_Max;
         mSessionData.Password_Session = mSessionContent.Password_Session;
+        mSessionData.Save_Url = mSessionContent.Save_Url;
 
         if (mSessionContent.Password_Session == "")//no password
         {

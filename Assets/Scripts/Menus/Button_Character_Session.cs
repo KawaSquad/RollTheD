@@ -18,6 +18,7 @@ public class Button_Character_Session : MonoBehaviour
     private Image mImgLoading;
 
     private string urlImage = "https://steven-sternberger.be/RollTheD/ProfilPictures/unknow.png";
+    private bool isDestroyed = false;
 
     public void SetCharacter(string characterName, string characterClass, string characterAccount, string characterImage = "")
     {
@@ -35,6 +36,9 @@ public class Button_Character_Session : MonoBehaviour
 
     void OnImageLoaded(Texture2D textureRequested)
     {
+        if (isDestroyed)
+            return;
+
         if (textureRequested == null)
         {
             Debug.Log("Icon null");
@@ -49,6 +53,12 @@ public class Button_Character_Session : MonoBehaviour
     }
     void OnDownloadProgress(float value)
     {
-        mImgLoading.fillAmount = value;
+        if(mImgLoading != null)
+            mImgLoading.fillAmount = value;
+    }
+
+    private void OnDestroy()
+    {
+        isDestroyed = true;
     }
 }

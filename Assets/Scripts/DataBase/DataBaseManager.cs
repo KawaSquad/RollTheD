@@ -10,7 +10,7 @@ public class DataBaseManager : MonoBehaviour
     {
         get
         {
-            if(instance == null)
+            if (instance == null)
                 Debug.LogError("Instance not set yet");
             return instance;
         }
@@ -24,6 +24,7 @@ public class DataBaseManager : MonoBehaviour
     static Coroutine coWebReq;
     public delegate void OnRequestEnd(JsonRequest requested);
     public delegate void OnImageLoaded(Texture2D textureRequested);
+    public delegate void OnTextLoaded(string textRequested);
     public delegate void OnDownloadProgress(float value);
 
     private void Awake()
@@ -85,7 +86,7 @@ public class DataBaseManager : MonoBehaviour
             StopCoroutine(coWebReq);
         coWebReq = StartCoroutine(RequestWeb(url, forms, 10f, "Create new session", onRequestEnd));
     }
-    public void CharacterList(int idSession,OnRequestEnd onRequestEnd)
+    public void CharacterList(int idSession, OnRequestEnd onRequestEnd)
     {
         string url = DATABASE + "CharactersLobby.php";
 
@@ -97,7 +98,7 @@ public class DataBaseManager : MonoBehaviour
         coWebReq = StartCoroutine(RequestWeb(url, forms, 10f, "Refresh character", onRequestEnd));
     }
 
-    IEnumerator RequestWeb(string url, WWWForm forms, float timeOut,string loadingFeedback,OnRequestEnd onRequestEnd)
+    IEnumerator RequestWeb(string url, WWWForm forms, float timeOut, string loadingFeedback, OnRequestEnd onRequestEnd)
     {
         UnityWebRequest webRequest = UnityWebRequest.Post(url, forms);
         UnityWebRequestAsyncOperation handler = webRequest.SendWebRequest();
@@ -140,6 +141,49 @@ public class DataBaseManager : MonoBehaviour
     }
 
 
+    public void DownloadSave(string url, OnTextLoaded onTextLoaded, OnDownloadProgress onDownloadProgress)
+    {
+        //if (coWebReq != null)
+        //    StopCoroutine(coWebReq);
+        //coWebReq = 
+        StartCoroutine(RequestText(url, 60f, onTextLoaded, onDownloadProgress));
+    }
+    IEnumerator RequestText(string url, float timeOut, OnTextLoaded onTextLoaded, OnDownloadProgress onDownloadProgress)
+    {
+        UnityWebRequest webRequest = UnityWebRequest.Get(url);
+        UnityWebRequestAsyncOperation handler = webRequest.SendWebRequest();
+
+        float timeIn = 0f;
+        bool isAborted = false;
+        while (!handler.isDone)
+        {
+            timeIn += Time.deltaTime;
+            if (onDownloadProgress != null)
+                onDownloadProgress(handler.progress);
+            if (timeIn > timeOut)
+            {
+                //Security
+                isAborted = true;
+                webRequest.Abort();
+                break;
+            }
+            yield return null;
+        }
+
+        if (webRequest.isNetworkError || webRequest.isHttpError || isAborted)
+        {
+            Debug.Log(webRequest.error);
+            onTextLoaded(null);
+        }
+        else
+        {
+            string textRequested = webRequest.downloadHandler.text;
+            onTextLoaded(textRequested);
+        }
+
+        yield break;
+    }
+
 
     public void DownloadImage(string url, OnImageLoaded onImageLoaded, OnDownloadProgress onDownloadProgress)
     {
@@ -155,20 +199,23 @@ public class DataBaseManager : MonoBehaviour
         UnityWebRequestAsyncOperation handler = webRequest.SendWebRequest();
 
         float timeIn = 0f;
+        bool isAborted = false;
         while (!handler.isDone)
         {
             timeIn += Time.deltaTime;
-            onDownloadProgress(handler.progress);
+            if (onDownloadProgress != null)
+                onDownloadProgress(handler.progress);
             if (timeIn > timeOut)
             {
                 //Security
+                isAborted = true;
                 webRequest.Abort();
                 break;
             }
             yield return null;
         }
 
-        if (webRequest.isNetworkError || webRequest.isHttpError)
+        if (webRequest.isNetworkError || webRequest.isHttpError || isAborted)
         {
             Debug.Log(webRequest.error);
             onImageLoaded(null);
@@ -214,6 +261,7 @@ public class Content_Session
     public int Number_Player_Max = 8;
     public string Password_Session = "psw";
     public string IP_Session = "127.0.0.1";
+    public string Save_Url = "";
 }
 
 [System.Serializable]

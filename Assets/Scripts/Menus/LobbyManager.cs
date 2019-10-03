@@ -12,10 +12,28 @@ public class LobbyManager : MonoBehaviour
     [Header("Session data")]
     public SObject_Player sessionData;
 
+    public void StartAsMaster()
+    {
+        if(sessionData.Game_Master)
+        {
+            MenuManager.Instance.ActiveState(EMenuState.Adventure_Start_Session);
+        }
+        else
+        {
+            Debug.Log("CHECK IF MASTER STARTED;");
+        }
+        // ACTIVE MAP
+    }
     public void OpenNewCharcater()
     {
         MenuManager.Instance.ActiveState(EMenuState.Lobby_Player_Character_Creation);
     }
+    public void CreateNewCharcater()
+    {
+        MenuManager.Instance.ActiveState(EMenuState.Lobby_Player_Character_Preview);
+    }
+
+
     public void Refresh_Characters_List()
     {
         Button_Character_Session[] charactersData = listCharacterParent.GetComponentsInChildren<Button_Character_Session>();
@@ -47,5 +65,7 @@ public class LobbyManager : MonoBehaviour
             Debug.Log(requested.error);
         }
     }
+
+
 
 }
