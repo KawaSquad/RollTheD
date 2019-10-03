@@ -23,6 +23,8 @@ public class DataBaseManager : MonoBehaviour
 
     static Coroutine coWebReq;
     public delegate void OnRequestEnd(JsonRequest requested);
+    public delegate void OnImageLoaded(Texture2D textureRequested);
+    public delegate void OnDownloadProgress(float value);
 
     private void Awake()
     {
@@ -36,7 +38,7 @@ public class DataBaseManager : MonoBehaviour
         string url = DATABASE + "Login.php";
 
         WWWForm forms = new WWWForm();
-        forms.AddField("loginPost", accountName);
+        forms.AddField("loginPost", accountName.ToLower());
         string encodedPswd = accountPassword.GetHashCode().ToString();
         forms.AddField("passwordPost", encodedPswd);
 
@@ -44,13 +46,12 @@ public class DataBaseManager : MonoBehaviour
             StopCoroutine(coWebReq);
         coWebReq = StartCoroutine(RequestWeb(url, forms, 10f, "Check account", onRequestEnd));
     }
-
     public void Create_Account(string accountName, string accountPassword, OnRequestEnd onRequestEnd)
     {
         string url = DATABASE + "NewAccount.php";
 
         WWWForm forms = new WWWForm();
-        forms.AddField("loginPost", accountName);
+        forms.AddField("loginPost", accountName.ToLower());
         string encodedPswd = accountPassword.GetHashCode().ToString();
         forms.AddField("passwordPost", encodedPswd);
 
@@ -137,8 +138,52 @@ public class DataBaseManager : MonoBehaviour
 
         yield break;
     }
-}
 
+
+
+    public void DownloadImage(string url, OnImageLoaded onImageLoaded, OnDownloadProgress onDownloadProgress)
+    {
+        //if (coWebReq != null)
+        //    StopCoroutine(coWebReq);
+        //coWebReq = 
+        StartCoroutine(RequestPicture(url, 60f, onImageLoaded, onDownloadProgress));
+    }
+
+    IEnumerator RequestPicture(string url, float timeOut, OnImageLoaded onImageLoaded, OnDownloadProgress onDownloadProgress)
+    {
+        UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(url);
+        UnityWebRequestAsyncOperation handler = webRequest.SendWebRequest();
+
+        float timeIn = 0f;
+        while (!handler.isDone)
+        {
+            timeIn += Time.deltaTime;
+            onDownloadProgress(handler.progress);
+            if (timeIn > timeOut)
+            {
+                //Security
+                webRequest.Abort();
+                break;
+            }
+            yield return null;
+        }
+
+        if (webRequest.isNetworkError || webRequest.isHttpError)
+        {
+            Debug.Log(webRequest.error);
+            onImageLoaded(null);
+        }
+        else
+        {
+            //Call end
+            Texture2D textureRequested = DownloadHandlerTexture.GetContent(webRequest);
+            onImageLoaded(textureRequested);
+        }
+
+        yield break;
+    }
+
+}
 [System.Serializable]
 public class JsonRequest
 {
@@ -152,7 +197,7 @@ public class Content_Account
 {
     public int ID_Account = 0;
     public string Name_Account = "name";
-    public string Password_Account = "pswd";
+    public string Password_Account = "psw";
 }
 [System.Serializable]
 public class Json_Content_Session
@@ -165,5 +210,25 @@ public class Content_Session
     public int ID_Session = 0;
     public string Name_Session = "Name";
     public string Master_Session = "Name";
+    public int Number_Player = 0;
+    public int Number_Player_Max = 8;
+    public string Password_Session = "psw";
     public string IP_Session = "127.0.0.1";
+}
+
+[System.Serializable]
+public class Json_Content_Lobby
+{
+    public List<Content_Lobby> characters;
+}
+[System.Serializable]
+public class Content_Lobby
+{
+    public int ID_Character = 0;
+    public int ID_Account = 0;
+    public int ID_Session = 0;
+    public string Picture_Url = "";
+    public string Name_Character = "Name";
+    public string Class_Character = "Name";
+    public int HP_Character = 10;
 }

@@ -5,6 +5,17 @@ using UnityEngine.UI;
 
 public class SessionManager : MonoBehaviour
 {
+    private static SessionManager instance;
+    public static SessionManager Instance
+    {
+        get
+        {
+            if (instance == null)
+                Debug.LogError("Instance not already set");
+            return instance;
+        }
+    }
+
     [Header("Sessions list")]
     public Button bCreateSessionButton;
     public Button_Session buttonSessionSample;
@@ -13,14 +24,24 @@ public class SessionManager : MonoBehaviour
     [Header("New session")]
     public Inputfield_Form inpSessionName;
     public Inputfield_Form inpSessionMaster;
-    
+
+    [Header("Protected session")]
+    public Text textSessionName;
+    public Inputfield_Form inpSessionPassword;
+
     [Header("Player data")]
-    public SObject_Player playerData;
-    public SObject_Session sessionData;
+    public SObject_Player sessionData;
+
+    private void Awake()
+    {
+        if(instance != null)
+            Debug.LogError("Instance already assigned");
+        instance = this;
+    }
 
     public void Open_SessionsList()
     {
-        bCreateSessionButton.gameObject.SetActive(playerData.Game_Master);
+        bCreateSessionButton.gameObject.SetActive(sessionData.Game_Master);
     }
     public void Refresh_Sessions()
     {
@@ -89,6 +110,32 @@ public class SessionManager : MonoBehaviour
         else
         {
             Debug.Log(requested.error);
+        }
+    }
+
+    public void OpenSessionWithPassword()
+    {
+        MenuManager.Instance.ActiveState(EMenuState.Lobby_Session_Password);
+        textSessionName.text = sessionData.Name_Session;
+        inpSessionPassword.ResetField();
+    }
+
+    public void CheckSessionWithPassword()
+    {
+        if (inpSessionPassword.Validate())
+        {
+            if (inpSessionPassword.Content.GetHashCode().ToString() == sessionData.Password_Session)
+            {
+                MenuManager.Instance.ActiveState(EMenuState.Lobby_Session);
+            }
+            else
+            {
+                inpSessionPassword.DisplayError("Wrong password");
+            }
+        }
+        else
+        {
+            inpSessionPassword.DisplayError("Password required");
         }
     }
 }

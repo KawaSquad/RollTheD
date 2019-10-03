@@ -13,6 +13,8 @@ public class MenuPanel : MonoBehaviour
     [SerializeField]
     private RectTransform rectTransform;
 
+    public bool mIsPopup = false;
+
     public UnityEvent onActivePanel;
 
 

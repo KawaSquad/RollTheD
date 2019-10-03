@@ -232,9 +232,9 @@ class RequestManager
                 
 				if($result)
 				{
-					$sessionsList = new SessionList();
-					$sessionsList->sessions = $result;
-                    $jsonRequest->content = json_encode($sessionsList);
+					$charactersList = new CharacterList();
+					$charactersList->characters = $result;
+                    $jsonRequest->content = json_encode($charactersList);
 					$success = true;
 				}
 				else

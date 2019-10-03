@@ -10,11 +10,11 @@ public class LobbyManager : MonoBehaviour
     public Transform listCharacterParent;
 
     [Header("Session data")]
-    public SObject_Session sessionData;
+    public SObject_Player sessionData;
 
     public void OpenNewCharcater()
     {
-        MenuManager.Instance.ActiveState(EMenuState.GameMaster_New_Session);
+        MenuManager.Instance.ActiveState(EMenuState.Lobby_Player_Character_Creation);
     }
     public void Refresh_Characters_List()
     {
@@ -31,12 +31,13 @@ public class LobbyManager : MonoBehaviour
     {
         if (requested.success == "true")
         {
-            Json_Content_Session contentAccount = JsonUtility.FromJson<Json_Content_Session>(requested.content);
+            Json_Content_Lobby contentAccount = JsonUtility.FromJson<Json_Content_Lobby>(requested.content);
 
-            for (int i = 0; i < contentAccount.sessions.Count; i++)
+            for (int i = 0; i < contentAccount.characters.Count; i++)
             {
+                Content_Lobby character = contentAccount.characters[i];
                 Button_Character_Session bSession = Instantiate(sampleCharacter, listCharacterParent);
-                //bSession.SetSessionData(contentAccount.sessions[i]);
+                bSession.SetCharacter(character.Name_Character, character.Class_Character, character.ID_Account.ToString(), character.Picture_Url);
             }
 
             LoadingScreen.StopLoading();

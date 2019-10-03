@@ -11,11 +11,13 @@ public class Button_Session : MonoBehaviour
     private Text mSessionName;
     [SerializeField]
     private Text mSessionMaster;
-    //[SerializeField]
-    //private Text mSessionIP;
+    [SerializeField]
+    private Text mSessionPlayers;
+    [SerializeField]
+    private Image mSessionLock;
 
     [SerializeField]
-    private SObject_Session mSessionData;
+    private SObject_Player mSessionData;
 
     private Content_Session mSessionContent;
 
@@ -26,6 +28,8 @@ public class Button_Session : MonoBehaviour
         mSessionIndex.text = mSessionContent.ID_Session.ToString();
         mSessionName.text = mSessionContent.Name_Session;
         mSessionMaster.text = mSessionContent.Master_Session;
+        mSessionPlayers.text = mSessionContent.Number_Player + "/" + mSessionContent.Number_Player_Max;
+        mSessionLock.enabled = (mSessionContent.Password_Session != "");
     }
 
     public void OnClick()
@@ -33,8 +37,18 @@ public class Button_Session : MonoBehaviour
         mSessionData.ID_Session = mSessionContent.ID_Session;
         mSessionData.Name_Session = mSessionContent.Name_Session;
         mSessionData.Master_Session = mSessionContent.Master_Session;
+        mSessionData.Number_Player = mSessionContent.Number_Player;
+        mSessionData.Number_Player_Max = mSessionContent.Number_Player_Max;
+        mSessionData.Password_Session = mSessionContent.Password_Session;
 
-        MenuManager.Instance.ActiveState(EMenuState.Lobby_Session);
-        Debug.Log("OPEN Session " + mSessionData.Name_Session);
+        if (mSessionContent.Password_Session == "")//no password
+        {
+            MenuManager.Instance.ActiveState(EMenuState.Lobby_Session);
+        }
+        else
+        {
+            SessionManager.Instance.OpenSessionWithPassword();
+            Debug.Log("OPEN POPUP PASSWORD");
+        }
     }
 }

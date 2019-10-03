@@ -72,7 +72,7 @@ public class MenuManager : MonoBehaviour
         {
             if(menus[i].menuState == eMenuState)
             {
-                if (currentMenu != null)
+                if (!menus[i].mIsPopup && currentMenu != null)
                     currentMenu.ActiveAlpha(false);
 
                 currentMenu = menus[i];
@@ -103,6 +103,9 @@ public class MenuManager : MonoBehaviour
                 //logout
                 break;
             case EMenuState.Lobby_Session:
+                ActiveState(EMenuState.Account_Sessions_List);
+                break;
+            case EMenuState.Lobby_Session_Password:
                 ActiveState(EMenuState.Account_Sessions_List);
                 break;
             case EMenuState.Lobby_Player_Character_Creation:
@@ -145,6 +148,7 @@ public enum EMenuState
     Lobby_Session = 10,
     Lobby_Player_Character_Creation = 11,
     Lobby_Player_Character_Preview = 12,
+    Lobby_Session_Password = 13,
 
     GameMaster_Mode = 20,
     GameMaster_Editor = 21,
