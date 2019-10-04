@@ -12,9 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03fa3252531327743814864053590d90, type: 3}
   m_Name: Player_Data
   m_EditorClassIdentifier: 
-  ID_Account: 0
-  Name_Account: name
-  Password_Account: pswd
+  ID_Account: 22
+  Name_Account: styven184
+  Password_Account: 1793703675
+  Game_Master: 1
   ID_Character: 0
   Name_Character: name
   Class_Character: class
+  ID_Session: 6
+  Name_Session: Kiwipower
+  Master_Session: NovaStorm
+  Number_Player: 5
+  Number_Player_Max: 8
+  Password_Session: 
+  IP_Session: 127.0.0.1
+  Save_Url: https://steven-sternberger.be/RollTheD/Saves/MAP_02.json
+  Content_Lobby:
+    characters: []
