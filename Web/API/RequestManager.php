@@ -124,14 +124,15 @@ class RequestManager
 			{			
 				$req = self::$bdd->prepare('SELECT * FROM t_Roll_Session');
 				$req->execute();
-
-				$result = $req->fetchall();
+				
+				$results = $req->fetchall();
 				$req->closeCursor();
                 
-				if($result)
+				if($results)
 				{
 					$sessionsList = new SessionList();
-					$sessionsList->sessions = $result;
+					$sessionsList->sessions = $results;
+
                     $jsonRequest->content = json_encode($sessionsList);
 					$success = true;
 				}
@@ -150,9 +151,8 @@ class RequestManager
         echo $jsonEncode;
 	}
   
-	function NewSession()
+	function NewSession($jsonRequest)
     {
-        $jsonRequest = new JsonFormat();
         $success = false;
 		
 		$nameSessionPost = "";
@@ -168,7 +168,7 @@ class RequestManager
 			if($this->ConnectToDB())
 			{	
 				//Check If exist 
-
+				
 				$req = self::$bdd->prepare('SELECT * FROM t_Roll_Session WHERE Name_Session = :nameSessionPost');
 				$req->bindParam('nameSessionPost',$nameSessionPost);
 
@@ -190,8 +190,10 @@ class RequestManager
 					$req = self::$bdd->prepare('INSERT INTO t_Roll_Session ( Name_Session, Master_Session,IP_Session) VALUES (:nameSessionPost,:masterSessionPost,:ipSessionPost)');
 	
 					$req->execute(array('nameSessionPost' => $nameSessionPost,'masterSessionPost' => $masterSessionPost,'ipSessionPost' => $ipSessionPost));
+					$result = $req->fetch();
 					$req->closeCursor();
-					$success = true;					
+
+					$success = true;
 				}   
 			}
 			else
@@ -205,8 +207,8 @@ class RequestManager
         }
         
         $jsonRequest->success= $success;
-		$jsonEncode =  (json_encode($jsonRequest));
-        echo $jsonEncode;
+		// $jsonEncode =  (json_encode($jsonRequest));
+        // echo $jsonEncode;
     }
 
 	function RequestCharactersList()
@@ -253,13 +255,86 @@ class RequestManager
         echo $jsonEncode;
 	}
 
+	function CreateFolder($jsonRequest)
+	{
+		$success = false;
+		
+		$masterSessionPost = "";
+
+		if(isset($_POST['masterSessionPost']))
+		{
+			$masterSessionPost = $_POST['masterSessionPost'];		
+
+			$config = require("../restricted/configDB.php");
+
+			$ftp_server = $config["ftp_server"];
+			$ftp_username=$config["ftp_username"];
+			$ftp_userpass=$config["ftp_userpass"];
+			
+			$ftp_connection = ftp_connect($ftp_server)  
+				  or die("Could not connect to $ftp_server"); 
+			
+		  	if($ftp_connection) 
+			{ 
+				$login = ftp_login($ftp_connection, $ftp_username, $ftp_userpass); 
+			  	if($login)
+			  	{ 
+				  	$dir = "www/RollTheD/Sessions/$masterSessionPost";
+				  	$dirSaves = "$dir/Saves";
+					$dirMaps = "$dir/Maps";
+					$dirPictures = "$dir/Pictures";
+					  
+					if (ftp_chdir($ftp_connection, $dir))
+					{
+						$success = true;
+						$jsonRequest->content = "$dir - Directory exist";
+					}
+					else
+					{ 
+						if (ftp_mkdir($ftp_connection, $dir)) 
+						{
+							if (ftp_mkdir($ftp_connection, $dirSaves) && ftp_mkdir($ftp_connection, $dirMaps) && ftp_mkdir($ftp_connection, $dirPictures)) 
+							{
+								$success = true;
+								$jsonRequest->content = "$dir - New directory created save";
+							}
+							else
+							{
+								$jsonRequest->error = "Can not create the subs directories";
+							}	
+						}
+						else
+						{
+							$jsonRequest->error = "Can not create the directory";
+						}
+					}
+			  	} 
+			  	else 
+			  	{ 
+					$jsonRequest->error = "Login fail";
+				} 
+			
+		  		// Closeing  connection 
+				ftp_close($ftp_connection);
+			}
+		}
+		else
+		{
+			$jsonRequest->error = "Error Post!"; 			
+		}
+
+		$jsonRequest->success= $success;
+		// $jsonEncode =  (json_encode($jsonRequest));
+        // echo $jsonEncode;
+	}
+
 	//Database
     
     function ConnectToDB()
 	{
         try
 		{
-            $config = require("restricted/configDB.php");
+            $config = require("../restricted/configDB.php");
 			self::$bdd = new PDO($config["db"], $config["username"], $config["password"]);
 			return true;
 		}

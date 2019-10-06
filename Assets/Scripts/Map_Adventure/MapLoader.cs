@@ -17,8 +17,10 @@ public class MapLoader : MonoBehaviour
     public ButtonMap bMapName;
     public Transform listMaps;
 
-    GameObject chunck = null;
-    MapDataMof currentMap = null;
+    private MapDataMof currentMap = null;
+
+    public SObject_Player sessionData;
+
     public static MapDataMof CurrentMap
     {
         get
@@ -90,6 +92,19 @@ public class MapLoader : MonoBehaviour
             Destroy(bMaps[i].gameObject);
         }
 
+
+        for (int i = 0; i < sessionData.Maps.Length; i++)
+        {
+            string url_Map = sessionData.GM_Url + "Maps/" + sessionData.Maps[i];
+            string fileName = sessionData.Maps[i].Split('.')[0];
+
+            ButtonMap bMap = Instantiate(bMapName, listMaps);
+            bMap.mapName = fileName;
+            bMap.mapPath = url_Map;
+            bMap.textMapName.text = bMap.mapName;
+        }
+
+        /*
         string pathFolder = Path.Combine(Application.persistentDataPath, "Saves");
         string[] files = Directory.GetFiles(pathFolder);
         for (int i = 0; i < files.Length; i++)
@@ -99,6 +114,7 @@ public class MapLoader : MonoBehaviour
             bMap.mapPath = files[i];
             bMap.textMapName.text = bMap.mapName;
         }
+         */
     }
     public void CloseLoadMap()
     {

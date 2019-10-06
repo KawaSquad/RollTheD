@@ -6,18 +6,18 @@ using UnityEngine.UI;
 public class Button_Session : MonoBehaviour
 {
     [SerializeField]
-    private Text mSessionIndex;
+    private Text mSessionIndex = null;
     [SerializeField]
-    private Text mSessionName;
+    private Text mSessionName = null;
     [SerializeField]
-    private Text mSessionMaster;
+    private Text mSessionMaster = null;
     [SerializeField]
-    private Text mSessionPlayers;
+    private Text mSessionPlayers = null;
     [SerializeField]
-    private Image mSessionLock;
+    private Image mSessionLock = null;
 
     [SerializeField]
-    private SObject_Player mSessionData;
+    private SObject_Player mSessionData = null;
 
     private Content_Session mSessionContent;
 
@@ -28,9 +28,26 @@ public class Button_Session : MonoBehaviour
         mSessionIndex.text = mSessionContent.ID_Session.ToString();
         mSessionName.text = mSessionContent.Name_Session;
         mSessionMaster.text = mSessionContent.Master_Session;
-        mSessionPlayers.text = mSessionContent.Number_Player + "/" + mSessionContent.Number_Player_Max;
+        mSessionPlayers.text = /*mSessionContent.Number_Player + */ "-/" + mSessionContent.Number_Player_Max;
         mSessionLock.enabled = (mSessionContent.Password_Session != "");
+
+        if (DataBaseManager.Instance != null)
+            DataBaseManager.Instance.CharacterList(mSessionContent.ID_Session,new DataBaseManager.OnRequestEnd(OnRequestCountBySession),true);
     }
+    public void OnRequestCountBySession(JsonRequest requested)
+    {
+        if (requested.success == "true")
+        {
+            Json_Content_Lobby lobby = JsonUtility.FromJson<Json_Content_Lobby>(requested.content);
+            mSessionContent.Number_Player = lobby.characters.Count;
+        }
+        else
+        {
+            mSessionContent.Number_Player = 0;
+        }
+        mSessionPlayers.text = mSessionContent.Number_Player + "/" + mSessionContent.Number_Player_Max;
+    }
+
 
     public void OnClick()
     {
@@ -40,7 +57,8 @@ public class Button_Session : MonoBehaviour
         mSessionData.Number_Player = mSessionContent.Number_Player;
         mSessionData.Number_Player_Max = mSessionContent.Number_Player_Max;
         mSessionData.Password_Session = mSessionContent.Password_Session;
-        mSessionData.Save_Url = mSessionContent.Save_Url;
+        mSessionData.GM_Url = DataBaseManager.DataBase + "Sessions/"+ mSessionContent.Master_Session + "/";
+        mSessionData.Maps = mSessionContent.Maps.Split(',');
 
         if (mSessionContent.Password_Session == "")//no password
         {
@@ -49,7 +67,6 @@ public class Button_Session : MonoBehaviour
         else
         {
             SessionManager.Instance.OpenSessionWithPassword();
-            Debug.Log("OPEN POPUP PASSWORD");
         }
     }
 }

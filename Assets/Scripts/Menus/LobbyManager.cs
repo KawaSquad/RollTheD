@@ -55,7 +55,10 @@ public class LobbyManager : MonoBehaviour
             {
                 Content_Lobby character = contentAccount.characters[i];
                 Button_Character_Session bSession = Instantiate(sampleCharacter, listCharacterParent);
-                bSession.SetCharacter(character.Name_Character, character.Class_Character, character.ID_Account.ToString(), character.Picture_Url);
+                string urlPP = DataBaseManager.DataBase+ "Sessions/" + sessionData.Master_Session + "/Pictures/" + character.Picture_Url;
+                if (character.Picture_Url == "")
+                    urlPP = "";
+                bSession.SetCharacter(character.Name_Character, character.Class_Character, character.ID_Account.ToString(), urlPP);
             }
 
             LoadingScreen.StopLoading();

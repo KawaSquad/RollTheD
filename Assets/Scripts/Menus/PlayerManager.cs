@@ -17,7 +17,7 @@ public class PlayerManager : MonoBehaviour
 
     [Header("SObject Player Data")]
     [SerializeField]
-    private SObject_Player playerData;
+    private SObject_Player playerData = null;
 
 
 

@@ -108,38 +108,42 @@ public class MapDataMof : MonoBehaviour
         {
             for (int x = 0; x < jsonMapData.sizeMap.x; x++)
             {
-
                 int index = (jsonMapData.sizeMap.x * 2) * (y * 2) + (x * 2);
                 int indexMap = (jsonMapData.sizeMap.x) * y + x;
                 int indexTile = jsonMapData.mapData[indexMap].indexTile;
-                TilesetManager.Tile tile = TilesetManager.instance.tiles[indexTile];
 
-                TileData tileData = new TileData();
-                tileData.indexMap = indexMap;
-                tileData.indexTile = indexTile;
-                mapData.Add(tileData);
+                if (indexTile != -1)
+                {
 
-                //UL
-                int newIndex = index;
-                vertices[newIndex] = new Vector3(x, 0, y);
-                uvs[newIndex] = tile.uv_UL;
-                //uvs[newIndex] = new Vector2(x, y);
-                //UR
-                newIndex = index + 1;
-                vertices[newIndex] = new Vector3(x + 1, 0, y);
-                uvs[newIndex] = tile.uv_UR;
-                //uvs[newIndex] = new Vector2((x + 1), y);
-                //DL
-                newIndex = index + (jsonMapData.sizeMap.x * 2);
-                vertices[newIndex] = new Vector3(x, 0, y + 1);
-                uvs[newIndex] = tile.uv_DL;
-                //uvs[newIndex] = new Vector2(x, (y + 1));
-                //DR
-                newIndex = index + (jsonMapData.sizeMap.x * 2) + 1;
-                vertices[newIndex] = new Vector3(x + 1, 0, y + 1);
-                uvs[newIndex] = tile.uv_DR;
-                //uvs[newIndex] = new Vector2((x + 1), (y + 1));
+                    TilesetManager.Tile tile = TilesetManager.instance.tiles[indexTile];
 
+                    TileData tileData = new TileData();
+                    tileData.indexMap = indexMap;
+                    tileData.indexTile = indexTile;
+                    mapData.Add(tileData);
+
+                    //UL
+                    int newIndex = index;
+                    vertices[newIndex] = new Vector3(x, 0, y);
+                    uvs[newIndex] = tile.uv_UL;
+                    //uvs[newIndex] = new Vector2(x, y);
+                    //UR
+                    newIndex = index + 1;
+                    vertices[newIndex] = new Vector3(x + 1, 0, y);
+                    uvs[newIndex] = tile.uv_UR;
+                    //uvs[newIndex] = new Vector2((x + 1), y);
+                    //DL
+                    newIndex = index + (jsonMapData.sizeMap.x * 2);
+                    vertices[newIndex] = new Vector3(x, 0, y + 1);
+                    uvs[newIndex] = tile.uv_DL;
+                    //uvs[newIndex] = new Vector2(x, (y + 1));
+                    //DR
+                    newIndex = index + (jsonMapData.sizeMap.x * 2) + 1;
+                    vertices[newIndex] = new Vector3(x + 1, 0, y + 1);
+                    uvs[newIndex] = tile.uv_DR;
+                    //uvs[newIndex] = new Vector2((x + 1), (y + 1));
+
+                }
                 triangles[indexTriangles + 0] = index;
                 triangles[indexTriangles + 1] = index + (jsonMapData.sizeMap.x * 2);
                 triangles[indexTriangles + 2] = index + 1;

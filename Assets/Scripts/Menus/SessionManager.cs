@@ -60,6 +60,7 @@ public class SessionManager : MonoBehaviour
         {
             Json_Content_Session contentAccount = JsonUtility.FromJson<Json_Content_Session>(requested.content);
 
+
             for (int i = 0; i < contentAccount.sessions.Count; i++)
             {
                 Button_Session bSession = Instantiate(buttonSessionSample, listSessionParent);
@@ -76,7 +77,6 @@ public class SessionManager : MonoBehaviour
             Debug.Log(requested.error);
         }
     }
-
     public void OpenNewSession()
     {
         MenuManager.Instance.ActiveState(EMenuState.GameMaster_New_Session);
@@ -102,13 +102,12 @@ public class SessionManager : MonoBehaviour
     {
         if (requested.success == "true")
         {
-            Json_Content_Session jsonContent = JsonUtility.FromJson<Json_Content_Session>(requested.content);
-//            sessionData.ID_Session = 
             MenuManager.Instance.ActiveState(EMenuState.Account_Sessions_List);
             LoadingScreen.StopLoading();
         }
         else
         {
+            inpSessionMaster.DisplayError(requested.error);
             Debug.Log(requested.error);
         }
     }

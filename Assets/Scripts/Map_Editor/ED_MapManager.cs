@@ -62,8 +62,10 @@ public class ED_MapManager : MonoBehaviour
         if (currentMap != null)
         {
             //left mouse click
-            if (Input.GetKey(KeyCode.Mouse0))
+            if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
             {
+                bool isLeft = Input.GetMouseButton(1);
+
                 if (ui_Eventsystem.IsPointerOverGameObject())
                     return;
 
@@ -75,8 +77,8 @@ public class ED_MapManager : MonoBehaviour
                     TileData mapData = hitInfo.collider.GetComponent<TileData>();
                     if(mapData != null)
                     {
-                        if(mapData.indexTile != currentIndexTexture)
-                            mapData.SetIndex(currentIndexTexture);
+                        if (isLeft || mapData.indexTile != currentIndexTexture)
+                            mapData.SetIndex((isLeft) ? -1 : currentIndexTexture);
                     }
                 }
             }

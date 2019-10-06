@@ -18,7 +18,14 @@ public class DataBaseManager : MonoBehaviour
 
 
     private const string DATABASE = "https://steven-sternberger.be/RollTheD/";
-
+    private const string API = DATABASE + "API/";
+    public static string DataBase
+    {
+        get
+        {
+            return DATABASE;
+        }
+    }
 
 
     static Coroutine coWebReq;
@@ -36,7 +43,7 @@ public class DataBaseManager : MonoBehaviour
 
     public void Login_Account(string accountName, string accountPassword, OnRequestEnd onRequestEnd)
     {
-        string url = DATABASE + "Login.php";
+        string url = API + "Login.php";
 
         WWWForm forms = new WWWForm();
         forms.AddField("loginPost", accountName.ToLower());
@@ -49,7 +56,7 @@ public class DataBaseManager : MonoBehaviour
     }
     public void Create_Account(string accountName, string accountPassword, OnRequestEnd onRequestEnd)
     {
-        string url = DATABASE + "NewAccount.php";
+        string url = API + "NewAccount.php";
 
         WWWForm forms = new WWWForm();
         forms.AddField("loginPost", accountName.ToLower());
@@ -62,7 +69,7 @@ public class DataBaseManager : MonoBehaviour
     }
     public void Session_List(OnRequestEnd onRequestEnd)
     {
-        string url = DATABASE + "SessionList.php";
+        string url = API + "SessionList.php";
 
         WWWForm forms = new WWWForm();
         //forms.AddField("loginPost", accountName);
@@ -75,7 +82,7 @@ public class DataBaseManager : MonoBehaviour
     }
     public void CreateNewSession(string nameSession, string masterSession, string ipSession, OnRequestEnd onRequestEnd)
     {
-        string url = DATABASE + "NewSession.php";
+        string url = API + "NewSession.php";
 
         WWWForm forms = new WWWForm();
         forms.AddField("nameSessionPost", nameSession);
@@ -86,25 +93,33 @@ public class DataBaseManager : MonoBehaviour
             StopCoroutine(coWebReq);
         coWebReq = StartCoroutine(RequestWeb(url, forms, 10f, "Create new session", onRequestEnd));
     }
-    public void CharacterList(int idSession, OnRequestEnd onRequestEnd)
+    public void CharacterList(int idSession, OnRequestEnd onRequestEnd, bool inBackground = false)
     {
-        string url = DATABASE + "CharactersLobby.php";
+        string url = API + "CharactersLobby.php";
 
         WWWForm forms = new WWWForm();
         forms.AddField("SessionIDPost", idSession);
 
-        if (coWebReq != null)
-            StopCoroutine(coWebReq);
-        coWebReq = StartCoroutine(RequestWeb(url, forms, 10f, "Refresh character", onRequestEnd));
+        if (inBackground)
+        {
+            StartCoroutine(RequestWeb(url, forms, 10f, "Refresh character", onRequestEnd, inBackground));
+        }
+        else
+        {
+            if (coWebReq != null)
+                StopCoroutine(coWebReq);
+            coWebReq = StartCoroutine(RequestWeb(url, forms, 10f, "Refresh character", onRequestEnd, inBackground));
+        }
     }
 
-    IEnumerator RequestWeb(string url, WWWForm forms, float timeOut, string loadingFeedback, OnRequestEnd onRequestEnd)
+    IEnumerator RequestWeb(string url, WWWForm forms, float timeOut, string loadingFeedback, OnRequestEnd onRequestEnd, bool inBackground = false)
     {
         UnityWebRequest webRequest = UnityWebRequest.Post(url, forms);
         UnityWebRequestAsyncOperation handler = webRequest.SendWebRequest();
 
         float timeIn = 0f;
-        LoadingScreen.ActiveLoading(loadingFeedback);
+        if(!inBackground)
+            LoadingScreen.ActiveLoading(loadingFeedback);
         while (!handler.isDone)
         {
             timeIn += Time.deltaTime;
@@ -112,7 +127,8 @@ public class DataBaseManager : MonoBehaviour
             {
                 //Security
                 webRequest.Abort();
-                LoadingScreen.ActiveLoading("TIME OUT");
+                if(!inBackground)
+                    LoadingScreen.ActiveLoading("TIME OUT");
                 yield return new WaitForSeconds(2f);
                 break;
             }
@@ -121,16 +137,19 @@ public class DataBaseManager : MonoBehaviour
 
         //FakeDelay
         float minTime = 1f;
-        if (timeIn < minTime)
+        if(!inBackground && timeIn < minTime)
             yield return new WaitForSeconds(minTime - timeIn);
-        LoadingScreen.StopLoading();
 
         if (webRequest.isNetworkError || webRequest.isHttpError)
         {
             Debug.Log(webRequest.error);
+            if (!inBackground)
+                LoadingScreen.ActiveLoading(webRequest.error,false,1f);
         }
         else
         {
+            if (!inBackground)
+                LoadingScreen.StopLoading();
             //Call end
             string content = webRequest.downloadHandler.text;
             JsonRequest request = JsonUtility.FromJson<JsonRequest>(content);
@@ -261,7 +280,7 @@ public class Content_Session
     public int Number_Player_Max = 8;
     public string Password_Session = "psw";
     public string IP_Session = "127.0.0.1";
-    public string Save_Url = "";
+    public string Maps = "";
 }
 
 [System.Serializable]

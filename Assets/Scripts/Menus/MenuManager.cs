@@ -17,14 +17,14 @@ public class MenuManager : MonoBehaviour
     }
 
     [SerializeField]
-    private EMenuState currentMenuState;
+    private EMenuState currentMenuState = EMenuState.MainMenu;
 
     public List<MenuPanel> menus;
     MenuPanel currentMenu;
     MenuPanel currentPopup;
 
     [SerializeField]
-    private SObject_Player mConfig_PlayerData;
+    private SObject_Player mConfig_PlayerData = null;
 
     private void Awake()
     {

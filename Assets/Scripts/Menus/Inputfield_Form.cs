@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class Inputfield_Form : MonoBehaviour
 {
     [SerializeField]
-    private InputField field;
+    private InputField field = null;
     [SerializeField]
-    private Text errorText;
+    private Text errorText = null;
     [SerializeField]
     private EVerification eVerification = EVerification.unknow;
 

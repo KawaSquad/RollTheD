@@ -6,18 +6,18 @@ using UnityEngine.UI;
 public class Button_Character_Session : MonoBehaviour
 {
     [SerializeField]
-    private Text mFieldName;
+    private Text mFieldName = null;
     [SerializeField]
-    private Text mFieldClass;
+    private Text mFieldClass = null;
     [SerializeField]
-    private Text mFieldAccount;
+    private Text mFieldAccount = null;
     [SerializeField]
-    private Image mImgPreview;
+    private Image mImgPreview = null;
 
     [SerializeField]
-    private Image mImgLoading;
+    private Image mImgLoading = null;
 
-    private string urlImage = "https://steven-sternberger.be/RollTheD/ProfilPictures/unknow.png";
+    private string urlImage = "https://steven-sternberger.be/RollTheD/Ressources/unknow.png";
     private bool isDestroyed = false;
 
     public void SetCharacter(string characterName, string characterClass, string characterAccount, string characterImage = "")
@@ -26,7 +26,9 @@ public class Button_Character_Session : MonoBehaviour
         mFieldClass.text = characterClass;
         mFieldAccount.text = characterAccount;
         if (characterImage != "")
+        {
             urlImage = characterImage;
+        }
 
         mImgLoading.enabled = true;
         mImgLoading.fillAmount = 0f;

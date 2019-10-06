@@ -30,6 +30,10 @@ public class TileData : MonoBehaviour
     public void SetIndex(int indexTile)
     {
         this.indexTile = indexTile;
-        material.SetTexture("_MainTex", TilesetManager.instance.tiles[indexTile].texture);
+
+        bool isEnabled = (indexTile != -1);
+        meshRenderer.enabled = (isEnabled);
+        if (isEnabled)
+            material.SetTexture("_MainTex", TilesetManager.instance.tiles[indexTile].texture);
     }
 }
