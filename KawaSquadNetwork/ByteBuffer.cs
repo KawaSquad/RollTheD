@@ -1,0 +1,206 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace KawaSquad
+{
+    namespace Network
+    {
+        public class ByteBuffer : IDisposable
+        {
+            public List<byte> Buff;
+            private byte[] readBuff;
+            private int readPos;
+            private bool buffUpdated = false;
+
+            #region Class
+            public ByteBuffer()
+            {
+                Buff = new List<byte>();
+                readPos = 0;
+            }
+
+            //Getter
+            public int ReadPos
+            {
+                get
+                {
+                    return readPos;
+                }
+            }
+            public byte[] ToArray()
+            {
+                return Buff.ToArray();
+            }
+            public int Count
+            {
+                get
+                {
+                    return Buff.Count;
+                }
+            }
+            public int Lenght
+            {
+                get
+                {
+                    return Count - readPos;
+                }
+            }
+            public void Clear()
+            {
+                Buff.Clear();
+                readPos = 0;
+            }
+            #endregion
+
+            #region Writter
+            public void WriteByte(byte input)
+            {
+                Buff.Add(input);
+                buffUpdated = true;
+            }
+            public void WriteBytes(byte[] inputs)
+            {
+                Buff.AddRange(inputs);
+                buffUpdated = true;
+            }
+            public void WriteShort(short input)
+            {
+                Buff.AddRange(BitConverter.GetBytes(input));
+                buffUpdated = true;
+            }
+            public void WriteInteger(int input)
+            {
+                Buff.AddRange(BitConverter.GetBytes(input));
+                buffUpdated = true;
+            }
+            public void WriteLong(long input)
+            {
+                Buff.AddRange(BitConverter.GetBytes(input));
+                buffUpdated = true;
+            }
+            public void WriteFloat(float input)
+            {
+                Buff.AddRange(BitConverter.GetBytes(input));
+                buffUpdated = true;
+            }
+            public void WriteBool(bool input)
+            {
+                Buff.AddRange(BitConverter.GetBytes(input));
+                buffUpdated = true;
+            }
+            public void WriteString(string input)
+            {
+                Buff.AddRange(BitConverter.GetBytes(input.Length));
+                Buff.AddRange(Encoding.ASCII.GetBytes(input));
+                buffUpdated = true;
+            }
+            #endregion
+
+            #region Reader
+            public byte ReadByte(bool peek = true)
+            {
+                if (Buff.Count > readPos)
+                {
+                    if (buffUpdated)
+                    {
+                        readBuff = Buff.ToArray();
+                        buffUpdated = false;
+                    }
+
+                    byte value = readBuff[readPos];
+                    if (peek && Buff.Count > readPos)
+                    {
+                        readPos++;
+                    }
+                    return value;
+                }
+                else
+                {
+                    throw new Exception("Buffer out of range");
+                }
+            }
+            public byte[] ReadBytes(int lenght = -1,bool peek = true)
+            {
+                if (Buff.Count > readPos)
+                {
+                    if (buffUpdated)
+                    {
+                        readBuff = Buff.ToArray();
+                        buffUpdated = false;
+                    }
+
+                    byte[] value = Buff.GetRange(readPos,Lenght).ToArray();
+                    if (peek)
+                    {
+                        if(lenght == -1)
+                            readPos += Lenght;
+                        else
+                            readPos += lenght;
+                    }
+                    return value;
+                }
+                else
+                {
+                    throw new Exception("Buffer out of range");
+                }
+            }
+            public short ReadShort(bool peek = true)
+            {
+                byte[] value = ReadBytes(2,peek);
+                return BitConverter.ToInt16(value, readPos);
+            }
+            public int ReadInteger(bool peek = true)
+            {
+                byte[] value = ReadBytes(4,peek);
+                return BitConverter.ToInt32(value, readPos);
+            }
+            public long ReadLong(bool peek = true)
+            {
+                byte[] value = ReadBytes(8,peek);
+                return BitConverter.ToInt64(value, readPos);
+            }
+            public float ReadFloat(bool peek = true)
+            {
+                byte[] value = ReadBytes(4,peek);
+                return BitConverter.ToSingle(value, readPos);
+            }
+            public bool ReadBool(bool peek = true)
+            {
+                byte[] value = ReadBytes(1,peek);
+                return BitConverter.ToBoolean(value, readPos);
+            }
+            public string ReadString(bool peek = true)
+            {
+                int lenght = ReadInteger(true);
+
+                byte[] value = ReadBytes(lenght,peek);
+                return Encoding.ASCII.GetString(value);
+            }
+            #endregion
+
+            private bool disposedValue = false;
+            public virtual void Dispose(bool disposing)
+            {
+                if(!disposedValue)
+                {
+                    if(disposing)
+                    {
+                        Buff.Clear();
+                        readPos = 0;
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+        }
+    }
+}

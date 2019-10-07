@@ -26,7 +26,7 @@ MonoBehaviour:
   Number_Player_Max: 8
   Password_Session: 
   IP_Session: 127.0.0.1
-  GM_Url: https://steven-sternberger.be/RollTheD/Sessions/styven184/
+  GM_Url: https://steven-sternberger.be/RollTheD/Sessions/NovaStorm/
   Maps:
   - MAP_01.json
   - MAP_02.json

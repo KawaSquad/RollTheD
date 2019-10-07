@@ -15,8 +15,7 @@ public class DataBaseManager : MonoBehaviour
             return instance;
         }
     }
-
-
+    
     private const string DATABASE = "https://steven-sternberger.be/RollTheD/";
     private const string API = DATABASE + "API/";
     public static string DataBase
@@ -26,8 +25,7 @@ public class DataBaseManager : MonoBehaviour
             return DATABASE;
         }
     }
-
-
+    
     static Coroutine coWebReq;
     public delegate void OnRequestEnd(JsonRequest requested);
     public delegate void OnImageLoaded(Texture2D textureRequested);
@@ -159,7 +157,6 @@ public class DataBaseManager : MonoBehaviour
         yield break;
     }
 
-
     public void DownloadSave(string url, OnTextLoaded onTextLoaded, OnDownloadProgress onDownloadProgress)
     {
         //if (coWebReq != null)
@@ -167,6 +164,7 @@ public class DataBaseManager : MonoBehaviour
         //coWebReq = 
         StartCoroutine(RequestText(url, 60f, onTextLoaded, onDownloadProgress));
     }
+
     IEnumerator RequestText(string url, float timeOut, OnTextLoaded onTextLoaded, OnDownloadProgress onDownloadProgress)
     {
         UnityWebRequest webRequest = UnityWebRequest.Get(url);
@@ -202,7 +200,6 @@ public class DataBaseManager : MonoBehaviour
 
         yield break;
     }
-
 
     public void DownloadImage(string url, OnImageLoaded onImageLoaded, OnDownloadProgress onDownloadProgress)
     {
