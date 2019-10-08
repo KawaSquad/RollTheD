@@ -11,8 +11,8 @@ namespace KawaSquad
     {
         public enum ClientPackets
         {
-            S_WELCOME_MESSAGE = 1,
-            S_CREATE_PLAYER = 2,
+            C_WELCOME_MESSAGE = 1,
+            C_CREATE_PLAYER = 2,
         }
 
         static class DataReceiver
@@ -26,6 +26,18 @@ namespace KawaSquad
                 buffer.Dispose();
 
                 Debug.Log(msg);
+                DataSender.SendHelloServer();
+            }
+
+            public static void HandleInstantiatePlayer(byte[] data)
+            {
+                ByteBuffer buffer = new ByteBuffer();
+                buffer.WriteBytes(data);
+                int packetID = buffer.ReadInteger();
+                int index = buffer.ReadInteger();
+                buffer.Dispose();
+
+                NetworkManager.instance.InstantiatePlayer(index);
             }
         }
     }

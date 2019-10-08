@@ -18,7 +18,8 @@ namespace KawaSquad
 
             public static void InitializePackets()
             {
-                packets.Add((int)ClientPackets.S_WELCOME_MESSAGE, DataReceiver.HandleWelcomeMessage);
+                packets.Add((int)ClientPackets.C_WELCOME_MESSAGE, DataReceiver.HandleWelcomeMessage);
+                packets.Add((int)ClientPackets.C_CREATE_PLAYER, DataReceiver.HandleInstantiatePlayer);
             }
             public static void HandleData(byte[] data)
             {

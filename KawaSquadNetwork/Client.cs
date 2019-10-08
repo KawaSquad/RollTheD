@@ -56,6 +56,7 @@ namespace KawaSquad
             {
                 Console.WriteLine("Connection from '{0}' has been terminated.",socket.Client.RemoteEndPoint.ToString());
                 socket.Close();
+                ClientManager.clients.Remove(this.connectionID);
             }
         }
     }

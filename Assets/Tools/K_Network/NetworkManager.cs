@@ -9,6 +9,9 @@ namespace KawaSquad
         public class NetworkManager : MonoBehaviour
         {
             public static NetworkManager instance;
+            public Dictionary<int, GameObject> playersList = new Dictionary<int, GameObject>();
+
+            public GameObject prefabPlayer;
 
             private void Awake()
             {
@@ -23,6 +26,13 @@ namespace KawaSquad
                 UnityThread.initUnityThread();
                 ClientHandleData.InitializePackets();
                 ClientTCP.InitializeNetworking();
+            }
+
+            public void InstantiatePlayer(int index)
+            {
+                GameObject go = Instantiate(prefabPlayer);
+                go.name = "Player_" + index;
+                playersList.Add(index, go);
             }
 
             private void OnApplicationQuit()
