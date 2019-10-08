@@ -23,6 +23,23 @@ namespace KawaSquad
                 clients.Add(newClient.connectionID, newClient);
 
                 DataSender.SendWelcomeMessage(newClient.connectionID);
+                InstatiatePlayer(newClient.connectionID);
+            }
+
+            public static void InstatiatePlayer(int connectionID)
+            {
+                foreach (var client in clients)
+                {
+                    if(client.Key != connectionID)
+                    {
+                        DataSender.SendInstantiatePlayer(client.Key, connectionID);
+                    }
+                }
+
+                foreach (var client in clients)
+                {
+                    DataSender.SendInstantiatePlayer(connectionID, client.Key);
+                }
             }
 
             public static void SendDataTo(int connectionID, byte[] data)

@@ -19,9 +19,11 @@ namespace KawaSquad
 
             public void Start()
             {
-                socket.SendBufferSize = 4096;
-                socket.ReceiveBufferSize = 4096;
+                int bufferSize = 4096;
+                socket.SendBufferSize = bufferSize;
+                socket.ReceiveBufferSize = bufferSize;
                 stream = socket.GetStream();
+                recBuffer = new byte[bufferSize];
                 stream.BeginRead(recBuffer,0,socket.ReceiveBufferSize,OnReceivedData,null);
                 Console.WriteLine("Incoming connection '{0}'." , socket.Client.RemoteEndPoint.ToString());
             }
