@@ -17,6 +17,7 @@ namespace KawaSquad
             public static void InitializePackets()
             {
                 packets.Add((int)ClientPackets.C_HELLO_SERVER, DataReceiver.HandleHelloServer);
+                packets.Add((int)ClientPackets.C_MOVE_PAWN, DataReceiver.HandlePawnMove);
             }
             public static void HandleData(int connectionID, byte[] data)
             {

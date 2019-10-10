@@ -20,6 +20,7 @@ namespace KawaSquad
             {
                 packets.Add((int)ClientPackets.C_WELCOME_MESSAGE, DataReceiver.HandleWelcomeMessage);
                 packets.Add((int)ClientPackets.C_CREATE_PLAYER, DataReceiver.HandleInstantiatePlayer);
+                packets.Add((int)ClientPackets.C_PAWN_MOVE, DataReceiver.HandlePawnMove);
             }
             public static void HandleData(byte[] data)
             {

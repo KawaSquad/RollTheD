@@ -12,6 +12,8 @@ namespace KawaSquad
         {
             S_WELCOME_MESSAGE = 1,
             S_CREATE_PLAYER = 2,
+
+            S_PAWN_MOVE = 10,
         }
 
         public static class DataSender
@@ -24,11 +26,20 @@ namespace KawaSquad
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }
-            public static void SendInstantiatePlayer(int index,int connectionID)
+            public static void SendInstantiatePlayer(int index, int connectionID)
             {
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteInteger((int)ServerPackets.S_CREATE_PLAYER);
                 buffer.WriteInteger(index);
+                ClientManager.SendDataTo(connectionID, buffer.ToArray());
+                buffer.Dispose();
+            }
+            public static void SendPawnMove(int index , int connectionID,byte[] data)//Index how move, Conn send to
+            {
+                ByteBuffer buffer = new ByteBuffer();
+                buffer.WriteInteger((int)ServerPackets.S_PAWN_MOVE);
+                buffer.WriteInteger(index);
+                buffer.WriteBytes(data);
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }

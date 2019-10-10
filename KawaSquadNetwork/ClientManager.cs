@@ -42,6 +42,17 @@ namespace KawaSquad
                 }
             }
 
+            public static void PawnMove(int connectionID,byte[] data)
+            {
+                foreach (var client in clients)
+                {
+                    if (client.Key != connectionID)
+                    {
+                        DataSender.SendPawnMove(connectionID, client.Key, data);
+                    }
+                }
+            }
+
             public static void SendDataTo(int connectionID, byte[] data)
             {
                 ByteBuffer buffer = new ByteBuffer();

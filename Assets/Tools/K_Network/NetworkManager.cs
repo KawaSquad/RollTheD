@@ -34,6 +34,13 @@ namespace KawaSquad
                 playerHandle.name = "Player_" + index;
                 playersList.Add(index, playerHandle);
             }
+            public void Player_MovePawn(int index,Vector3 position)
+            {
+                if (playersList.TryGetValue(index,out PlayerHandle playerTarget))
+                {
+                    playerTarget.SetPawnPosition(position);
+                }
+            }
             public void RemovePlayer(int index)
             {
                 GameObject playerCell = playersList[index].gameObject;

@@ -12,6 +12,7 @@ namespace KawaSquad
         public enum ServerPackets
         {
             S_HELLO_SERVER = 1,
+
             S_MOVE_PAWN = 10,
         }
         class DataSender

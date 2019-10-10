@@ -13,6 +13,8 @@ namespace KawaSquad
         {
             C_WELCOME_MESSAGE = 1,
             C_CREATE_PLAYER = 2,
+
+            C_PAWN_MOVE = 10,
         }
 
         static class DataReceiver
@@ -46,9 +48,12 @@ namespace KawaSquad
                 buffer.WriteBytes(data);
                 int packetID = buffer.ReadInteger();
                 int index = buffer.ReadInteger();
+                float pos_x = buffer.ReadFloat();
+                float pos_y = buffer.ReadFloat();
+                float pos_z = buffer.ReadFloat();
                 buffer.Dispose();
 
-                NetworkManager.instance.InstantiatePlayer(index);
+                NetworkManager.instance.Player_MovePawn(index,new Vector3(pos_x,pos_y,pos_z));
             }
         }
     }
