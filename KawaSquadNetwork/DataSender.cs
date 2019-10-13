@@ -14,6 +14,8 @@ namespace KawaSquad
             S_CREATE_PLAYER = 2,
 
             S_PAWN_MOVE = 10,
+            S_NEW_PAWN = 11,
+            S_ASSIGN_PAWN = 12,
         }
 
         public static class DataSender
@@ -26,18 +28,37 @@ namespace KawaSquad
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }
-            public static void SendInstantiatePlayer(int index, int connectionID)
+            public static void SendInstantiatePlayer(int index, int connectionID,bool isLocalClient = false)
             {
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteInteger((int)ServerPackets.S_CREATE_PLAYER);
                 buffer.WriteInteger(index);
+                buffer.WriteBool(isLocalClient);
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }
-            public static void SendPawnMove(int index , int connectionID,byte[] data)//Index how move, Conn send to
+            public static void SendPawnMove(int index, int connectionID, byte[] data)//Index how move, Conn send to
             {
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteInteger((int)ServerPackets.S_PAWN_MOVE);
+                buffer.WriteInteger(index);
+                buffer.WriteBytes(data);
+                ClientManager.SendDataTo(connectionID, buffer.ToArray());
+                buffer.Dispose();
+            }
+            public static void SendNewPawn(int index, int connectionID, byte[] data)//Index how move, Conn send to
+            {
+                ByteBuffer buffer = new ByteBuffer();
+                buffer.WriteInteger((int)ServerPackets.S_NEW_PAWN);
+                buffer.WriteInteger(index);
+                buffer.WriteBytes(data);
+                ClientManager.SendDataTo(connectionID, buffer.ToArray());
+                buffer.Dispose();
+            }
+            public static void SendAssignPawn(int index, int connectionID, byte[] data)//Index how move, Conn send to
+            {
+                ByteBuffer buffer = new ByteBuffer();
+                buffer.WriteInteger((int)ServerPackets.S_ASSIGN_PAWN);
                 buffer.WriteInteger(index);
                 buffer.WriteBytes(data);
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());

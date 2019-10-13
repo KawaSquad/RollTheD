@@ -5,5 +5,5 @@ Temp
 Build
 obj
 Ressources_FromTFE
-*.sln
-*.csproj
+Assembly-CSharp-Editor.csproj
+Assembly-CSharp.csproj

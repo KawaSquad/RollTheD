@@ -18,6 +18,8 @@ namespace KawaSquad
             {
                 packets.Add((int)ClientPackets.C_HELLO_SERVER, DataReceiver.HandleHelloServer);
                 packets.Add((int)ClientPackets.C_MOVE_PAWN, DataReceiver.HandlePawnMove);
+                packets.Add((int)ClientPackets.C_NEW_PAWN, DataReceiver.HandleNewPawn);
+                packets.Add((int)ClientPackets.C_ASSIGN_PAWN, DataReceiver.HandleAssignPawn);
             }
             public static void HandleData(int connectionID, byte[] data)
             {

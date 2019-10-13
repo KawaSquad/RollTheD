@@ -60,7 +60,6 @@ public class SessionManager : MonoBehaviour
         {
             Json_Content_Session contentAccount = JsonUtility.FromJson<Json_Content_Session>(requested.content);
 
-
             for (int i = 0; i < contentAccount.sessions.Count; i++)
             {
                 Button_Session bSession = Instantiate(buttonSessionSample, listSessionParent);

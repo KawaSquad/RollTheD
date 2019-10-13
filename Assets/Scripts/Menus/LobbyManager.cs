@@ -50,6 +50,7 @@ public class LobbyManager : MonoBehaviour
         if (requested.success == "true")
         {
             Json_Content_Lobby contentAccount = JsonUtility.FromJson<Json_Content_Lobby>(requested.content);
+            sessionData.Content_Lobby.characters = contentAccount.characters;
 
             for (int i = 0; i < contentAccount.characters.Count; i++)
             {

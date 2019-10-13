@@ -8,33 +8,57 @@ namespace KawaSquad
     {
         public class PlayerHandle : MonoBehaviour
         {
-            public PlayerController pawn;
+            public static PlayerHandle LocalPlayerHandle;
+            public List<PlayerController> pawns;
+
+            public bool isLocalClient = false;
+            public int connectionID = 0;
 
             private Vector3 currentPosition = Vector3.zero;
-            private Transform pawnTransform;
 
-            public bool isClient = false;
-
-            private void Start()
+            public void SetPlayerHandle(int connectionID, bool isLocalClient)
             {
-                pawnTransform = pawn.transform;
+                this.connectionID = connectionID;
+                this.name = "Player_" + connectionID;
+                this.isLocalClient = isLocalClient;
+
+                if (isLocalClient)
+                    LocalPlayerHandle = this;
             }
+
             private void Update()
             {
-                if (!isClient)
-                    return;
-
-                if (currentPosition != pawnTransform.position)
+                if (isLocalClient)
                 {
-                    currentPosition = pawnTransform.position;
-                    DataSender.SendPawnDestination(currentPosition);
+                    /*
+                    if (currentPosition != pawnTransform.position)
+                    {
+                        DataSender.SendPawnDestination(currentPosition);
+                    }
+                     */
                 }
             }
 
+            /*
             public void SetPawnPosition(Vector3 newPos)
             {
                 currentPosition = newPos;
-                pawnTransform.position = newPos;
+                //pawnTransform.position = newPos;
+            }
+             */
+
+            public void AssignedPawn(PlayerController newPawn)
+            {
+                newPawn.transform.parent = this.transform;
+                pawns.Add(newPawn);
+            }
+            public void RemovePawn(PlayerController existingPawn)
+            {
+                if(pawns.Contains(existingPawn))
+                {
+                    pawns.Remove(existingPawn);
+                    existingPawn.transform.parent = null;
+                }
             }
         }
     }

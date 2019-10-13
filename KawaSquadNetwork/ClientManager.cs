@@ -28,27 +28,47 @@ namespace KawaSquad
 
             public static void InstatiatePlayer(int connectionID)
             {
+                //send to new client all existing player
                 foreach (var client in clients)
                 {
-                    if(client.Key != connectionID)
+                    bool isNewClient = (client.Key == connectionID);
+                    if(!isNewClient)
                     {
                         DataSender.SendInstantiatePlayer(client.Key, connectionID);
                     }
-                }
-
-                foreach (var client in clients)
-                {
-                    DataSender.SendInstantiatePlayer(connectionID, client.Key);
+    
+                    //send to existing player to the new client
+                    DataSender.SendInstantiatePlayer(connectionID, client.Key, isNewClient);
                 }
             }
 
-            public static void PawnMove(int connectionID,byte[] data)
+            public static void PawnMove(int connectionID, byte[] data)
             {
                 foreach (var client in clients)
                 {
                     if (client.Key != connectionID)
                     {
                         DataSender.SendPawnMove(connectionID, client.Key, data);
+                    }
+                }
+            }
+            public static void NewPawn(int connectionID, byte[] data)
+            {
+                foreach (var client in clients)
+                {
+                    if (client.Key != connectionID)
+                    {
+                        DataSender.SendNewPawn(connectionID, client.Key, data);
+                    }
+                }
+            }
+            public static void AssignPawn(int connectionID, byte[] data)
+            {
+                foreach (var client in clients)
+                {
+                    if (client.Key != connectionID)
+                    {
+                        DataSender.SendAssignPawn(connectionID, client.Key, data);
                     }
                 }
             }

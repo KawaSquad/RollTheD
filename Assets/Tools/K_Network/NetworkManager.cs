@@ -12,6 +12,7 @@ namespace KawaSquad
             public Dictionary<int, PlayerHandle> playersList = new Dictionary<int, PlayerHandle>();
 
             public PlayerHandle prefabPlayer;
+            public PlayerController prefabController;
 
             private void Awake()
             {
@@ -28,17 +29,51 @@ namespace KawaSquad
                 ClientTCP.InitializeNetworking();
             }
 
-            public void InstantiatePlayer(int index)
+
+
+            public void InstantiatePlayerHandler(int index, bool isLocalClient)
             {
                 PlayerHandle playerHandle = Instantiate(prefabPlayer);
-                playerHandle.name = "Player_" + index;
+                playerHandle.SetPlayerHandle(index,isLocalClient);
                 playersList.Add(index, playerHandle);
             }
-            public void Player_MovePawn(int index,Vector3 position)
+            public void InstantiatePlayerController(int connectionID, Content_Lobby character)
+            {
+                if (playersList.TryGetValue(connectionID, out PlayerHandle handler))
+                {
+                    PlayerController playerController = Instantiate(prefabController);
+                    playerController.name = "Player_Controller_" + character.Name_Character;
+                    playerController.id_Character = character.ID_Character;
+                    handler.AssignedPawn(playerController);
+                }
+                else
+                {
+                    Debug.LogError("Handler not created");
+                }
+
+                //playerController.isLocalClient = isLocalClient;
+                //playersList.Add(index, playerController);
+            }
+
+            public void AssignedPawn(int index)
+            {
+
+            }
+
+            public void Player_MovePawn(int index, int id_character, Vector3 position)
             {
                 if (playersList.TryGetValue(index,out PlayerHandle playerTarget))
                 {
-                    playerTarget.SetPawnPosition(position);
+                    for (int i = 0; i < playerTarget.pawns.Count; i++)
+                    {
+                        if (playerTarget.pawns[i].id_Character == id_character)
+                        {
+                            playerTarget.pawns[i].SetPosition(position, false);
+                            break;
+                        }
+                    }
+
+                    Debug.LogError("No pawn");
                 }
             }
             public void RemovePlayer(int index)
