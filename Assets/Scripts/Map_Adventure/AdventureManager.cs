@@ -72,7 +72,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     if (PlayerController.activeController != null)
                     {
-                        PlayerController.activeController.SetPosition(hitInfo.point, true);
+                        PlayerController.activeController.SetPosition(hitInfo.point, Vector3.zero, Vector3.one);
                     }
                 }
             }
@@ -97,9 +97,18 @@ public class AdventureManager : MonoBehaviour
         }
         if (character != null)
         {
-            NetworkManager.instance.InstantiatePlayerController(connectionID, character);//PlayerHandle.LocalPlayerHandle.isLocalClient);
-            if (sendToServer)
-                DataSender.SendNewCharacter(connectionID, character.ID_Character);
+            PlayerController.Server_PawnData data = new PlayerController.Server_PawnData();
+            data.ID_Character = id_Character;
+            data.ID_Handler = connectionID;
+
+            data.position = Vector3.zero;
+            data.rotation = Vector3.zero;
+            data.scale = Vector3.one;
+
+
+            DataSender.SendNewCharacter(data);
+
+            //if (sendToServer)
         }
     }
 }

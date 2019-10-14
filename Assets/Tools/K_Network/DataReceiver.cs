@@ -47,15 +47,20 @@ namespace KawaSquad
 
             public static void HandleNewCharacter(byte[] data)
             {
+                PlayerController.Server_PawnData dataPawn = new PlayerController.Server_PawnData();
+
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteBytes(data);
                 int packetID = buffer.ReadInteger();
-                int indexSender = buffer.ReadInteger();
-                int connectionID = buffer.ReadInteger();
-                int ID_Charater = buffer.ReadInteger();
+                dataPawn.ID_Handler = buffer.ReadInteger();
+                dataPawn.ID_Character = buffer.ReadInteger();
+                dataPawn.position = buffer.ReadVector3();
+                dataPawn.rotation = buffer.ReadVector3();
+                dataPawn.scale = buffer.ReadVector3();
                 buffer.Dispose();
 
-                AdventureManager.Instance.CreateCharacter(connectionID, ID_Charater, false);
+                NetworkManager.instance.InstantiatePawn(dataPawn);
+                //AdventureManager.Instance.CreateCharacter(connectionID, ID_Charater, false);
             }
             public static void HandleAssignCharacter(byte[] data)
             {
@@ -78,12 +83,13 @@ namespace KawaSquad
                 int packetID = buffer.ReadInteger();
                 int index = buffer.ReadInteger();
                 int id_Character = buffer.ReadInteger();
-                float pos_x = buffer.ReadFloat();
-                float pos_y = buffer.ReadFloat();
-                float pos_z = buffer.ReadFloat();
+                Vector3 position = buffer.ReadVector3();
+                Vector3 rotation = buffer.ReadVector3();
+                Vector3 scale = buffer.ReadVector3();
+
                 buffer.Dispose();
 
-                NetworkManager.instance.Player_MovePawn(index, id_Character, new Vector3(pos_x,pos_y,pos_z));
+                NetworkManager.instance.Player_MovePawn(index, id_Character, position, rotation, scale);
             }
 
         }

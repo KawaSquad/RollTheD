@@ -49,13 +49,18 @@
     <Compile Include="DataReceiver.cs" />
     <Compile Include="DataSender.cs" />
     <Compile Include="General.cs" />
+    <Compile Include="Pawn.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerHandleData.cs" />
     <Compile Include="ServerTCP.cs" />
+    <Compile Include="UnityEngine_Class.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

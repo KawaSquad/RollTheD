@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace KawaSquad
 {
@@ -13,6 +14,7 @@ namespace KawaSquad
 
             public PlayerHandle prefabPlayer;
             public PlayerController prefabController;
+            public CanvasGroup waitNetwork;
 
             private void Awake()
             {
@@ -31,13 +33,35 @@ namespace KawaSquad
 
 
 
+            public IEnumerator NetworkReady()
+            {
+                waitNetwork.alpha = 0f;
+                waitNetwork.blocksRaycasts = false;
+                waitNetwork.interactable = false;
+                yield break;
+            }
             public void InstantiatePlayerHandler(int index, bool isLocalClient)
             {
                 PlayerHandle playerHandle = Instantiate(prefabPlayer);
                 playerHandle.SetPlayerHandle(index,isLocalClient);
                 playersList.Add(index, playerHandle);
             }
-            public void InstantiatePlayerController(int connectionID, Content_Lobby character)
+            public void InstantiatePawn(PlayerController.Server_PawnData data)
+            {
+                if (playersList.TryGetValue(data.ID_Handler, out PlayerHandle handler))
+                {
+                    PlayerController playerController = Instantiate(prefabController);
+                    playerController.name = "Player_Controller_" + data.ID_Character;
+                    playerController.id_Character = data.ID_Character;
+                    playerController.SetPosition(data.position, data.rotation, data.scale);
+                    handler.AssignedPawn(playerController);
+                }
+                else
+                {
+                    Debug.LogError("Handler not created");
+                }
+            }
+            public void InstantiatePlayerController_OLD(int connectionID, Content_Lobby character)
             {
                 if (playersList.TryGetValue(connectionID, out PlayerHandle handler))
                 {
@@ -60,7 +84,7 @@ namespace KawaSquad
 
             }
 
-            public void Player_MovePawn(int index, int id_character, Vector3 position)
+            public void Player_MovePawn(int index, int id_character, Vector3 position, Vector3 rotation, Vector3 scale)
             {
                 if (playersList.TryGetValue(index,out PlayerHandle playerTarget))
                 {
@@ -68,7 +92,7 @@ namespace KawaSquad
                     {
                         if (playerTarget.pawns[i].id_Character == id_character)
                         {
-                            playerTarget.pawns[i].SetPosition(position, false);
+                            playerTarget.pawns[i].SetPosition(position, rotation, scale);
                             break;
                         }
                     }

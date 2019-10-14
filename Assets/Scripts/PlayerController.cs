@@ -5,6 +5,15 @@ using KawaSquad.Network;
 
 public class PlayerController : MonoBehaviour
 {
+    public class Server_PawnData
+    {
+        public int ID_Character;
+        public int ID_Handler;
+        public Vector3 position;
+        public Vector3 rotation;
+        public Vector3 scale;
+    }
+
     public static PlayerController activeController = null;
 
     [SerializeField]
@@ -73,13 +82,12 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-    public void SetPosition(Vector3 destination, bool sendToServer)
+    public void SetPosition(Vector3 destination, Vector3 orientation, Vector3 scale)
     {
         Transform controller = this.transform;
         destination.y = controller.position.y;
         controller.position = destination;
-
-        if(sendToServer)
-            DataSender.SendPawnDestination( id_Character, destination);
+        controller.eulerAngles = orientation;
+        controller.localScale = scale;
     }
 }

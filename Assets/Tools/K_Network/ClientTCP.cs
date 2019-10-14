@@ -25,9 +25,12 @@ namespace KawaSquad
             }
             public static void ClientCallBack(IAsyncResult result)
             {
-                clientSocket.EndConnect(result);
                 if (clientSocket.Connected)
                 {
+                    Debug.Log("Connected");
+                    clientSocket.EndConnect(result);
+
+                    UnityThread.executeCoroutine(NetworkManager.instance.NetworkReady());
                     clientSocket.NoDelay = true;
                     stream = clientSocket.GetStream();
                     stream.BeginRead(recBuffer, 0, sizeBuffer * 2, ReceiveCallBack, null);
@@ -35,6 +38,8 @@ namespace KawaSquad
                 else
                 {
                     //LOG
+                    Debug.Log("Try again");
+                    clientSocket.BeginConnect("127.0.0.1", 5557, new AsyncCallback(ClientCallBack), clientSocket);
                     return;
                 }
             }

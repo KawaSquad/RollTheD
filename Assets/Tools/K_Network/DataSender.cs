@@ -27,12 +27,15 @@ namespace KawaSquad
                 ClientTCP.SendData(bufer.ToArray());
                 bufer.Dispose();
             }
-            public static void SendNewCharacter(int connectionID,int ID_Character)
+            public static void SendNewCharacter(PlayerController.Server_PawnData data)
             {
                 ByteBuffer bufer = new ByteBuffer();
                 bufer.WriteInteger((int)ServerPackets.S_NEW_PAWN);
-                bufer.WriteInteger(connectionID);
-                bufer.WriteInteger(ID_Character);
+                bufer.WriteInteger(data.ID_Handler);
+                bufer.WriteInteger(data.ID_Character);
+                bufer.WriteVector3(data.position);
+                bufer.WriteVector3(data.rotation);
+                bufer.WriteVector3(data.scale);
                 ClientTCP.SendData(bufer.ToArray());
                 bufer.Dispose();
             }
@@ -45,18 +48,16 @@ namespace KawaSquad
                 ClientTCP.SendData(bufer.ToArray());
                 bufer.Dispose();
             }
-
-
-            public static void SendPawnDestination(int id_Character, Vector3 destination)
+            public static void SendPawnDestination(PlayerController.Server_PawnData data)
             {
                 ByteBuffer bufer = new ByteBuffer();
                 bufer.WriteInteger((int)ServerPackets.S_MOVE_PAWN);
                 //bufer.WriteInteger(connectionID);
-                bufer.WriteInteger(id_Character);
+                bufer.WriteInteger(data.ID_Character);
 
-                bufer.WriteFloat(destination.x);
-                bufer.WriteFloat(destination.y);
-                bufer.WriteFloat(destination.z);
+                bufer.WriteVector3(data.position);
+                bufer.WriteVector3(data.rotation);
+                bufer.WriteVector3(data.scale);
                 ClientTCP.SendData(bufer.ToArray());
                 bufer.Dispose();
             }

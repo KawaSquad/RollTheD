@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace KawaSquad
 {
@@ -28,6 +29,7 @@ namespace KawaSquad
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }
+            #region PlayerHandle
             public static void SendInstantiatePlayer(int index, int connectionID,bool isLocalClient = false)
             {
                 ByteBuffer buffer = new ByteBuffer();
@@ -37,21 +39,29 @@ namespace KawaSquad
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }
-            public static void SendPawnMove(int index, int connectionID, byte[] data)//Index how move, Conn send to
+            #endregion
+
+            #region Pawn
+            public static void SendPawnMove(int index, int connectionID, Transform pawnTransform)//Index how move, Conn send to
             {
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteInteger((int)ServerPackets.S_PAWN_MOVE);
                 buffer.WriteInteger(index);
-                buffer.WriteBytes(data);
+                buffer.WriteVector3(pawnTransform.position);
+                buffer.WriteVector3(pawnTransform.rotation);
+                buffer.WriteVector3(pawnTransform.scale);
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }
-            public static void SendNewPawn(int index, int connectionID, byte[] data)//Index how move, Conn send to
+            public static void SendNewPawn(int connectionID, Pawn pawn)//Index how move, Conn send to
             {
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteInteger((int)ServerPackets.S_NEW_PAWN);
-                buffer.WriteInteger(index);
-                buffer.WriteBytes(data);
+                buffer.WriteInteger(pawn.ID_Hanlder);
+                buffer.WriteInteger(pawn.ID_Character);
+                buffer.WriteVector3(pawn.transform.position);
+                buffer.WriteVector3(pawn.transform.rotation);
+                buffer.WriteVector3(pawn.transform.scale);
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }
@@ -64,6 +74,7 @@ namespace KawaSquad
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }
+            #endregion
         }
     }
 }

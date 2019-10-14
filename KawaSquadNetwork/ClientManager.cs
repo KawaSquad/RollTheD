@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace KawaSquad
 {
@@ -13,6 +14,7 @@ namespace KawaSquad
         public class ClientManager
         {
             public static Dictionary<int, Client> clients = new Dictionary<int, Client>();
+            public static Dictionary<int, Pawn> pawns = new Dictionary<int, Pawn>();
 
             public static void CreateNewConnection(TcpClient tempClient)
             {
@@ -28,7 +30,7 @@ namespace KawaSquad
 
             public static void InstatiatePlayer(int connectionID)
             {
-                //send to new client all existing player
+                //send to new client all existing player handle
                 foreach (var client in clients)
                 {
                     bool isNewClient = (client.Key == connectionID);
@@ -40,26 +42,36 @@ namespace KawaSquad
                     //send to existing player to the new client
                     DataSender.SendInstantiatePlayer(connectionID, client.Key, isNewClient);
                 }
+
+                //send to new client all pawn
+                foreach (var pawn in pawns)
+                {
+                    DataSender.SendNewPawn(connectionID, pawn.Value);
+                }
             }
 
-            public static void PawnMove(int connectionID, byte[] data)
+            public static void PawnMove(int connectionID, Transform pawnTransform)
             {
                 foreach (var client in clients)
                 {
                     if (client.Key != connectionID)
                     {
-                        DataSender.SendPawnMove(connectionID, client.Key, data);
+                        DataSender.SendPawnMove(client.Key, connectionID, pawnTransform);
                     }
                 }
             }
-            public static void NewPawn(int connectionID, byte[] data)
+            public static void NewPawn(int connectionID, Pawn newPawn)
             {
+                ClientManager.pawns.Add(newPawn.ID_Character, newPawn);
+
                 foreach (var client in clients)
                 {
+                    DataSender.SendNewPawn(client.Key, newPawn);// newPawn.ID_Character, newPawn.transform);
+                    /*
                     if (client.Key != connectionID)
                     {
-                        DataSender.SendNewPawn(connectionID, client.Key, data);
                     }
+                    */
                 }
             }
             public static void AssignPawn(int connectionID, byte[] data)

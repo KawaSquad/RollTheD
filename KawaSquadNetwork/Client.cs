@@ -9,7 +9,7 @@ namespace KawaSquad
 {
     namespace Network
     {
-        public class Client
+        public class Client //playerHandle
         {
             public int connectionID;
             public TcpClient socket;
@@ -56,7 +56,10 @@ namespace KawaSquad
             {
                 Console.WriteLine("Connection from '{0}' has been terminated.",socket.Client.RemoteEndPoint.ToString());
                 socket.Close();
+
                 ClientManager.clients.Remove(this.connectionID);
+
+                //DataSender.SendClientDisconnect(this.connectionID);
             }
         }
     }

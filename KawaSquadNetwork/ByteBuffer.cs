@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace KawaSquad
 {
@@ -95,6 +96,13 @@ namespace KawaSquad
             {
                 Buff.AddRange(BitConverter.GetBytes(input.Length));
                 Buff.AddRange(Encoding.ASCII.GetBytes(input));
+                buffUpdated = true;
+            }
+            public void WriteVector3(Vector3 input)
+            {
+                Buff.AddRange(BitConverter.GetBytes(input.x));
+                Buff.AddRange(BitConverter.GetBytes(input.y));
+                Buff.AddRange(BitConverter.GetBytes(input.z));
                 buffUpdated = true;
             }
             #endregion
@@ -309,6 +317,27 @@ namespace KawaSquad
                         readPos += lenght;
                 }
                 return value;
+            }
+
+            public Vector3 ReadVector3(bool peek = true)
+            {
+                if (Buff.Count > readPos)
+                {
+                    Vector3 output = new Vector3(0, 0, 0);
+                    output.x = ReadFloat(true);
+                    output.y = ReadFloat(true);
+                    output.z = ReadFloat(true);
+
+                    //if (peek && Buff.Count > readPos)
+                    //{
+                    //    readPos += (4 * 3);//float:4 * x,y,z
+                    //}
+                    return output;
+                }
+                else
+                {
+                    throw new Exception("Buffer out of range : BOOL");
+                }
             }
 
             #endregion
