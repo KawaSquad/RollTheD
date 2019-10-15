@@ -72,7 +72,7 @@ public class AdventureManager : MonoBehaviour
                 {
                     if (PlayerController.activeController != null)
                     {
-                        PlayerController.activeController.SetPosition(hitInfo.point, Vector3.zero, Vector3.one);
+                        PlayerController.activeController.MovePawn(hitInfo.point, Vector3.zero, Vector3.one);
                     }
                 }
             }

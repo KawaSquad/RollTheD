@@ -12,14 +12,20 @@ namespace KawaSquad
     {
         public static class ServerTCP
         {
-            public static TcpListener serverSocket = new TcpListener(IPAddress.Any, 5557);
+            public const int PORT = 5557;
+            public static TcpListener serverSocket = new TcpListener(IPAddress.Any, PORT);
 
             public static void InitailizeNetWork()
             {
                 Console.WriteLine("Initialize network ...");
                 ServerHandleData.InitializePackets();
+
+                //Create Server
+
                 serverSocket.Start();
                 serverSocket.BeginAcceptSocket(new AsyncCallback(OnClientConnect), true);
+
+                TcpClient tcpClient = new TcpClient("127.0.0.1", PORT);
             }
 
             private static void OnClientConnect(IAsyncResult result)

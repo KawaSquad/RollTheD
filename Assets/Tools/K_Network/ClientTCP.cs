@@ -63,7 +63,7 @@ namespace KawaSquad
                 catch (Exception)
                 {
 
-                    throw;
+                    //throw;
                 }
             }
 

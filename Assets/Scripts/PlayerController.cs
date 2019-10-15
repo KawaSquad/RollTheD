@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using KawaSquad.Network;
@@ -7,6 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     public class Server_PawnData
     {
+        public Guid server_Ref;
         public int ID_Character;
         public int ID_Handler;
         public Vector3 position;
@@ -24,6 +26,7 @@ public class PlayerController : MonoBehaviour
     private bool isActive = false;
 
     public int id_Character = -1;
+    public Server_PawnData serverData;
 
     private void Start()
     {
@@ -82,6 +85,14 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
+    public void MovePawn(Vector3 position, Vector3 rotation, Vector3 scale)
+    {
+        serverData.position = position;
+        serverData.rotation = rotation;
+        serverData.scale = scale;
+
+        DataSender.SendPawnDestination(serverData);
+    }
     public void SetPosition(Vector3 destination, Vector3 orientation, Vector3 scale)
     {
         Transform controller = this.transform;

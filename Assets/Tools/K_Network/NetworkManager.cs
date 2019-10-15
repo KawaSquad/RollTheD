@@ -51,6 +51,8 @@ namespace KawaSquad
                 if (playersList.TryGetValue(data.ID_Handler, out PlayerHandle handler))
                 {
                     PlayerController playerController = Instantiate(prefabController);
+                    playerController.serverData = data;
+
                     playerController.name = "Player_Controller_" + data.ID_Character;
                     playerController.id_Character = data.ID_Character;
                     playerController.SetPosition(data.position, data.rotation, data.scale);

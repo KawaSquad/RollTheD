@@ -16,6 +16,7 @@ namespace KawaSquad
             public NetworkStream stream;
             private byte[] recBuffer;
             public ByteBuffer buffer;
+            public List<Pawn> pawns = new List<Pawn>();
 
             public void Start()
             {
@@ -56,6 +57,16 @@ namespace KawaSquad
             {
                 Console.WriteLine("Connection from '{0}' has been terminated.",socket.Client.RemoteEndPoint.ToString());
                 socket.Close();
+
+                //SERVER KEEP ALL
+                if(ClientManager.clients.TryGetValue(ServerTCP.PORT,out Client serverClient))
+                {
+                    for (int i = 0; i < this.pawns.Count; i++)
+                    {
+                        this.pawns[i].ID_Hanlder = ServerTCP.PORT;
+                    }
+                    serverClient.pawns.AddRange(this.pawns);
+                }
 
                 ClientManager.clients.Remove(this.connectionID);
 

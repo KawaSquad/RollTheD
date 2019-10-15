@@ -52,6 +52,7 @@ namespace KawaSquad
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteBytes(data);
                 int packetID = buffer.ReadInteger();
+                dataPawn.server_Ref = Guid.Parse(buffer.ReadString());
                 dataPawn.ID_Handler = buffer.ReadInteger();
                 dataPawn.ID_Character = buffer.ReadInteger();
                 dataPawn.position = buffer.ReadVector3();
@@ -81,6 +82,8 @@ namespace KawaSquad
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteBytes(data);
                 int packetID = buffer.ReadInteger();
+                byte[] guidBuffer = buffer.ReadBytes();
+                Guid serverRef = new Guid(guidBuffer);
                 int index = buffer.ReadInteger();
                 int id_Character = buffer.ReadInteger();
                 Vector3 position = buffer.ReadVector3();

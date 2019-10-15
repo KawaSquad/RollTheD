@@ -23,6 +23,9 @@ namespace KawaSquad
         {
             public static void SendWelcomeMessage(int connectionID)
             {
+                if (connectionID == ServerTCP.PORT)//this is the server, no need to say welcome to the server
+                    return;
+
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteInteger((int)ServerPackets.S_WELCOME_MESSAGE);
                 buffer.WriteString("Welcome:");
@@ -57,6 +60,7 @@ namespace KawaSquad
             {
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteInteger((int)ServerPackets.S_NEW_PAWN);
+                buffer.WriteString(pawn.server_Ref.ToString());
                 buffer.WriteInteger(pawn.ID_Hanlder);
                 buffer.WriteInteger(pawn.ID_Character);
                 buffer.WriteVector3(pawn.transform.position);

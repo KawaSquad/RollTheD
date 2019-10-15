@@ -14,7 +14,7 @@ namespace KawaSquad
         public class ClientManager
         {
             public static Dictionary<int, Client> clients = new Dictionary<int, Client>();
-            public static Dictionary<int, Pawn> pawns = new Dictionary<int, Pawn>();
+            //public static Dictionary<int, Pawn> pawns = new Dictionary<int, Pawn>();
 
             public static void CreateNewConnection(TcpClient tempClient)
             {
@@ -22,6 +22,9 @@ namespace KawaSquad
                 newClient.socket = tempClient;
                 newClient.connectionID = ((IPEndPoint)tempClient.Client.RemoteEndPoint).Port;
                 newClient.Start();
+
+                if(clients.Count == 0)
+                    newClient.connectionID = ServerTCP.PORT;
                 clients.Add(newClient.connectionID, newClient);
 
                 DataSender.SendWelcomeMessage(newClient.connectionID);
@@ -34,44 +37,46 @@ namespace KawaSquad
                 foreach (var client in clients)
                 {
                     bool isNewClient = (client.Key == connectionID);
-                    if(!isNewClient)
+                    if (!isNewClient)
                     {
                         DataSender.SendInstantiatePlayer(client.Key, connectionID);
                     }
-    
+
                     //send to existing player to the new client
                     DataSender.SendInstantiatePlayer(connectionID, client.Key, isNewClient);
-                }
 
-                //send to new client all pawn
-                foreach (var pawn in pawns)
-                {
-                    DataSender.SendNewPawn(connectionID, pawn.Value);
+                    //send to new client all pawn
+                    foreach (var pawn in client.Value.pawns)
+                    {
+                        DataSender.SendNewPawn(connectionID, pawn);
+                    }
                 }
             }
 
-            public static void PawnMove(int connectionID, Transform pawnTransform)
+            public static void PawnMove(int ID_Handler, Transform pawnTransform)
             {
                 foreach (var client in clients)
                 {
-                    if (client.Key != connectionID)
-                    {
-                        DataSender.SendPawnMove(client.Key, connectionID, pawnTransform);
-                    }
+                    //if (client.Key != connectionID)
+                    //{
+                    //}
+                    DataSender.SendPawnMove(client.Key, ID_Handler, pawnTransform);
                 }
             }
             public static void NewPawn(int connectionID, Pawn newPawn)
             {
-                ClientManager.pawns.Add(newPawn.ID_Character, newPawn);
-
-                foreach (var client in clients)
+                if (clients.TryGetValue(connectionID, out Client thisClient))
                 {
-                    DataSender.SendNewPawn(client.Key, newPawn);// newPawn.ID_Character, newPawn.transform);
-                    /*
-                    if (client.Key != connectionID)
+                    thisClient.pawns.Add(newPawn);
+
+                    foreach (var client in clients)
                     {
+                        DataSender.SendNewPawn(client.Key, newPawn);// newPawn.ID_Character, newPawn.transform);
                     }
-                    */
+                }
+                else
+                {
+                    throw new Exception("why ?");
                 }
             }
             public static void AssignPawn(int connectionID, byte[] data)

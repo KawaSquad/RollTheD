@@ -32,9 +32,23 @@ MonoBehaviour:
   - MAP_02.json
   Content_Lobby:
     characters:
-    - ID_Character: 0
+    - ID_Character: 5
       ID_Account: 0
-      ID_Session: 0
+      ID_Session: 6
+      Picture_Url: 
+      Name_Character: NovaStorm
+      Class_Character: Alchemist
+      HP_Character: 12
+    - ID_Character: 7
+      ID_Account: 0
+      ID_Session: 6
+      Picture_Url: 
+      Name_Character: NovaStorm
+      Class_Character: Alchemist
+      HP_Character: 12
+    - ID_Character: 8
+      ID_Account: 0
+      ID_Session: 6
       Picture_Url: 
       Name_Character: NovaStorm
       Class_Character: Alchemist
