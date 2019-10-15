@@ -53,14 +53,37 @@ namespace KawaSquad
                 }
             }
 
-            public static void PawnMove(int ID_Handler, Transform pawnTransform)
+            public static void PawnMove(int ID_Handler, Guid server_Ref, Transform pawnTransform)
             {
-                foreach (var client in clients)
+                if (clients.TryGetValue(ID_Handler, out Client clientHandler))
                 {
-                    //if (client.Key != connectionID)
-                    //{
-                    //}
-                    DataSender.SendPawnMove(client.Key, ID_Handler, pawnTransform);
+                    Pawn target = null;
+                    for (int i = 0; i < clientHandler.pawns.Count; i++)
+                    {
+                        if (clientHandler.pawns[i].server_Ref == server_Ref)
+                        {
+                            target = clientHandler.pawns[i];
+                            break;
+                        }
+                    }
+
+                    if (target != null)
+                    {
+                        target.transform = pawnTransform;
+                        foreach (var client in clients)
+                        {
+                            // send to all new position (owner too)
+                            DataSender.SendPawnMove(client.Key, ID_Handler, server_Ref, pawnTransform);
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("no pawn");
+                    }
+                }
+                else
+                {
+                    throw new Exception("no handler");
                 }
             }
             public static void NewPawn(int connectionID, Pawn newPawn)

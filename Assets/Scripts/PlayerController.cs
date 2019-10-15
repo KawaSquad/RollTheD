@@ -6,6 +6,7 @@ using KawaSquad.Network;
 
 public class PlayerController : MonoBehaviour
 {
+     [System.Serializable]
     public class Server_PawnData
     {
         public Guid server_Ref;

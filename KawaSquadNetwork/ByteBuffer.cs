@@ -98,6 +98,13 @@ namespace KawaSquad
                 Buff.AddRange(Encoding.ASCII.GetBytes(input));
                 buffUpdated = true;
             }
+            public void WriteGuid(Guid input)
+            {
+                byte[] guidBuf = input.ToByteArray();
+                Buff.AddRange(BitConverter.GetBytes(guidBuf.Length));//GUID_LENGHT
+                Buff.AddRange(guidBuf);
+                buffUpdated = true;
+            }
             public void WriteVector3(Vector3 input)
             {
                 Buff.AddRange(BitConverter.GetBytes(input.x));
@@ -318,7 +325,28 @@ namespace KawaSquad
                 }
                 return value;
             }
+            public Guid ReadGuid(bool peek = true)
+            {
+                int lenght = ReadInteger(true);
+                if (buffUpdated)
+                {
+                    readBuff = Buff.ToArray();
+                    buffUpdated = false;
+                }
 
+                byte[] newBuffer = new byte[lenght];
+                for (int i = 0; i < lenght; i++)
+                {
+                    newBuffer[i] = readBuff[readPos + i];
+                }
+                Guid value = new Guid(newBuffer);
+                if (peek && Buff.Count > readPos)
+                {
+                    //if (value.Length > 0)
+                        readPos += lenght;
+                }
+                return value;
+            }
             public Vector3 ReadVector3(bool peek = true)
             {
                 if (Buff.Count > readPos)

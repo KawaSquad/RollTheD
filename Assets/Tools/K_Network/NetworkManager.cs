@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -81,25 +82,23 @@ namespace KawaSquad
                 //playersList.Add(index, playerController);
             }
 
-            public void AssignedPawn(int index)
+            public void AssignedPawn(int handler)
             {
 
             }
 
-            public void Player_MovePawn(int index, int id_character, Vector3 position, Vector3 rotation, Vector3 scale)
+            public void Player_MovePawn(int handler, Guid server_Ref, Vector3 position, Vector3 rotation, Vector3 scale)
             {
-                if (playersList.TryGetValue(index,out PlayerHandle playerTarget))
+                if (playersList.TryGetValue(handler, out PlayerHandle playerTarget)) 
                 {
                     for (int i = 0; i < playerTarget.pawns.Count; i++)
                     {
-                        if (playerTarget.pawns[i].id_Character == id_character)
+                        if (playerTarget.pawns[i].serverData.server_Ref == server_Ref)
                         {
                             playerTarget.pawns[i].SetPosition(position, rotation, scale);
                             break;
                         }
                     }
-
-                    Debug.LogError("No pawn");
                 }
             }
             public void RemovePlayer(int index)

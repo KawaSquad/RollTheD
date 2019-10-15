@@ -52,7 +52,7 @@ namespace KawaSquad
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteBytes(data);
                 int packetID = buffer.ReadInteger();
-                dataPawn.server_Ref = Guid.Parse(buffer.ReadString());
+                dataPawn.server_Ref = buffer.ReadGuid();
                 dataPawn.ID_Handler = buffer.ReadInteger();
                 dataPawn.ID_Character = buffer.ReadInteger();
                 dataPawn.position = buffer.ReadVector3();
@@ -82,17 +82,15 @@ namespace KawaSquad
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteBytes(data);
                 int packetID = buffer.ReadInteger();
-                byte[] guidBuffer = buffer.ReadBytes();
-                Guid serverRef = new Guid(guidBuffer);
-                int index = buffer.ReadInteger();
-                int id_Character = buffer.ReadInteger();
+                Guid server_Ref = buffer.ReadGuid();
+                int handler = buffer.ReadInteger();
                 Vector3 position = buffer.ReadVector3();
                 Vector3 rotation = buffer.ReadVector3();
                 Vector3 scale = buffer.ReadVector3();
 
                 buffer.Dispose();
 
-                NetworkManager.instance.Player_MovePawn(index, id_Character, position, rotation, scale);
+                NetworkManager.instance.Player_MovePawn(handler, server_Ref, position, rotation, scale);
             }
 
         }

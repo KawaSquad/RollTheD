@@ -45,22 +45,11 @@ namespace KawaSquad
             #endregion
 
             #region Pawn
-            public static void SendPawnMove(int index, int connectionID, Transform pawnTransform)//Index how move, Conn send to
-            {
-                ByteBuffer buffer = new ByteBuffer();
-                buffer.WriteInteger((int)ServerPackets.S_PAWN_MOVE);
-                buffer.WriteInteger(index);
-                buffer.WriteVector3(pawnTransform.position);
-                buffer.WriteVector3(pawnTransform.rotation);
-                buffer.WriteVector3(pawnTransform.scale);
-                ClientManager.SendDataTo(connectionID, buffer.ToArray());
-                buffer.Dispose();
-            }
             public static void SendNewPawn(int connectionID, Pawn pawn)//Index how move, Conn send to
             {
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteInteger((int)ServerPackets.S_NEW_PAWN);
-                buffer.WriteString(pawn.server_Ref.ToString());
+                buffer.WriteGuid(pawn.server_Ref);
                 buffer.WriteInteger(pawn.ID_Hanlder);
                 buffer.WriteInteger(pawn.ID_Character);
                 buffer.WriteVector3(pawn.transform.position);
@@ -75,6 +64,18 @@ namespace KawaSquad
                 buffer.WriteInteger((int)ServerPackets.S_ASSIGN_PAWN);
                 buffer.WriteInteger(index);
                 buffer.WriteBytes(data);
+                ClientManager.SendDataTo(connectionID, buffer.ToArray());
+                buffer.Dispose();
+            }
+            public static void SendPawnMove(int connectionID, int handler, Guid server_Ref, Transform pawnTransform)//Index how move, Conn send to
+            {
+                ByteBuffer buffer = new ByteBuffer();
+                buffer.WriteInteger((int)ServerPackets.S_PAWN_MOVE);
+                buffer.WriteGuid(server_Ref);
+                buffer.WriteInteger(handler);
+                buffer.WriteVector3(pawnTransform.position);
+                buffer.WriteVector3(pawnTransform.rotation);
+                buffer.WriteVector3(pawnTransform.scale);
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }
