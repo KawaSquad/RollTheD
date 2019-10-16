@@ -29,7 +29,7 @@ namespace KawaSquad
 
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteInteger((int)ServerPackets.S_WELCOME_MESSAGE);
-                buffer.WriteString("Welcome:");
+                buffer.WriteString("Welcome");
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }
