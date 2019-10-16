@@ -46,43 +46,61 @@ public class AdventureManager : MonoBehaviour
         RaycastHit hitInfo;
         if (Physics.Raycast(ray, out hitInfo))
         {
-            if (hitInfo.collider.tag == "Player")
+            if (PlayerController.activeController != null)
             {
-                PlayerController player = hitInfo.collider.GetComponent<PlayerController>();
-                if (player != null)
-                {
-                    if (playerSelected != null && playerSelected != player)
-                    {
-                        playerSelected.UnselectCharacter();
-                        playerSelected = null;
-                    }
-
-                    player.SelectCharacter();
-                    playerSelected = player;
-
-                    if (Input.GetMouseButtonDown(0))
-                    {
-                        player.ActiveCharacter();
-                    }
-                }
-            }
-            else if (hitInfo.collider.tag == "Ground")
-            {
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButton(0))
                 {
                     if (PlayerController.activeController != null)
                     {
                         PlayerController.activeController.MovePawn(hitInfo.point, Vector3.zero, Vector3.one);
                     }
                 }
+                else if (Input.GetMouseButtonUp(0))
+                {
+                    PlayerController.activeController.SetActiveCharacter(false);
+                }
             }
-        }
-        else
-        {
-            if (playerSelected != null)
+            else
             {
-                playerSelected.UnselectCharacter();
-                playerSelected = null;
+                if (hitInfo.collider.tag == "Player")
+                {
+                    PlayerController player = hitInfo.collider.GetComponent<PlayerController>();
+                    if (player != null)
+                    {
+                        if (playerSelected != null && playerSelected != player)
+                        {
+                            playerSelected.UnselectCharacter();
+                            playerSelected = null;
+                        }
+
+                        player.SelectCharacter();
+                        playerSelected = player;
+
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            player.SetActiveCharacter(true);
+                        }
+                        else if (Input.GetMouseButton(0))
+                        {
+                            if (PlayerController.activeController != null)
+                            {
+                                PlayerController.activeController.MovePawn(hitInfo.point, Vector3.zero, Vector3.one);
+                            }
+                        }
+                        else if (Input.GetMouseButtonUp(0))
+                        {
+                            player.SetActiveCharacter(false);
+                        }
+                    }
+                }
+                else
+                {
+                    if (playerSelected != null)
+                    {
+                        playerSelected.UnselectCharacter();
+                        playerSelected = null;
+                    }
+                }
             }
         }
     }

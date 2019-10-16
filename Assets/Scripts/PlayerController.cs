@@ -84,6 +84,30 @@ public class PlayerController : MonoBehaviour
             material.SetColor("_HighlightColor", AdventureManager.Instance.colorSelections.unselected);
         }
     }
+
+    public void SetActiveCharacter(bool isActive)
+    {
+        this.isActive = isActive;
+
+        if (isActive)
+        {
+            //if (activeController != null && activeController != this)
+            //    activeController.SetActiveCharacter(false);
+
+            activeController = this;
+
+            material.SetInt("_IsHighlighted", 1);
+            material.SetColor("_HighlightColor", AdventureManager.Instance.colorSelections.active);
+        }
+        else
+        {
+            activeController = null;
+
+            material.SetInt("_IsHighlighted", 0);
+            material.SetColor("_HighlightColor", AdventureManager.Instance.colorSelections.unselected);
+        }
+    }
+
     #endregion
 
     public void MovePawn(Vector3 position, Vector3 rotation, Vector3 scale)

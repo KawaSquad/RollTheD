@@ -45,11 +45,11 @@ namespace KawaSquad
                     //send to existing player to the new client
                     DataSender.SendInstantiatePlayer(connectionID, client.Key, isNewClient);
 
-                    //send to new client all pawn
-                    foreach (var pawn in pawns)
-                    {
-                        DataSender.SendNewPawn(connectionID, pawn.Value);
-                    }
+                }
+                //send to new client all pawn
+                foreach (var pawn in pawns)
+                {
+                    DataSender.SendNewPawn(connectionID, pawn.Value);
                 }
             }
 
