@@ -10,6 +10,15 @@ namespace KawaSquad
     {
         public class ClientTCP
         {
+            public static bool IsConnected
+            {
+                get
+                {
+                    if (clientSocket == null)
+                        return false;
+                    return clientSocket.Connected;
+                }
+            }
             private static TcpClient clientSocket;
             private static NetworkStream stream;
             private static byte[] recBuffer;

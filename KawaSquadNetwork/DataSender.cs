@@ -13,6 +13,7 @@ namespace KawaSquad
         {
             S_WELCOME_MESSAGE = 1,
             S_CREATE_PLAYER = 2,
+            S_PING_CLIENT = 3,
 
             S_PAWN_MOVE = 10,
             S_NEW_PAWN = 11,
@@ -32,6 +33,18 @@ namespace KawaSquad
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }
+            public static void SendPingClient(int connectionID)
+            {
+                ByteBuffer bufer = new ByteBuffer();
+                bufer.WriteInteger((int)ServerPackets.S_PING_CLIENT);
+                int packageSize = 128;
+                bufer.WriteInteger(packageSize);//PackageSize
+                bufer.WriteBytes(new byte[packageSize]);
+                ClientManager.SendDataTo(connectionID, bufer.ToArray());
+                bufer.Dispose();
+            }
+
+
             #region PlayerHandle
             public static void SendInstantiatePlayer(int index, int connectionID,bool isLocalClient = false)
             {

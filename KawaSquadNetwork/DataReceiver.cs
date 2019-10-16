@@ -12,6 +12,7 @@ namespace KawaSquad
         public enum ClientPackets
         {
             C_HELLO_SERVER = 1,
+            C_PING_SERVER = 2,
 
             C_MOVE_PAWN = 10,
             C_NEW_PAWN = 11,
@@ -29,6 +30,18 @@ namespace KawaSquad
                 string msg = buffer.ReadString();
                 buffer.Dispose();
                 Console.WriteLine(msg);
+            }
+            public static void HandlePingServer(int connectionID, byte[] data)
+            {
+                /*
+                ByteBuffer buffer = new ByteBuffer();
+                buffer.WriteBytes(data);
+                int packetID = buffer.ReadInteger();
+                int packageSize = buffer.ReadInteger();
+                byte[] package = buffer.ReadBytes(packageSize);
+                buffer.Dispose();
+                 */
+                DataSender.SendPingClient(connectionID);
             }
             #endregion
 

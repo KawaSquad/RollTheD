@@ -12,6 +12,7 @@ namespace KawaSquad
         public enum ServerPackets
         {
             S_HELLO_SERVER = 1,
+            S_PING_SERVER = 2,
 
             S_MOVE_PAWN = 10,
             S_NEW_PAWN = 11,
@@ -24,6 +25,16 @@ namespace KawaSquad
                 ByteBuffer bufer = new ByteBuffer();
                 bufer.WriteInteger((int)ServerPackets.S_HELLO_SERVER);
                 bufer.WriteString("I am connected");
+                ClientTCP.SendData(bufer.ToArray());
+                bufer.Dispose();
+            }
+            public static void SendPingServer()
+            {
+                ByteBuffer bufer = new ByteBuffer();
+                bufer.WriteInteger((int)ServerPackets.S_PING_SERVER);
+                int packageSize = 128;
+                bufer.WriteInteger(packageSize);//PackageSize
+                bufer.WriteBytes(new byte[packageSize]);
                 ClientTCP.SendData(bufer.ToArray());
                 bufer.Dispose();
             }

@@ -52,7 +52,6 @@ namespace KawaSquad
                     DataSender.SendNewPawn(connectionID, pawn.Value);
                 }
             }
-
             public static void PawnMove(Guid server_Ref, Transform pawnTransform)
             {
                 if (pawns.TryGetValue(server_Ref, out Pawn pawn))
