@@ -67,12 +67,12 @@ namespace KawaSquad
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }
-            public static void SendPawnMove(int connectionID, int handler, Guid server_Ref, Transform pawnTransform)//Index how move, Conn send to
+            public static void SendPawnMove(int connectionID, Guid server_Ref, Transform pawnTransform)//Index how move, Conn send to
             {
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteInteger((int)ServerPackets.S_PAWN_MOVE);
                 buffer.WriteGuid(server_Ref);
-                buffer.WriteInteger(handler);
+//                buffer.WriteInteger(handler);
                 buffer.WriteVector3(pawnTransform.position);
                 buffer.WriteVector3(pawnTransform.rotation);
                 buffer.WriteVector3(pawnTransform.scale);

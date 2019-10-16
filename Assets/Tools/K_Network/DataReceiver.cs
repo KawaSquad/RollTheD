@@ -83,14 +83,14 @@ namespace KawaSquad
                 buffer.WriteBytes(data);
                 int packetID = buffer.ReadInteger();
                 Guid server_Ref = buffer.ReadGuid();
-                int handler = buffer.ReadInteger();
+//                int handler = buffer.ReadInteger();
                 Vector3 position = buffer.ReadVector3();
                 Vector3 rotation = buffer.ReadVector3();
                 Vector3 scale = buffer.ReadVector3();
 
                 buffer.Dispose();
 
-                NetworkManager.instance.Player_MovePawn(handler, server_Ref, position, rotation, scale);
+                NetworkManager.instance.Player_MovePawn(server_Ref, position, rotation, scale);
             }
 
         }

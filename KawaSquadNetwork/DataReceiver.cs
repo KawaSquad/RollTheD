@@ -77,7 +77,7 @@ namespace KawaSquad
                 buffer.WriteBytes(data);
                 int packetID = buffer.ReadInteger();
                 Guid server_Ref = buffer.ReadGuid();
-                int ID_Handler = buffer.ReadInteger();
+//                int ID_Handler = buffer.ReadInteger();
                 Vector3 position = buffer.ReadVector3();
                 Vector3 rotation = buffer.ReadVector3();
                 Vector3 scale = buffer.ReadVector3();
@@ -86,7 +86,7 @@ namespace KawaSquad
                 //Console.WriteLine("Character : '{0}' from '{1}' - position : '{2}''{3}''{4}' ", id_Character, connectionID, pos_x, pos_y, pos_z);
 
                 Transform pawnTransform = new Transform(position, rotation, scale );
-                ClientManager.PawnMove(ID_Handler, server_Ref, pawnTransform);
+                ClientManager.PawnMove(server_Ref, pawnTransform);
             }
             #endregion
         }

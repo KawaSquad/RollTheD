@@ -12,6 +12,7 @@ namespace KawaSquad
         {
             public static NetworkManager instance;
             public Dictionary<int, PlayerHandle> playersList = new Dictionary<int, PlayerHandle>();
+            public Dictionary<Guid, PlayerController> pawns = new Dictionary<Guid, PlayerController>();
 
             public PlayerHandle prefabPlayer;
             public PlayerController prefabController;
@@ -49,37 +50,22 @@ namespace KawaSquad
             }
             public void InstantiatePawn(PlayerController.Server_PawnData data)
             {
+                PlayerController playerController = Instantiate(prefabController);
+                playerController.serverData = data;
+
+                playerController.name = "Player_Controller_" + data.ID_Character;
+                playerController.id_Character = data.ID_Character;
+                playerController.SetPosition(data.position, data.rotation, data.scale);
+
+                pawns.Add(data.server_Ref, playerController);
                 if (playersList.TryGetValue(data.ID_Handler, out PlayerHandle handler))
                 {
-                    PlayerController playerController = Instantiate(prefabController);
-                    playerController.serverData = data;
-
-                    playerController.name = "Player_Controller_" + data.ID_Character;
-                    playerController.id_Character = data.ID_Character;
-                    playerController.SetPosition(data.position, data.rotation, data.scale);
                     handler.AssignedPawn(playerController);
                 }
                 else
                 {
                     Debug.LogError("Handler not created");
                 }
-            }
-            public void InstantiatePlayerController_OLD(int connectionID, Content_Lobby character)
-            {
-                if (playersList.TryGetValue(connectionID, out PlayerHandle handler))
-                {
-                    PlayerController playerController = Instantiate(prefabController);
-                    playerController.name = "Player_Controller_" + character.Name_Character;
-                    playerController.id_Character = character.ID_Character;
-                    handler.AssignedPawn(playerController);
-                }
-                else
-                {
-                    Debug.LogError("Handler not created");
-                }
-
-                //playerController.isLocalClient = isLocalClient;
-                //playersList.Add(index, playerController);
             }
 
             public void AssignedPawn(int handler)
@@ -87,24 +73,18 @@ namespace KawaSquad
 
             }
 
-            public void Player_MovePawn(int handler, Guid server_Ref, Vector3 position, Vector3 rotation, Vector3 scale)
+            public void Player_MovePawn(Guid server_Ref, Vector3 position, Vector3 rotation, Vector3 scale)
             {
-                if (playersList.TryGetValue(handler, out PlayerHandle playerTarget)) 
+                if (pawns.TryGetValue(server_Ref, out PlayerController playerTarget))
                 {
-                    for (int i = 0; i < playerTarget.pawns.Count; i++)
-                    {
-                        if (playerTarget.pawns[i].serverData.server_Ref == server_Ref)
-                        {
-                            playerTarget.pawns[i].SetPosition(position, rotation, scale);
-                            break;
-                        }
-                    }
+                    playerTarget.SetPosition(position, rotation, scale);
                 }
             }
-            public void RemovePlayer(int index)
+
+            public void RemovePlayer(int handler)
             {
-                GameObject playerCell = playersList[index].gameObject;
-                playersList.Remove(index);
+                GameObject playerCell = playersList[handler].gameObject;
+                playersList.Remove(handler);
                 Destroy(playerCell);
             }
 

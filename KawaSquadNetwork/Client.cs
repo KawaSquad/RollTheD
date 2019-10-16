@@ -16,7 +16,8 @@ namespace KawaSquad
             public NetworkStream stream;
             private byte[] recBuffer;
             public ByteBuffer buffer;
-            public List<Pawn> pawns = new List<Pawn>();
+
+            List<Pawn> pawns = new List<Pawn>();
 
             public void Start()
             {
@@ -52,6 +53,14 @@ namespace KawaSquad
                     return;
                 }
             }
+
+            public void AssignPawn(Pawn newPawn)
+            {
+                if (pawns == null)
+                    pawns = new List<Pawn>();
+                pawns.Add(newPawn);
+            }
+
 
             void CloseConnection()
             {

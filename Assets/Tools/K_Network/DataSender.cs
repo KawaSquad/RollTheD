@@ -54,7 +54,7 @@ namespace KawaSquad
                 bufer.WriteInteger((int)ServerPackets.S_MOVE_PAWN);
 
                 bufer.WriteGuid(data.server_Ref);
-                bufer.WriteInteger(data.ID_Handler); 
+//                bufer.WriteInteger(data.ID_Handler); 
 
                 bufer.WriteVector3(data.position);
                 bufer.WriteVector3(data.rotation);
