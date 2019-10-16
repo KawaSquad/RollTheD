@@ -39,18 +39,18 @@ namespace KawaSquad
                 buffer.WriteBytes(data);
                 int packetID = buffer.ReadInteger();
                 int handlerID = buffer.ReadInteger();
-                int ID_Character = buffer.ReadInteger();
+//                int ID_Character = buffer.ReadInteger();
                 Vector3 position = buffer.ReadVector3();
                 Vector3 rotation = buffer.ReadVector3();
                 Vector3 scale = buffer.ReadVector3();
                 buffer.Dispose();
 
-                Console.WriteLine("New character : '{0}' from '{1}'", ID_Character, connectionID);
+                //Console.WriteLine("New character : '{0}' from '{1}'", ID_Character, connectionID);
 
                 Pawn newPawn = new Pawn();
                 newPawn.server_Ref = Guid.NewGuid();
                 newPawn.ID_Hanlder = handlerID;
-                newPawn.ID_Character = ID_Character;
+//                newPawn.ID_Character = ID_Character;
                 newPawn.transform = new Transform(position, rotation, scale);
                 ClientManager.NewPawn(connectionID, newPawn);
             }

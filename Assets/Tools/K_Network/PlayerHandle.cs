@@ -9,7 +9,7 @@ namespace KawaSquad
         public class PlayerHandle : MonoBehaviour
         {
             public static PlayerHandle LocalPlayerHandle;
-            public List<PlayerController> pawns;
+            public List<Pawn> pawns;
 
             public bool isLocalClient = false;
             public int connectionID = 0;
@@ -26,33 +26,12 @@ namespace KawaSquad
                     LocalPlayerHandle = this;
             }
 
-            private void Update()
-            {
-                if (isLocalClient)
-                {
-                    /*
-                    if (currentPosition != pawnTransform.position)
-                    {
-                        DataSender.SendPawnDestination(currentPosition);
-                    }
-                     */
-                }
-            }
-
-            /*
-            public void SetPawnPosition(Vector3 newPos)
-            {
-                currentPosition = newPos;
-                //pawnTransform.position = newPos;
-            }
-             */
-
-            public void AssignedPawn(PlayerController newPawn)
+            public void AssignedPawn(Pawn newPawn)
             {
                 newPawn.transform.parent = this.transform;
                 pawns.Add(newPawn);
             }
-            public void RemovePawn(PlayerController existingPawn)
+            public void RemovePawn(Pawn existingPawn)
             {
                 if(pawns.Contains(existingPawn))
                 {

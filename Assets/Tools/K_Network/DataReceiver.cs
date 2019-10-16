@@ -45,16 +45,16 @@ namespace KawaSquad
                 NetworkManager.instance.InstantiatePlayerHandler(index, isLocalClient);
             }
 
-            public static void HandleNewCharacter(byte[] data)
+            public static void HandleNewPawn(byte[] data)
             {
-                PlayerController.Server_PawnData dataPawn = new PlayerController.Server_PawnData();
+                Pawn.Server_PawnData dataPawn = new Pawn.Server_PawnData();
 
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteBytes(data);
                 int packetID = buffer.ReadInteger();
                 dataPawn.server_Ref = buffer.ReadGuid();
                 dataPawn.ID_Handler = buffer.ReadInteger();
-                dataPawn.ID_Character = buffer.ReadInteger();
+//                dataPawn.ID_Character = buffer.ReadInteger();
                 dataPawn.position = buffer.ReadVector3();
                 dataPawn.rotation = buffer.ReadVector3();
                 dataPawn.scale = buffer.ReadVector3();
@@ -63,7 +63,7 @@ namespace KawaSquad
                 NetworkManager.instance.InstantiatePawn(dataPawn);
                 //AdventureManager.Instance.CreateCharacter(connectionID, ID_Charater, false);
             }
-            public static void HandleAssignCharacter(byte[] data)
+            public static void HandleAssignPawn(byte[] data)
             {
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteBytes(data);

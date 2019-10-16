@@ -12,10 +12,10 @@ namespace KawaSquad
         {
             public static NetworkManager instance;
             public Dictionary<int, PlayerHandle> playersList = new Dictionary<int, PlayerHandle>();
-            public Dictionary<Guid, PlayerController> pawns = new Dictionary<Guid, PlayerController>();
+            public Dictionary<Guid, Pawn> pawns = new Dictionary<Guid, Pawn>();
 
             public PlayerHandle prefabPlayer;
-            public PlayerController prefabController;
+            public Pawn prefabPawn;
             public CanvasGroup waitNetwork;
 
             private void Awake()
@@ -50,17 +50,18 @@ namespace KawaSquad
             }
             public void InstantiatePawn(PlayerController.Server_PawnData data)
             {
-                PlayerController playerController = Instantiate(prefabController);
-                playerController.serverData = data;
+                Pawn newPawn = Instantiate(prefabPawn);
+                newPawn.serverData = data;
 
-                playerController.name = "Player_Controller_" + data.ID_Character;
-                playerController.id_Character = data.ID_Character;
-                playerController.SetPosition(data.position, data.rotation, data.scale);
+//                newPawn.name = "Player_Controller_" + data.ID_Character;
+//                newPawn.id_Character = data.ID_Character;
 
-                pawns.Add(data.server_Ref, playerController);
+                newPawn.SetPosition(data.position, data.rotation, data.scale);
+
+                pawns.Add(data.server_Ref, newPawn);
                 if (playersList.TryGetValue(data.ID_Handler, out PlayerHandle handler))
                 {
-                    handler.AssignedPawn(playerController);
+                    handler.AssignedPawn(newPawn);
                 }
                 else
                 {
@@ -75,9 +76,9 @@ namespace KawaSquad
 
             public void Player_MovePawn(Guid server_Ref, Vector3 position, Vector3 rotation, Vector3 scale)
             {
-                if (pawns.TryGetValue(server_Ref, out PlayerController playerTarget))
+                if (pawns.TryGetValue(server_Ref, out Pawn pawnTarget))
                 {
-                    playerTarget.SetPosition(position, rotation, scale);
+                    pawnTarget.SetPosition(position, rotation, scale);
                 }
             }
 

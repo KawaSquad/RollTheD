@@ -2326,7 +2326,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabPlayer: {fileID: 6747815365760322777, guid: dfa9bfcabcaaa0b44bf5387b7c6dc419,
     type: 3}
-  prefabController: {fileID: 8737010605223648351, guid: 5bd0ffc2247f99243944fc57a6bb9f4d,
+  prefabPawn: {fileID: 8737010605223648351, guid: 5bd0ffc2247f99243944fc57a6bb9f4d,
     type: 3}
   waitNetwork: {fileID: 1894201127}
 --- !u!4 &1174136910

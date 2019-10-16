@@ -115,8 +115,8 @@ public class AdventureManager : MonoBehaviour
         }
         if (character != null)
         {
-            PlayerController.Server_PawnData data = new PlayerController.Server_PawnData();
-            data.ID_Character = id_Character;
+            Pawn.Server_PawnData data = new PlayerController.Server_PawnData();
+            //data.ID_Character = id_Character;
             data.ID_Handler = connectionID;
 
             data.position = Vector3.zero;
@@ -124,7 +124,7 @@ public class AdventureManager : MonoBehaviour
             data.scale = Vector3.one;
 
 
-            DataSender.SendNewCharacter(data);
+            DataSender.SendNewPawn(data);
 
             //if (sendToServer)
         }
