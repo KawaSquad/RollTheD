@@ -29,7 +29,7 @@ namespace KawaSquad
                 int packetID = buffer.ReadInteger();
                 string msg = buffer.ReadString();
                 buffer.Dispose();
-                Console.WriteLine(msg);
+                Debug.Log(msg,true);
             }
             public static void HandlePingServer(int connectionID, byte[] data)
             {
@@ -58,7 +58,7 @@ namespace KawaSquad
                 Vector3 scale = buffer.ReadVector3();
                 buffer.Dispose();
 
-                //Console.WriteLine("New character : '{0}' from '{1}'", ID_Character, connectionID);
+                //Debug.Log("New character : '{0}' from '{1}'", ID_Character, connectionID);
 
                 Pawn newPawn = new Pawn();
                 newPawn.server_Ref = Guid.NewGuid();
@@ -76,7 +76,7 @@ namespace KawaSquad
                 int handlerID = buffer.ReadInteger();
                 buffer.Dispose();
 
-                //Console.WriteLine("Player : '{0}' - position : '{1}''{2}''{3}' ", connectionID, pos_x, pos_y, pos_z);
+                //Debug.Log("Player : '{0}' - position : '{1}''{2}''{3}' ", connectionID, pos_x, pos_y, pos_z);
 
                 buffer = new ByteBuffer();
                 buffer.WriteInteger(ID_Character);
@@ -96,7 +96,7 @@ namespace KawaSquad
                 Vector3 scale = buffer.ReadVector3();
                 buffer.Dispose();
 
-                //Console.WriteLine("Character : '{0}' from '{1}' - position : '{2}''{3}''{4}' ", id_Character, connectionID, pos_x, pos_y, pos_z);
+                //Debug.Log("Character : '{0}' from '{1}' - position : '{2}''{3}''{4}' ", id_Character, connectionID, pos_x, pos_y, pos_z);
 
                 Transform pawnTransform = new Transform(position, rotation, scale );
                 ClientManager.PawnMove(server_Ref, pawnTransform);

@@ -27,7 +27,7 @@ namespace KawaSquad
                 stream = socket.GetStream();
                 recBuffer = new byte[bufferSize];
                 stream.BeginRead(recBuffer,0,socket.ReceiveBufferSize,OnReceivedData,null);
-                Console.WriteLine("Incoming connection '{0}'." , socket.Client.RemoteEndPoint.ToString());
+                Debug.Log("Incoming connection " + socket.Client.RemoteEndPoint.ToString(), true);
             }
 
             void OnReceivedData(IAsyncResult result)
@@ -64,7 +64,7 @@ namespace KawaSquad
 
             void CloseConnection()
             {
-                Console.WriteLine("Connection from '{0}' has been terminated.",socket.Client.RemoteEndPoint.ToString());
+                Debug.Log("Connection from " + socket.Client.RemoteEndPoint.ToString() + " has been terminated.", true);
                 socket.Close();
 
                 //SERVER KEEP ALL

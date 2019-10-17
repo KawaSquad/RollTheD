@@ -22,6 +22,7 @@ namespace KawaSquad
                 newClient.socket = tempClient;
                 newClient.connectionID = ((IPEndPoint)tempClient.Client.RemoteEndPoint).Port;
                 newClient.Start();
+                Debug.Log("New connection : " + newClient.connectionID);
 
                 if(clients.Count == 0)
                     newClient.connectionID = ServerTCP.PORT;
@@ -51,6 +52,7 @@ namespace KawaSquad
                 {
                     DataSender.SendNewPawn(connectionID, pawn.Value);
                 }
+
             }
             public static void PawnMove(Guid server_Ref, Transform pawnTransform)
             {
@@ -62,44 +64,9 @@ namespace KawaSquad
                         // send to all new position (owner too)
                         DataSender.SendPawnMove(client.Key, server_Ref, pawnTransform);
                     }
+                    Debug.Log("Move pawn : " + server_Ref + " to : " + pawnTransform.ToString());
                 }
             }
-
-            /*
-            public static void PawnMove(int ID_Handler, Guid server_Ref, Transform pawnTransform)
-            {
-                if (clients.TryGetValue(ID_Handler, out Client clientHandler))
-                {
-                    Pawn target = null;
-                    for (int i = 0; i < clientHandler.pawns.Count; i++)
-                    {
-                        if (clientHandler.pawns[i].server_Ref == server_Ref)
-                        {
-                            target = clientHandler.pawns[i];
-                            break;
-                        }
-                    }
-
-                    if (target != null)
-                    {
-                        target.transform = pawnTransform;
-                        foreach (var client in clients)
-                        {
-                            // send to all new position (owner too)
-                            DataSender.SendPawnMove(client.Key, ID_Handler, server_Ref, pawnTransform);
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("no pawn");
-                    }
-                }
-                else
-                {
-                    throw new Exception("no handler");
-                }
-            }
-             */
 
             public static void NewPawn(int connectionID, Pawn newPawn)
             {
@@ -111,6 +78,7 @@ namespace KawaSquad
                     {
                         DataSender.SendNewPawn(client.Key, newPawn);// newPawn.ID_Character, newPawn.transform);
                     }
+                    Debug.Log("New pawn : " + newPawn.server_Ref);
                 }
                 else
                 {

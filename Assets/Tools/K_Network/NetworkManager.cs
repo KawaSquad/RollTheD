@@ -18,6 +18,7 @@ namespace KawaSquad
             public PlayerHandle prefabPlayer;
             public Pawn prefabPawn;
             public CanvasGroup waitNetwork;
+            public SObject_Player sessionData;
 
             private Coroutine coKeepAlive;
 
@@ -51,7 +52,7 @@ namespace KawaSquad
                 waitNetwork.blocksRaycasts = true;
                 waitNetwork.interactable = true;
 
-                ClientTCP.InitializeNetworking();
+                ClientTCP.InitializeNetworking(sessionData.IP_Session, sessionData.Port_Session);
             }
 
             IEnumerator KeepAlive()

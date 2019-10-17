@@ -25,6 +25,7 @@ public class SObject_Player : ScriptableObject
     public int Number_Player_Max = 8;
     public string Password_Session = "psw";
     public string IP_Session = "127.0.0.1";
+    public int Port_Session = 5557;
     public string GM_Url = "https://steven-sternberger.be/RollTheD/Sessions/styven184/";
     public string[] Maps = { "Map_01.json","Map_02.json" };
 

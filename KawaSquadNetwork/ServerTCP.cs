@@ -17,7 +17,7 @@ namespace KawaSquad
 
             public static void InitailizeNetWork()
             {
-                Console.WriteLine("Initialize network ...");
+                Debug.Log("Initialize network ...", true);
                 ServerHandleData.InitializePackets();
 
                 //Create Server

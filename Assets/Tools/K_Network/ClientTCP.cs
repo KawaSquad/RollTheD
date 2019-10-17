@@ -24,13 +24,19 @@ namespace KawaSquad
             private static byte[] recBuffer;
             private static int sizeBuffer = 4096;
 
-            public static void InitializeNetworking()
+            private static string session_ip_adress = "127.0.0.1";
+            private static int session_port = 5557;
+
+            public static void InitializeNetworking(string ip_adress = "127.0.0.1", int port = 5557)
             {
+                session_ip_adress = ip_adress;
+                session_port = port;
+
                 clientSocket = new TcpClient();
                 clientSocket.ReceiveBufferSize = sizeBuffer;
                 clientSocket.SendBufferSize = sizeBuffer;
                 recBuffer = new byte[sizeBuffer * 2];
-                clientSocket.BeginConnect("127.0.0.1", 5557, new AsyncCallback(ClientCallBack), clientSocket);
+                clientSocket.BeginConnect(session_ip_adress, session_port, new AsyncCallback(ClientCallBack), clientSocket);
             }
             public static void ClientCallBack(IAsyncResult result)
             {
@@ -48,7 +54,7 @@ namespace KawaSquad
                 {
                     //LOG
                     Debug.Log("Try again");
-                    clientSocket.BeginConnect("127.0.0.1", 5557, new AsyncCallback(ClientCallBack), clientSocket);
+                    clientSocket.BeginConnect(session_ip_adress, session_port, new AsyncCallback(ClientCallBack), clientSocket);
                     return;
                 }
             }

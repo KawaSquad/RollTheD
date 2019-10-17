@@ -32,6 +32,8 @@ namespace KawaSquad
                 buffer.WriteString("Welcome");
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
+
+                Debug.Log("send welcome to : " + connectionID);
             }
             public static void SendPingClient(int connectionID)
             {
@@ -42,6 +44,7 @@ namespace KawaSquad
                 bufer.WriteBytes(new byte[packageSize]);
                 ClientManager.SendDataTo(connectionID, bufer.ToArray());
                 bufer.Dispose();
+                Debug.Log("send ping to : " + connectionID);
             }
 
 
@@ -54,6 +57,7 @@ namespace KawaSquad
                 buffer.WriteBool(isLocalClient);
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
+                Debug.Log("send new player to : " + connectionID);
             }
             #endregion
 
@@ -70,15 +74,19 @@ namespace KawaSquad
                 buffer.WriteVector3(pawn.transform.scale);
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
+                Debug.Log("send new pawn" + pawn.server_Ref + "on : " + connectionID);
             }
             public static void SendAssignPawn(int index, int connectionID, byte[] data)//Index how move, Conn send to
             {
+                /*
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteInteger((int)ServerPackets.S_ASSIGN_PAWN);
                 buffer.WriteInteger(index);
                 buffer.WriteBytes(data);
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
+                 */
+                Debug.Log("assign pawn" + index + "on : " + connectionID);
             }
             public static void SendPawnMove(int connectionID, Guid server_Ref, Transform pawnTransform)//Index how move, Conn send to
             {
@@ -91,6 +99,7 @@ namespace KawaSquad
                 buffer.WriteVector3(pawnTransform.scale);
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
+                Debug.Log("move pawn" + server_Ref + "on : " + connectionID);
             }
             #endregion
         }

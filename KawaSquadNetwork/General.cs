@@ -13,7 +13,9 @@ namespace KawaSquad
             public static void InitializeServer()
             {
                 ServerTCP.InitailizeNetWork();
-                Console.WriteLine("Server started");
+                Debug.Log("Server started",true);
+                SaveManager.Save();
+                SaveManager.Load();
             }
         }
     }

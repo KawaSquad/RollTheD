@@ -2329,6 +2329,7 @@ MonoBehaviour:
   prefabPawn: {fileID: 8737010605223648351, guid: 5bd0ffc2247f99243944fc57a6bb9f4d,
     type: 3}
   waitNetwork: {fileID: 1894201127}
+  sessionData: {fileID: 11400000, guid: 64a6afa681a527b448670a21355984a3, type: 2}
 --- !u!4 &1174136910
 Transform:
   m_ObjectHideFlags: 0
