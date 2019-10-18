@@ -18,6 +18,7 @@ namespace KawaSquad
             C_PAWN_MOVE = 10,
             C_NEW_PAWN = 11,
             C_ASSIGN_PAWN = 12,
+            C_DELETE_PAWN = 13,
         }
 
         static class DataReceiver
@@ -106,6 +107,16 @@ namespace KawaSquad
                 NetworkManager.instance.Player_MovePawn(server_Ref, position, rotation, scale);
             }
 
+            public static void HandleDeletePawn(byte[] data)
+            {
+                ByteBuffer buffer = new ByteBuffer();
+                buffer.WriteBytes(data);
+                int packetID = buffer.ReadInteger();
+                Guid server_Ref = buffer.ReadGuid();
+                buffer.Dispose();
+
+                NetworkManager.instance.Player_DeletePawn(server_Ref);
+            }
         }
     }
 }

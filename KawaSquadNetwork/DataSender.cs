@@ -18,6 +18,7 @@ namespace KawaSquad
             S_PAWN_MOVE = 10,
             S_NEW_PAWN = 11,
             S_ASSIGN_PAWN = 12,
+            S_DELETE_PAWN = 13,
         }
 
         public static class DataSender
@@ -101,6 +102,16 @@ namespace KawaSquad
                 buffer.Dispose();
                 Debug.Log("move pawn" + server_Ref + "on : " + connectionID);
             }
+            public static void SendDeletePawn(int connectionID, Guid server_Ref)//destroy server_Ref
+            {
+                ByteBuffer buffer = new ByteBuffer();
+                buffer.WriteInteger((int)ServerPackets.S_DELETE_PAWN);
+                buffer.WriteGuid(server_Ref);
+                ClientManager.SendDataTo(connectionID, buffer.ToArray());
+                buffer.Dispose();
+                Debug.Log("send new pawn" + server_Ref);
+            }
+
             #endregion
         }
     }

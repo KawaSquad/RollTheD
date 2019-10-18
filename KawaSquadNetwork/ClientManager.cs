@@ -67,15 +67,17 @@ namespace KawaSquad
                 }
 
             }
-            public static void PawnMove(Guid server_Ref, Transform pawnTransform)
+            public static void PawnMove(int connectionID,Guid server_Ref, Transform pawnTransform)
             {
                 if (pawns.TryGetValue(server_Ref, out Pawn pawn))
                 {
                     pawn.transform = pawnTransform;
                     foreach (var client in clients)
                     {
-                        // send to all new position (owner too)
-                        DataSender.SendPawnMove(client.Key, server_Ref, pawnTransform);
+                        // send to all new position (not owner too any more)
+
+                        if(client.Value.connectionID != connectionID)
+                            DataSender.SendPawnMove(client.Key, server_Ref, pawnTransform);
                     }
                     Debug.Log("Move pawn : " + server_Ref + " to : " + pawnTransform.ToString());
                 }
@@ -127,6 +129,24 @@ namespace KawaSquad
                 
                 buffer.Dispose();
             }
+
+            public static void DeletePawn(Guid server_Ref)
+            {
+                if (pawns.TryGetValue(server_Ref, out Pawn pawn))
+                {
+                    foreach (var client in clients)
+                    {
+                        DataSender.SendDeletePawn(client.Key, server_Ref);
+                    }
+                    pawns.Remove(server_Ref);
+                    Debug.Log("Delete pawn : " + server_Ref);
+                }
+                else
+                {
+                    throw new Exception("why ?");
+                }
+            }
+
         }
     }
 }

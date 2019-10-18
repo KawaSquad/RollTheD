@@ -17,6 +17,7 @@ namespace KawaSquad
             C_MOVE_PAWN = 10,
             C_NEW_PAWN = 11,
             C_ASSIGN_PAWN = 12,
+            C_DELETE_PAWN = 13,
         }
 
         public class DataReceiver
@@ -99,7 +100,17 @@ namespace KawaSquad
                 //Debug.Log("Character : '{0}' from '{1}' - position : '{2}''{3}''{4}' ", id_Character, connectionID, pos_x, pos_y, pos_z);
 
                 Transform pawnTransform = new Transform(position, rotation, scale );
-                ClientManager.PawnMove(server_Ref, pawnTransform);
+                ClientManager.PawnMove(connectionID, server_Ref, pawnTransform);
+            }
+            public static void HandlePawnDelete(int connectionID, byte[] data)
+            {
+                ByteBuffer buffer = new ByteBuffer();
+                buffer.WriteBytes(data);
+                int packetID = buffer.ReadInteger();
+                Guid server_Ref = buffer.ReadGuid();
+                buffer.Dispose();
+
+                ClientManager.DeletePawn(server_Ref);
             }
             #endregion
         }

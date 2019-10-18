@@ -25,7 +25,7 @@ MonoBehaviour:
   Number_Player: 5
   Number_Player_Max: 8
   Password_Session: 
-  IP_Session: 80.201.165.214
+  IP_Session: 127.0.0.1
   Port_Session: 5557
   GM_Url: https://steven-sternberger.be/RollTheD/Sessions/NovaStorm/
   Maps:

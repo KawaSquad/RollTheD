@@ -85,6 +85,10 @@ public class AdventureManager : MonoBehaviour
                         {
                             player.SetActiveCharacter(true);
                         }
+                        else if (Input.GetMouseButtonDown(1))
+                        {
+                            player.DestroyPawn();
+                        }
                         else if (Input.GetMouseButton(0))
                         {
                             if (PlayerController.activeController != null)

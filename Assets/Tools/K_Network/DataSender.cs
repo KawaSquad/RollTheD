@@ -17,6 +17,7 @@ namespace KawaSquad
             S_MOVE_PAWN = 10,
             S_NEW_PAWN = 11,
             S_ASSIGN_PAWN = 12,
+            S_DELETE_PAWN = 13,
         }
         class DataSender
         {
@@ -50,15 +51,16 @@ namespace KawaSquad
                 ClientTCP.SendData(bufer.ToArray());
                 bufer.Dispose();
             }
-            public static void SendAssignPawn(int ID_Character, int connectionID)
+            public static void SendAssignPawn(Pawn.Server_PawnData data,int connectionID)
             {
                 ByteBuffer bufer = new ByteBuffer();
                 bufer.WriteInteger((int)ServerPackets.S_ASSIGN_PAWN);
-                bufer.WriteInteger(ID_Character);
+                bufer.WriteGuid(data.server_Ref);
                 bufer.WriteInteger(connectionID);
                 ClientTCP.SendData(bufer.ToArray());
                 bufer.Dispose();
             }
+            
             public static void SendPawnDestination(Pawn.Server_PawnData data)
             {
                 ByteBuffer bufer = new ByteBuffer();
@@ -70,6 +72,14 @@ namespace KawaSquad
                 bufer.WriteVector3(data.position);
                 bufer.WriteVector3(data.rotation);
                 bufer.WriteVector3(data.scale);
+                ClientTCP.SendData(bufer.ToArray());
+                bufer.Dispose();
+            }
+            public static void SendPawnDestruct(Pawn.Server_PawnData data)
+            {
+                ByteBuffer bufer = new ByteBuffer();
+                bufer.WriteInteger((int)ServerPackets.S_DELETE_PAWN);
+                bufer.WriteGuid(data.server_Ref);
                 ClientTCP.SendData(bufer.ToArray());
                 bufer.Dispose();
             }

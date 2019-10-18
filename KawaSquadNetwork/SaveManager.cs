@@ -32,7 +32,16 @@ namespace KawaSquad
 
                 filePath = Path.Combine(folderPath, "Save.json");
                 if (File.Exists(filePath))
-                    File.Delete(filePath);
+                {
+                    string filePathOld = Path.Combine(folderPath, "Save_Old.json");
+
+                    if (!File.Exists(filePathOld))
+                    {
+                        FileStream streamold = File.Create(filePathOld);
+                        streamold.Close();
+                    }
+                    File.Replace(filePath, filePathOld, null);
+                }
                 FileStream stream = File.Create(filePath);
 
                 jsonSave = JsonConvert.SerializeObject(saveData);

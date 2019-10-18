@@ -119,6 +119,13 @@ namespace KawaSquad
                     pawnTarget.SetPosition(position, rotation, scale);
                 }
             }
+            public void Player_DeletePawn(Guid server_Ref)
+            {
+                if (pawns.TryGetValue(server_Ref, out Pawn pawnTarget))
+                {
+                    Destroy(pawnTarget.gameObject);
+                }
+            }
 
             public void RemovePlayer(int handler)
             {
