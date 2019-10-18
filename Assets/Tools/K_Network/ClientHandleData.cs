@@ -26,6 +26,8 @@ namespace KawaSquad
                 packets.Add((int)ClientPackets.C_NEW_PAWN, DataReceiver.HandleNewPawn);
                 packets.Add((int)ClientPackets.C_ASSIGN_PAWN, DataReceiver.HandleAssignPawn);
                 packets.Add((int)ClientPackets.C_DELETE_PAWN, DataReceiver.HandleDeletePawn);
+
+                packets.Add((int)ClientPackets.C_LOAD_MAP, DataReceiver.HandleLoadMap);
             }
             public static void HandleData(byte[] data)
             {

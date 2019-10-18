@@ -18,6 +18,8 @@ namespace KawaSquad
             C_NEW_PAWN = 11,
             C_ASSIGN_PAWN = 12,
             C_DELETE_PAWN = 13,
+
+            C_LOAD_MAP = 20,
         }
 
         public class DataReceiver
@@ -113,6 +115,20 @@ namespace KawaSquad
                 ClientManager.DeletePawn(server_Ref);
             }
             #endregion
+
+
+            #region Map
+            public static void HandleLoadMap(int connectionID, byte[] data)
+            {
+                ByteBuffer buffer = new ByteBuffer();
+                buffer.WriteBytes(data);
+                int packetID = buffer.ReadInteger();
+                string mapPath = buffer.ReadString();
+                buffer.Dispose();
+                ClientManager.LoadMap(connectionID, mapPath);
+            }
+            #endregion
+
         }
     }
 }

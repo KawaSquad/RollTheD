@@ -18,6 +18,8 @@ namespace KawaSquad
             S_NEW_PAWN = 11,
             S_ASSIGN_PAWN = 12,
             S_DELETE_PAWN = 13,
+
+            S_LOAD_MAP = 20,
         }
         class DataSender
         {
@@ -83,6 +85,17 @@ namespace KawaSquad
                 ClientTCP.SendData(bufer.ToArray());
                 bufer.Dispose();
             }
+
+
+            public static void SendLoadMap(string map)
+            {
+                ByteBuffer bufer = new ByteBuffer();
+                bufer.WriteInteger((int)ServerPackets.S_LOAD_MAP);
+                bufer.WriteString(map);
+                ClientTCP.SendData(bufer.ToArray());
+                bufer.Dispose();
+            }
+
         }
     }
 }

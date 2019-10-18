@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using KawaSquad.Network;
 
 public class ButtonMap : MonoBehaviour
 {
@@ -14,6 +15,13 @@ public class ButtonMap : MonoBehaviour
         if(ED_MapManager.instance != null)
             ED_MapManager.instance.LoadMap(mapPath);
         if (MapLoader.instance != null)
+        {
             MapLoader.instance.LoadMap(mapPath,false);
+
+            if(NetworkManager.instance != null)
+            {
+                DataSender.SendLoadMap(mapPath);
+            }
+        }
     }
 }

@@ -19,6 +19,8 @@ namespace KawaSquad
             C_NEW_PAWN = 11,
             C_ASSIGN_PAWN = 12,
             C_DELETE_PAWN = 13,
+
+            C_LOAD_MAP = 20,
         }
 
         static class DataReceiver
@@ -116,6 +118,19 @@ namespace KawaSquad
                 buffer.Dispose();
 
                 NetworkManager.instance.Player_DeletePawn(server_Ref);
+            }
+            public static void HandleLoadMap(byte[] data)
+            {
+                ByteBuffer buffer = new ByteBuffer();
+                buffer.WriteBytes(data);
+                int packetID = buffer.ReadInteger();
+                string mapPath = buffer.ReadString();
+                buffer.Dispose();
+
+                if (MapLoader.instance != null)
+                    MapLoader.instance.LoadMap(mapPath, false);
+                else
+                    Debug.LogError("instance is missing");
             }
         }
     }

@@ -25,7 +25,7 @@ namespace KawaSquad
 
             public static void AutoSave()
             {
-                int timeSleep = 10 * 1000;//Sec
+                int timeSleep = 10 * 1000;//10 Sec
                 while (true)
                 {
                     Thread.Sleep(timeSleep);

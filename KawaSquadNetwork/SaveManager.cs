@@ -60,8 +60,27 @@ namespace KawaSquad
                 filePath = Path.Combine(folderPath, "Save.json");
                 if (File.Exists(filePath))
                 {
-                    jsonSave = File.ReadAllText(filePath);
-                    saveData = JsonConvert.DeserializeObject<JsonSave>(jsonSave);
+                    try
+                    {
+                        jsonSave = File.ReadAllText(filePath);
+                        saveData = JsonConvert.DeserializeObject<JsonSave>(jsonSave);
+                    }
+                    catch (Exception)
+                    {
+                        string filePathOld = Path.Combine(folderPath, "Save_Old.json");
+                        if (File.Exists(filePathOld))
+                        {
+                            try
+                            {
+                                jsonSave = File.ReadAllText(filePathOld);
+                                saveData = JsonConvert.DeserializeObject<JsonSave>(jsonSave);
+                            }
+                            catch (Exception)
+                            {
+                                Debug.LogError("Files corrupted",true);
+                            }
+                        }
+                    }
                 }
             }
         }

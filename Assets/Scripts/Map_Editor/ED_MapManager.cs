@@ -64,11 +64,9 @@ public class ED_MapManager : MonoBehaviour
             //left mouse click
             if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
             {
-                bool isLeft = Input.GetMouseButton(1);
-
                 if (ui_Eventsystem.IsPointerOverGameObject())
                     return;
-
+                bool isLeft = Input.GetMouseButton(1);
                 Ray ray = cameraControl.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hitInfo;
 
@@ -77,7 +75,7 @@ public class ED_MapManager : MonoBehaviour
                     TileData mapData = hitInfo.collider.GetComponent<TileData>();
                     if(mapData != null)
                     {
-                        if (isLeft || mapData.indexTile != currentIndexTexture)
+                        if (isLeft || mapData.data.indexTile != currentIndexTexture)
                             mapData.SetIndex((isLeft) ? -1 : currentIndexTexture);
                     }
                 }

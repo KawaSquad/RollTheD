@@ -14,11 +14,13 @@ namespace KawaSquad
             S_WELCOME_MESSAGE = 1,
             S_CREATE_PLAYER = 2,
             S_PING_CLIENT = 3,
-
+            
             S_PAWN_MOVE = 10,
             S_NEW_PAWN = 11,
             S_ASSIGN_PAWN = 12,
             S_DELETE_PAWN = 13,
+            
+            S_LOAD_MAP = 20,
         }
 
         public static class DataSender
@@ -112,6 +114,17 @@ namespace KawaSquad
                 Debug.Log("send new pawn" + server_Ref);
             }
 
+            #endregion
+
+            #region Map
+            public static void SendLoadMap(int connectionID, string mapPath)
+            {
+                ByteBuffer buffer = new ByteBuffer();
+                buffer.WriteInteger((int)ServerPackets.S_LOAD_MAP);
+                buffer.WriteString(mapPath);
+                ClientManager.SendDataTo(connectionID, buffer.ToArray());
+                buffer.Dispose();
+            }
             #endregion
         }
     }

@@ -53,7 +53,6 @@ namespace KawaSquad
 
                         //send to existing player to the new client
                         DataSender.SendInstantiatePlayer(connectionID, client.Key, isNewClient);
-
                     }
                     //send to new client all pawn
                     foreach (var pawn in pawns)
@@ -146,7 +145,16 @@ namespace KawaSquad
                     throw new Exception("why ?");
                 }
             }
-
+            public static void LoadMap(int connectionID, string mapPath)
+            {
+                foreach (var client in clients)
+                {
+                    //connectionID already got it
+                    if(client.Key != connectionID)
+                        DataSender.SendLoadMap(client.Key, mapPath);
+                }
+                Debug.Log("Load map : " + mapPath, true);
+            }
         }
     }
 }

@@ -58,11 +58,12 @@ public class MapDataMof : MonoBehaviour
 
         if (mapData != null)
         {
+/*
             for (int i = 0; i < mapData.Count; i++)
             {
                 Destroy(mapData[i].gameObject);
-
             }
+ */
             mapData.Clear();
         }
 
@@ -117,9 +118,12 @@ public class MapDataMof : MonoBehaviour
 
                     TilesetManager.Tile tile = TilesetManager.instance.tiles[indexTile];
 
-                    TileData tileData = new TileData();
-                    tileData.indexMap = indexMap;
-                    tileData.indexTile = indexTile;
+                    GameObject goTile = new GameObject("Tile " + indexMap);
+                    goTile.transform.parent = this.transform;
+
+                    TileData tileData = goTile.AddComponent<TileData>();
+                    tileData.data.indexMap = indexMap;
+                    tileData.data.indexTile = indexTile;
                     mapData.Add(tileData);
 
                     //UL
@@ -179,8 +183,8 @@ public class MapDataMof : MonoBehaviour
             for (int i = 0; i < mapData.Count; i++)
             {
                 JsonMapData.JsonTileData jsonTile = new JsonMapData.JsonTileData();
-                jsonTile.indexMap = mapData[i].indexMap;
-                jsonTile.indexTile = mapData[i].indexTile;
+                jsonTile.indexMap = mapData[i].data.indexMap;
+                jsonTile.indexTile = mapData[i].data.indexTile;
                 data.mapData.Add(jsonTile);
             }
             string json = JsonUtility.ToJson(data);
@@ -192,9 +196,9 @@ public class MapDataMof : MonoBehaviour
     {
         for (int i = 0; i < jsonData.mapData.Count; i++)
         {
-            mapData[i].indexMap = jsonData.mapData[i].indexMap;
-            mapData[i].indexTile = jsonData.mapData[i].indexTile;
-            mapData[i].SetIndex(mapData[i].indexTile);
+            mapData[i].data.indexMap = jsonData.mapData[i].indexMap;
+            mapData[i].data.indexTile = jsonData.mapData[i].indexTile;
+            mapData[i].SetIndex(mapData[i].data.indexTile);
         }
     }
 }
