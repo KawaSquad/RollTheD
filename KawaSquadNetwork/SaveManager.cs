@@ -17,6 +17,7 @@ namespace KawaSquad
             public class JsonSave
             {
                 public Dictionary<Guid, Pawn> pawns = new Dictionary<Guid, Pawn>();
+                public string currentMap = "";
             }
             public static JsonSave saveData = new JsonSave();
 
