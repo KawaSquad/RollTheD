@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace KawaSquad
@@ -17,6 +18,8 @@ namespace KawaSquad
             private static FileStream logStream;
             private static string todayFormat;
 
+            private static Thread threadLog;
+            private static List<string> nextLogs;
             private enum LogType
             {
                 LOG, WARNING, ERROR
@@ -32,6 +35,13 @@ namespace KawaSquad
                 todayFormat = today.Day.ToString("D2") + "-" + today.Month.ToString("D2") + "-" + today.Year.ToString("D4");
                 string fileName = "ServerLog_" + todayFormat;
                 filePath = Path.Combine(folderPath, fileName + ".log");
+
+                if (threadLog != null)
+                    threadLog.Abort();
+
+                threadLog = new Thread(new ThreadStart(AddToLog));
+                threadLog.Start();
+                nextLogs = new List<string>();
 
                 if (!File.Exists(filePath))
                 {
@@ -97,7 +107,21 @@ namespace KawaSquad
                         break;
                 }
 
-                File.AppendAllText(filePath, logEncoded);
+                nextLogs.Add(logEncoded);
+                //File.AppendAllText(filePath, logEncoded);
+            }
+
+            private static void AddToLog()
+            {
+                while (true)
+                {
+                    if (nextLogs.Count > 0) 
+                    {
+                        File.AppendAllText(filePath, nextLogs[0]);
+                        nextLogs.Remove(nextLogs[0]);
+                    }
+                    Thread.Sleep(10);
+                }
             }
         }
     }

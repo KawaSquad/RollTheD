@@ -26,8 +26,15 @@ namespace KawaSquad
                 socket.ReceiveBufferSize = bufferSize;
                 stream = socket.GetStream();
                 recBuffer = new byte[bufferSize];
-                stream.BeginRead(recBuffer,0,socket.ReceiveBufferSize,OnReceivedData,null);
-                Debug.Log("Incoming connection " + socket.Client.RemoteEndPoint.ToString(), true);
+                stream.BeginRead(recBuffer, 0, socket.ReceiveBufferSize, OnReceivedData, null);
+                try
+                {
+                    Debug.Log("Incoming connection " + socket.Client.RemoteEndPoint.ToString(), true);
+                }
+                catch (Exception)
+                {
+                    Debug.LogError("Protection against browser spam");
+                }
             }
 
             void OnReceivedData(IAsyncResult result)

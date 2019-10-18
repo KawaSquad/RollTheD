@@ -24,33 +24,46 @@ namespace KawaSquad
                 newClient.Start();
                 Debug.Log("New connection : " + newClient.connectionID);
 
-                if(clients.Count == 0)
+                if (clients.Count == 0)
                     newClient.connectionID = ServerTCP.PORT;
                 clients.Add(newClient.connectionID, newClient);
 
-                DataSender.SendWelcomeMessage(newClient.connectionID);
-                InstatiatePlayer(newClient.connectionID);
+                if (newClient.socket.Connected)
+                {
+                    DataSender.SendWelcomeMessage(newClient.connectionID);
+                    InstatiatePlayer(newClient.connectionID);
+                }
             }
 
             public static void InstatiatePlayer(int connectionID)
             {
+                if (!clients.ContainsKey(connectionID))
+                    return;
+
                 //send to new client all existing player handle
-                foreach (var client in clients)
+                try
                 {
-                    bool isNewClient = (client.Key == connectionID);
-                    if (!isNewClient)
+                    foreach (var client in clients)
                     {
-                        DataSender.SendInstantiatePlayer(client.Key, connectionID);
+                        bool isNewClient = (client.Key == connectionID);
+                        if (!isNewClient)
+                        {
+                            DataSender.SendInstantiatePlayer(client.Key, connectionID);
+                        }
+
+                        //send to existing player to the new client
+                        DataSender.SendInstantiatePlayer(connectionID, client.Key, isNewClient);
+
                     }
-
-                    //send to existing player to the new client
-                    DataSender.SendInstantiatePlayer(connectionID, client.Key, isNewClient);
-
+                    //send to new client all pawn
+                    foreach (var pawn in pawns)
+                    {
+                        DataSender.SendNewPawn(connectionID, pawn.Value);
+                    }
                 }
-                //send to new client all pawn
-                foreach (var pawn in pawns)
+                catch (Exception)
                 {
-                    DataSender.SendNewPawn(connectionID, pawn.Value);
+                    Debug.LogError("Connection not allow : " + connectionID);
                 }
 
             }
@@ -102,7 +115,16 @@ namespace KawaSquad
                 buffer.WriteInteger((data.GetUpperBound(0) - data.GetLowerBound(0)) + 1);
                 buffer.WriteBytes(data);
                 byte[] bufferArray = buffer.ToArray();
-                clients[connectionID].stream.BeginWrite(bufferArray, 0, bufferArray.Length, null, null);
+
+                try
+                {
+                    clients[connectionID].stream.BeginWrite(bufferArray, 0, bufferArray.Length, null, null);
+                }
+                catch (Exception)
+                {
+                    Debug.LogError("Can not send data to " + connectionID);
+                }
+                
                 buffer.Dispose();
             }
         }

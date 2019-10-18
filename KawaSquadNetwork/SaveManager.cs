@@ -18,8 +18,7 @@ namespace KawaSquad
             {
                 public Dictionary<Guid, Pawn> pawns = new Dictionary<Guid, Pawn>();
             }
-            public static JsonSave pawnsSave = new JsonSave();
-            public static JsonSave pawnsLoad = new JsonSave();
+            public static JsonSave saveData = new JsonSave();
 
             public static string jsonSave;
 
@@ -36,13 +35,15 @@ namespace KawaSquad
                     File.Delete(filePath);
                 FileStream stream = File.Create(filePath);
 
-                jsonSave = JsonConvert.SerializeObject(pawnsSave);
+                jsonSave = JsonConvert.SerializeObject(saveData);
                 byte[] buffer = Encoding.UTF8.GetBytes(jsonSave);
                 stream.Write(buffer,0, buffer.Length);
                 stream.Close();
             }
             public static void Load()
             {
+                saveData = new JsonSave();
+
                 folderPath = Path.Combine(Directory.GetCurrentDirectory(), "ServerSave");
                 if (!Directory.Exists(folderPath))
                     Directory.CreateDirectory(folderPath);
@@ -51,7 +52,7 @@ namespace KawaSquad
                 if (File.Exists(filePath))
                 {
                     jsonSave = File.ReadAllText(filePath);
-                    pawnsLoad = JsonConvert.DeserializeObject<JsonSave>(jsonSave);
+                    saveData = JsonConvert.DeserializeObject<JsonSave>(jsonSave);
                 }
             }
         }
