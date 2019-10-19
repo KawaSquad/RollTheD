@@ -14,6 +14,8 @@ public class AdventureManager : MonoBehaviour
     public SObject_Player sessionData;
     public Transform listCharacters;
 
+    public CanvasGroup characterList;
+    public CharacterSelector characterSample;
 
     [System.Serializable]
     public class ColorSelection
@@ -31,6 +33,8 @@ public class AdventureManager : MonoBehaviour
         if (Instance != null)
             Debug.Log("Instance already assigned");
         Instance = this;
+
+        HideCharacterList();
     }
 
     /*
@@ -114,7 +118,7 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
-    public void CreateCharacter(int connectionID, int id_Character, bool sendToServer)
+    public void CreateCharacter(int connectionID, int id_Character, int id_Token)
     {
         Content_Lobby character = null;
         for (int i = 0; i < sessionData.Content_Lobby.characters.Count; i++)
@@ -124,18 +128,61 @@ public class AdventureManager : MonoBehaviour
         }
         if (character != null)
         {
-            Pawn.Server_PawnData data = new PlayerController.Server_PawnData();
+            Pawn.Server_PawnData data = new Pawn.Server_PawnData();
             //data.ID_Character = id_Character;
             data.ID_Handler = connectionID;
+
 
             data.position = Vector3.zero;
             data.rotation = Vector3.zero;
             data.scale = Vector3.one;
 
+            data.pawnType = Pawn.Server_PawnData.PawnPackets.P_Player;
+
+            PlayerController.PlayerController_Data dataToParse = new PlayerController.PlayerController_Data();
+            dataToParse.id_Character= character.ID_Character;
+            dataToParse.id_Token= character.ID_Token;
+            dataToParse.className = character.Class_Character;
+
+            data.classParsed = JsonUtility.ToJson(dataToParse);
 
             DataSender.SendNewPawn(data);
 
             //if (sendToServer)
         }
+    }
+
+    public void SessionCharacterList()
+    {
+        if (characterList.alpha == 1f)
+        {
+            HideCharacterList();
+            return;
+        }
+
+        CharacterSelector[] characters = characterList.GetComponentsInChildren<CharacterSelector>();
+        for (int i = 0; i < characters.Length; i++)
+        {
+            Destroy(characters[i].gameObject);
+        }
+
+        characterList.alpha = 1f;
+        characterList.blocksRaycasts = true;
+        characterList.interactable = true;
+
+        for (int i = 0; i < sessionData.Content_Lobby.characters.Count; i++)
+        {
+            Content_Lobby character = sessionData.Content_Lobby.characters[i];
+            CharacterSelector characterSelect = Instantiate(characterSample, characterList.transform);
+            characterSelect.name = "Character_" + character.ID_Character;
+            characterSelect.id_Character = character.ID_Character;
+            characterSelect.SetVisual(character.ID_Token);
+        }
+    }
+    public void HideCharacterList()
+    {
+        characterList.alpha = 0f;
+        characterList.blocksRaycasts = false;
+        characterList.interactable = false;
     }
 }

@@ -9,9 +9,11 @@ namespace KawaSquad
         public class PlayerHandle : MonoBehaviour
         {
             public static PlayerHandle LocalPlayerHandle;
-            public List<Pawn> pawns;
 
-            public bool isLocalClient = false;
+            private List<Pawn> pawns;
+            private bool isLocalClient = false;
+
+            [HideInInspector]
             public int connectionID = 0;
 
             private Vector3 currentPosition = Vector3.zero;

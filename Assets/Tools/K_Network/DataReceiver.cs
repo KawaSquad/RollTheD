@@ -70,14 +70,17 @@ namespace KawaSquad
                 int packetID = buffer.ReadInteger();
                 dataPawn.server_Ref = buffer.ReadGuid();
                 dataPawn.ID_Handler = buffer.ReadInteger();
-//                dataPawn.ID_Character = buffer.ReadInteger();
+
                 dataPawn.position = buffer.ReadVector3();
                 dataPawn.rotation = buffer.ReadVector3();
                 dataPawn.scale = buffer.ReadVector3();
+
+                dataPawn.pawnType = (Pawn.Server_PawnData.PawnPackets)buffer.ReadInteger();
+                dataPawn.classParsed = buffer.ReadString();
+
                 buffer.Dispose();
 
                 NetworkManager.instance.InstantiatePawn(dataPawn);
-                //AdventureManager.Instance.CreateCharacter(connectionID, ID_Charater, false);
             }
             public static void HandleAssignPawn(byte[] data)
             {

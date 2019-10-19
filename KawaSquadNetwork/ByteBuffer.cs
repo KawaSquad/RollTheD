@@ -160,43 +160,6 @@ namespace KawaSquad
                 }
             }
 
-            #region ReaderSimplify
-            /*
-            public short ReadShort(bool peek = true)
-            {
-                byte[] value = ReadBytes(2,peek);
-                return BitConverter.ToInt16(value, readPos);
-            }
-            public int ReadInteger(bool peek = true)
-            {
-                byte[] value = ReadBytes(4,peek);
-                return BitConverter.ToInt32(value, readPos);
-            }
-            public long ReadLong(bool peek = true)
-            {
-                byte[] value = ReadBytes(8,peek);
-                return BitConverter.ToInt64(value, readPos);
-            }
-            public float ReadFloat(bool peek = true)
-            {
-                byte[] value = ReadBytes(4,peek);
-                return BitConverter.ToSingle(value, readPos);
-            }
-            public bool ReadBool(bool peek = true)
-            {
-                byte[] value = ReadBytes(1,peek);
-                return BitConverter.ToBoolean(value, readPos);
-            }
-            public string ReadString(bool peek = true)
-            {
-                int lenght = ReadInteger(true);
-
-                byte[] value = ReadBytes(lenght,peek);
-                return Encoding.ASCII.GetString(value);
-            }
-            */
-            #endregion
-
             #region ReaderBase
             public short ReadShort(bool peek = true)
             {
@@ -367,7 +330,6 @@ namespace KawaSquad
                     throw new Exception("Buffer out of range : BOOL");
                 }
             }
-
             #endregion
 
             #endregion

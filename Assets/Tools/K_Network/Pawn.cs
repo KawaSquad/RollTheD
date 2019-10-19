@@ -12,13 +12,40 @@ namespace KawaSquad
             [System.Serializable]
             public class Server_PawnData
             {
+                public enum PawnPackets
+                {
+                    P_Base = 1,
+
+                    P_Player = 10,
+                    P_Ennemy = 11,
+                    P_Items = 12,
+                }
+
                 public Guid server_Ref;
                 public int ID_Handler;
+
                 public Vector3 position;
                 public Vector3 rotation;
                 public Vector3 scale;
+
+                public PawnPackets pawnType;
+                public string classParsed;
             }
             public Server_PawnData serverData;
+
+            private void Start()
+            {
+                Initialize();
+            }
+
+            public virtual void Initialize()
+            {
+
+            }
+            public virtual string GetClassParsed()
+            {
+                return "";
+            }
 
             public void MovePawn(Vector3 position, Vector3 rotation, Vector3 scale)
             {

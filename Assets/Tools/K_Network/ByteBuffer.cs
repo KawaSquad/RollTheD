@@ -393,7 +393,6 @@ namespace KawaSquad
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }
-
         }
     }
 }

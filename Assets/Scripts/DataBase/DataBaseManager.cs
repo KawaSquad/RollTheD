@@ -291,6 +291,7 @@ public class Content_Lobby
     public int ID_Character = 0;
     public int ID_Account = 0;
     public int ID_Session = 0;
+    public int ID_Token = 0;
     public string Picture_Url = "";
     public string Name_Character = "Name";
     public string Class_Character = "Name";

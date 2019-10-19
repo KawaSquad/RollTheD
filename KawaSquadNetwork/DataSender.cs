@@ -71,10 +71,14 @@ namespace KawaSquad
                 buffer.WriteInteger((int)ServerPackets.S_NEW_PAWN);
                 buffer.WriteGuid(pawn.server_Ref);
                 buffer.WriteInteger(pawn.ID_Hanlder);
-                //buffer.WriteInteger(pawn.ID_Character);
+
                 buffer.WriteVector3(pawn.transform.position);
                 buffer.WriteVector3(pawn.transform.rotation);
                 buffer.WriteVector3(pawn.transform.scale);
+
+                buffer.WriteInteger(pawn.pawnType);
+                buffer.WriteString(pawn.classParsed);
+
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
                 Debug.Log("send new pawn" + pawn.server_Ref + "on : " + connectionID);

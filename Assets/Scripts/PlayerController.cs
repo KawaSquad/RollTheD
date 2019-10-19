@@ -15,18 +15,43 @@ public class PlayerController : Pawn
     private bool isSelected = false;
     private bool isActive = false;
 
-    public int id_Character = -1;
-
-    private void Start()
+    [System.Serializable]
+    public class PlayerController_Data
     {
+        public int id_Character = 0;
+        public int id_Token = 0;
+        public string className = "novice";
+    }
+    public PlayerController_Data playerController_Data;
+
+    private Vector2[] offsetsTexture = { new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 0f), new Vector2(0.5f, 0f) };
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        if (serverData.pawnType != Server_PawnData.PawnPackets.P_Player)
+        {
+            Debug.LogError("try to instance pawn with wrong type");
+            return;
+        }
+
+        playerController_Data = JsonUtility.FromJson<PlayerController_Data>(serverData.classParsed);
+
         material = new Material(this.meshRenderer.sharedMaterial);
+        if (playerController_Data.id_Token < offsetsTexture.Length)
+            material.SetTextureOffset("_MainTex", offsetsTexture[playerController_Data.id_Token]);
         this.meshRenderer.sharedMaterial = material;
 
         isSelected = true;
         isActive = false;
         UnselectCharacter();
     }
-    
+    public override string GetClassParsed()
+    {
+        return JsonUtility.ToJson(playerController_Data);
+    }
+
     #region Highlight
     public void UnselectCharacter()
     {

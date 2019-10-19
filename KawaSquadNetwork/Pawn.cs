@@ -12,9 +12,12 @@ namespace KawaSquad
         public class Pawn
         {
             public Guid server_Ref;
-//            public int ID_Character;
             public int ID_Hanlder;
+
             public Transform transform;
+
+            public int pawnType;
+            public string classParsed;
         }
     }
 }

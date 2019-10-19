@@ -46,10 +46,14 @@ namespace KawaSquad
                 ByteBuffer bufer = new ByteBuffer();
                 bufer.WriteInteger((int)ServerPackets.S_NEW_PAWN);
                 bufer.WriteInteger(data.ID_Handler);
-//                bufer.WriteInteger(data.ID_Character);
+
                 bufer.WriteVector3(data.position);
                 bufer.WriteVector3(data.rotation);
                 bufer.WriteVector3(data.scale);
+
+                bufer.WriteInteger((int)data.pawnType);
+                bufer.WriteString(data.classParsed);
+
                 ClientTCP.SendData(bufer.ToArray());
                 bufer.Dispose();
             }

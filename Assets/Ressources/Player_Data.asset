@@ -18,11 +18,11 @@ MonoBehaviour:
   Game_Master: 1
   ID_Character: 0
   Name_Character: name
-  Class_Character: class
+  Class_Character: classe
   ID_Session: 6
   Name_Session: Kiwipower
   Master_Session: NovaStorm
-  Number_Player: 5
+  Number_Player: 3
   Number_Player_Max: 8
   Password_Session: 
   IP_Session: 127.0.0.1
@@ -31,26 +31,30 @@ MonoBehaviour:
   Maps:
   - MAP_01.json
   - MAP_02.json
+  - MAP_03.json
   Content_Lobby:
     characters:
     - ID_Character: 5
-      ID_Account: 0
+      ID_Account: 22
       ID_Session: 6
-      Picture_Url: 
+      ID_Token: 3
+      Picture_Url: Tag-counter2.jpg
       Name_Character: NovaStorm
-      Class_Character: Alchemist
-      HP_Character: 12
+      Class_Character: Ranger
+      HP_Character: 10
     - ID_Character: 7
-      ID_Account: 0
+      ID_Account: 23
       ID_Session: 6
+      ID_Token: 2
       Picture_Url: 
-      Name_Character: NovaStorm
-      Class_Character: Alchemist
-      HP_Character: 12
+      Name_Character: TuskMaster
+      Class_Character: Knight
+      HP_Character: 22
     - ID_Character: 8
-      ID_Account: 0
+      ID_Account: 22
       ID_Session: 6
-      Picture_Url: 
-      Name_Character: NovaStorm
-      Class_Character: Alchemist
-      HP_Character: 12
+      ID_Token: 1
+      Picture_Url: witchfire.png
+      Name_Character: TOOFAT
+      Class_Character: Mage
+      HP_Character: 100

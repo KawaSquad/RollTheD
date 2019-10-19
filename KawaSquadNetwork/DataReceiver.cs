@@ -51,23 +51,25 @@ namespace KawaSquad
             #region Pawn
             public static void HandleNewPawn(int connectionID, byte[] data)
             {
+                Pawn newPawn = new Pawn();
+                newPawn.server_Ref = Guid.NewGuid();
+
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteBytes(data);
+
                 int packetID = buffer.ReadInteger();
-                int handlerID = buffer.ReadInteger();
-//                int ID_Character = buffer.ReadInteger();
+                newPawn.ID_Hanlder = buffer.ReadInteger();
+
                 Vector3 position = buffer.ReadVector3();
                 Vector3 rotation = buffer.ReadVector3();
                 Vector3 scale = buffer.ReadVector3();
+                newPawn.transform = new Transform(position, rotation, scale);
+
+                newPawn.pawnType = buffer.ReadInteger();
+                newPawn.classParsed = buffer.ReadString();
+
                 buffer.Dispose();
 
-                //Debug.Log("New character : '{0}' from '{1}'", ID_Character, connectionID);
-
-                Pawn newPawn = new Pawn();
-                newPawn.server_Ref = Guid.NewGuid();
-                newPawn.ID_Hanlder = handlerID;
-//                newPawn.ID_Character = ID_Character;
-                newPawn.transform = new Transform(position, rotation, scale);
                 ClientManager.NewPawn(connectionID, newPawn);
             }
             public static void HandleAssignPawn(int connectionID, byte[] data)

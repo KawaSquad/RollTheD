@@ -89,6 +89,11 @@ namespace KawaSquad
                     Destroy(player.Value.gameObject);
                 }
                 playersList.Clear();
+                foreach (var pawn in pawns)
+                {
+                    Destroy(pawn.Value.gameObject);
+                }
+                pawns.Clear();
             }
             private void OnApplicationQuit()
             {
@@ -127,13 +132,10 @@ namespace KawaSquad
             #endregion 
 
             #region Pawn
-            public void InstantiatePawn(PlayerController.Server_PawnData data)
+            public void InstantiatePawn(Pawn.Server_PawnData data)
             {
                 Pawn newPawn = Instantiate(prefabPawn);
                 newPawn.serverData = data;
-
-//                newPawn.name = "Player_Controller_" + data.ID_Character;
-//                newPawn.id_Character = data.ID_Character;
 
                 newPawn.SetPosition(data.position, data.rotation, data.scale);
 
