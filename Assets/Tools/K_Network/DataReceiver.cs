@@ -75,7 +75,7 @@ namespace KawaSquad
                 dataPawn.rotation = buffer.ReadVector3();
                 dataPawn.scale = buffer.ReadVector3();
 
-                dataPawn.pawnType = (Pawn.Server_PawnData.PawnPackets)buffer.ReadInteger();
+                dataPawn.pawnType = (Pawn.PawnPackets)buffer.ReadInteger();
                 dataPawn.classParsed = buffer.ReadString();
 
                 buffer.Dispose();

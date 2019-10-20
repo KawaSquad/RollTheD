@@ -8,7 +8,7 @@ public class AdventureManager : MonoBehaviour
     public MapLoader mapLoader;
     public Camera mainCamera;
 
-    PlayerController playerSelected = null;
+    TokenPawn tokenSelected = null;
 
     [Header("GameMaster")]
     public SObject_Player sessionData;
@@ -16,6 +16,8 @@ public class AdventureManager : MonoBehaviour
 
     public CanvasGroup characterList;
     public CharacterSelector characterSample;
+    public EnemySelector enemySample;
+    public ItemSelector itemSample;
 
     [System.Serializable]
     public class ColorSelection
@@ -28,6 +30,14 @@ public class AdventureManager : MonoBehaviour
     public ColorSelection colorSelections;
     public static AdventureManager Instance;
 
+    public enum MouseStep
+    {
+        NONE,
+        RELEASED,
+        JUST_PRESSED,
+        PRESSED,
+    }
+
     private void Awake()
     {
         if (Instance != null)
@@ -37,86 +47,100 @@ public class AdventureManager : MonoBehaviour
         HideCharacterList();
     }
 
-    /*
-    void Start()
-    {
-        mapLoader.LoadMap(sessionData.GM_Url, false);
-    }
-     */
-
     private void Update()
     {
+        //Ping debug
         if (Input.GetKeyDown(KeyCode.P))
         {
             NetworkManager.PingServer();
         }
 
+        MouseStep mouseLeftStep = MouseStep.NONE;
+        if (Input.GetMouseButtonUp(0))
+            mouseLeftStep = MouseStep.RELEASED;
+        else if (Input.GetMouseButtonDown(0))
+            mouseLeftStep = MouseStep.JUST_PRESSED;
+        else if (Input.GetMouseButton(0))
+            mouseLeftStep = MouseStep.PRESSED;
+
+        MouseStep mouseRightStep = MouseStep.NONE;
+        if (Input.GetMouseButtonUp(1))
+            mouseRightStep = MouseStep.RELEASED;
+        else if (Input.GetMouseButtonDown(1))
+            mouseRightStep = MouseStep.JUST_PRESSED;
+        else if (Input.GetMouseButton(1))
+            mouseRightStep = MouseStep.PRESSED;
+
+
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hitInfo;
         if (Physics.Raycast(ray, out hitInfo))
         {
-            if (PlayerController.activeController != null)
+            if (TokenPawn.activeToken != null)
             {
-                if (Input.GetMouseButton(0))
+                switch (mouseLeftStep)
                 {
-                    if (PlayerController.activeController != null)
-                    {
-                        PlayerController.activeController.MovePawn(hitInfo.point, Vector3.zero, Vector3.one);
-                    }
-                }
-                else if (Input.GetMouseButtonUp(0))
-                {
-                    PlayerController.activeController.SetActiveCharacter(false);
+                    case MouseStep.RELEASED:
+                       TokenPawn.activeToken.SetActiveToken(false);
+                        break;
+                    case MouseStep.PRESSED:
+                        TokenPawn.activeToken.MovePawn(hitInfo.point, Vector3.zero, Vector3.one);
+                        break;
+                    default:
+                        break;
                 }
             }
             else
             {
-                if (hitInfo.collider.tag == "Player")
+                if (hitInfo.collider.tag == "Pawn")
                 {
-                    PlayerController player = hitInfo.collider.GetComponent<PlayerController>();
-                    if (player != null)
+                    TokenPawn pawn = hitInfo.collider.GetComponent<TokenPawn>();
+                    if (pawn != null)
                     {
-                        if (playerSelected != null && playerSelected != player)
+                        //if a token is selected and is not the token
+                        if (tokenSelected != null && tokenSelected != pawn)
                         {
-                            playerSelected.UnselectCharacter();
-                            playerSelected = null;
+                            tokenSelected.UnselectToken();
+                            tokenSelected = null;
                         }
 
-                        player.SelectCharacter();
-                        playerSelected = player;
+                        switch (mouseLeftStep)
+                        {
+                            case MouseStep.NONE:
+                                tokenSelected = pawn;
+                                tokenSelected.SelectToken();
+                                break;
+                            case MouseStep.RELEASED:
+                                pawn.SetActiveToken(false);
+                                break;
+                            case MouseStep.JUST_PRESSED:
+                                pawn.SetActiveToken(true);
+                                break;
+                            case MouseStep.PRESSED:
+                                if (TokenPawn.activeToken != null)
+                                    TokenPawn.activeToken.MovePawn(hitInfo.point, Vector3.zero, Vector3.one);
+                                break;
+                            default:
+                                break;
+                        }
 
-                        if (Input.GetMouseButtonDown(0))
-                        {
-                            player.SetActiveCharacter(true);
-                        }
-                        else if (Input.GetMouseButtonDown(1))
-                        {
-                            player.DestroyPawn();
-                        }
-                        else if (Input.GetMouseButton(0))
-                        {
-                            if (PlayerController.activeController != null)
-                            {
-                                PlayerController.activeController.MovePawn(hitInfo.point, Vector3.zero, Vector3.one);
-                            }
-                        }
-                        else if (Input.GetMouseButtonUp(0))
-                        {
-                            player.SetActiveCharacter(false);
-                        }
+                        if (mouseRightStep == MouseStep.JUST_PRESSED)
+                            pawn.DestroyPawn();
+
                     }
                 }
                 else
                 {
-                    if (playerSelected != null)
+                    if (tokenSelected != null)
                     {
-                        playerSelected.UnselectCharacter();
-                        playerSelected = null;
+                        tokenSelected.UnselectToken();
+                        tokenSelected = null;
                     }
                 }
             }
         }
     }
+
 
     public void CreateCharacter(int connectionID, int id_Character, int id_Token)
     {
@@ -129,28 +153,64 @@ public class AdventureManager : MonoBehaviour
         if (character != null)
         {
             Pawn.Server_PawnData data = new Pawn.Server_PawnData();
-            //data.ID_Character = id_Character;
             data.ID_Handler = connectionID;
 
-
-            data.position = Vector3.zero;
+            data.position = CastCenterCamera();
             data.rotation = Vector3.zero;
             data.scale = Vector3.one;
 
-            data.pawnType = Pawn.Server_PawnData.PawnPackets.P_Player;
+            data.pawnType = Pawn.PawnPackets.P_Player;
 
             PlayerController.PlayerController_Data dataToParse = new PlayerController.PlayerController_Data();
-            dataToParse.id_Character= character.ID_Character;
-            dataToParse.id_Token= character.ID_Token;
+            dataToParse.id_Character = character.ID_Character;
+            dataToParse.id_Token = character.ID_Token;
             dataToParse.className = character.Class_Character;
 
             data.classParsed = JsonUtility.ToJson(dataToParse);
 
             DataSender.SendNewPawn(data);
-
-            //if (sendToServer)
         }
+
     }
+
+    public void CreateEnemy(int connectionID, int id_Token)
+    {
+        Pawn.Server_PawnData data = new Pawn.Server_PawnData();
+        data.ID_Handler = connectionID;
+
+        data.position = CastCenterCamera();
+        data.rotation = Vector3.zero;
+        data.scale = Vector3.one;
+
+        data.pawnType = Pawn.PawnPackets.P_Ennemy;
+
+        EnemyController.EnemyController_Data dataToParse = new EnemyController.EnemyController_Data();
+        dataToParse.id_Token = id_Token;
+
+        data.classParsed = JsonUtility.ToJson(dataToParse);
+
+        DataSender.SendNewPawn(data);
+    }
+
+    public void CreateItem(int connectionID, int id_Token)
+    {
+        Pawn.Server_PawnData data = new Pawn.Server_PawnData();
+        data.ID_Handler = connectionID;
+
+        data.position = CastCenterCamera();
+        data.rotation = Vector3.zero;
+        data.scale = Vector3.one;
+
+        data.pawnType = Pawn.PawnPackets.P_Items;
+
+        ItemPawn.ItemPawn_Data dataToParse = new ItemPawn.ItemPawn_Data();
+        dataToParse.id_Token = id_Token;
+
+        data.classParsed = JsonUtility.ToJson(dataToParse);
+
+        DataSender.SendNewPawn(data);
+    }
+
 
     public void SessionCharacterList()
     {
@@ -160,7 +220,7 @@ public class AdventureManager : MonoBehaviour
             return;
         }
 
-        CharacterSelector[] characters = characterList.GetComponentsInChildren<CharacterSelector>();
+        CharacterSelector[] characters = listCharacters.GetComponentsInChildren<CharacterSelector>();
         for (int i = 0; i < characters.Length; i++)
         {
             Destroy(characters[i].gameObject);
@@ -173,16 +233,38 @@ public class AdventureManager : MonoBehaviour
         for (int i = 0; i < sessionData.Content_Lobby.characters.Count; i++)
         {
             Content_Lobby character = sessionData.Content_Lobby.characters[i];
-            CharacterSelector characterSelect = Instantiate(characterSample, characterList.transform);
+            CharacterSelector characterSelect = Instantiate(characterSample, listCharacters);
             characterSelect.name = "Character_" + character.ID_Character;
             characterSelect.id_Character = character.ID_Character;
             characterSelect.SetVisual(character.ID_Token);
         }
+
+        //SAMPLES
+        for (int i = 0; i < 4; i++)// 4 samples enemy
+        {
+            EnemySelector enemySelect = Instantiate(enemySample, listCharacters);
+            enemySelect.name = "Ennemy_" + i;
+            enemySelect.SetVisual(i);
+        }
+        ItemSelector chestSelect = Instantiate(itemSample, listCharacters);
+        chestSelect.name = "Chest";
+        chestSelect.SetVisual(0);
     }
     public void HideCharacterList()
     {
         characterList.alpha = 0f;
         characterList.blocksRaycasts = false;
         characterList.interactable = false;
+    }
+
+    Vector3 CastCenterCamera()
+    {
+        Ray ray = mainCamera.ScreenPointToRay(new Vector2(Screen.width, Screen.height) / 2f);
+        RaycastHit hitInfo;
+        if (Physics.Raycast(ray, out hitInfo))
+        {
+            return hitInfo.point;
+        }
+        return Vector3.zero;
     }
 }

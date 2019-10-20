@@ -4,56 +4,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using KawaSquad.Network;
 
-public class PlayerController : Pawn
+public class TokenPawn : Pawn
 {
-    public static PlayerController activeController = null;
+    public static TokenPawn activeToken = null;
 
     [SerializeField]
     private MeshRenderer meshRenderer = null;
 
-    private Material material;
-    private bool isSelected = false;
-    private bool isActive = false;
+    protected Material material;
+    protected bool isSelected = false;
+    protected bool isActive = false;
 
-    [System.Serializable]
-    public class PlayerController_Data
-    {
-        public int id_Character = 0;
-        public int id_Token = 0;
-        public string className = "novice";
-    }
-    public PlayerController_Data playerController_Data;
-
-    private Vector2[] offsetsTexture = { new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 0f), new Vector2(0.5f, 0f) };
+    protected Vector2[] offsetsTexture = { new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 0f), new Vector2(0.5f, 0f) };
 
     public override void Initialize()
     {
         base.Initialize();
 
-        if (serverData.pawnType != Server_PawnData.PawnPackets.P_Player)
-        {
-            Debug.LogError("try to instance pawn with wrong type");
-            return;
-        }
-
-        playerController_Data = JsonUtility.FromJson<PlayerController_Data>(serverData.classParsed);
-
         material = new Material(this.meshRenderer.sharedMaterial);
-        if (playerController_Data.id_Token < offsetsTexture.Length)
-            material.SetTextureOffset("_MainTex", offsetsTexture[playerController_Data.id_Token]);
         this.meshRenderer.sharedMaterial = material;
 
         isSelected = true;
         isActive = false;
-        UnselectCharacter();
-    }
-    public override string GetClassParsed()
-    {
-        return JsonUtility.ToJson(playerController_Data);
+        UnselectToken();
     }
 
     #region Highlight
-    public void UnselectCharacter()
+    public void UnselectToken()
     {
         if (isActive || !isSelected)
             return;
@@ -62,7 +39,7 @@ public class PlayerController : Pawn
         //Debug.Log("Unselect : " + this.name);
         material.SetInt("_IsHighlighted", 0);
     }
-    public void SelectCharacter()
+    public void SelectToken()
     {
         if (isActive || isSelected)
             return;
@@ -74,47 +51,44 @@ public class PlayerController : Pawn
     }
     #endregion
 
-    #region ActiveController
-    public void ActiveCharacter()
+    #region activeToken
+    public void ActiveToken()
     {
         isActive = !isActive;
 
         if (isActive)
         {
-            if (activeController != null)
-                activeController.ActiveCharacter();
+            if (activeToken != null)
+                activeToken.ActiveToken();
 
-            activeController = this;
+            activeToken = this;
 
             material.SetInt("_IsHighlighted", 1);
             material.SetColor("_HighlightColor", AdventureManager.Instance.colorSelections.active);
         }
         else
         {
-            activeController = null;
+            activeToken = null;
 
             material.SetInt("_IsHighlighted", 0);
             material.SetColor("_HighlightColor", AdventureManager.Instance.colorSelections.unselected);
         }
     }
 
-    public void SetActiveCharacter(bool isActive)
+    public void SetActiveToken(bool isActive)
     {
         this.isActive = isActive;
 
         if (isActive)
         {
-            //if (activeController != null && activeController != this)
-            //    activeController.SetActiveCharacter(false);
-
-            activeController = this;
+            activeToken = this;
 
             material.SetInt("_IsHighlighted", 1);
             material.SetColor("_HighlightColor", AdventureManager.Instance.colorSelections.active);
         }
         else
         {
-            activeController = null;
+            activeToken = null;
 
             material.SetInt("_IsHighlighted", 0);
             material.SetColor("_HighlightColor", AdventureManager.Instance.colorSelections.unselected);

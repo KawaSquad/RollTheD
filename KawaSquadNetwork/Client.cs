@@ -83,10 +83,7 @@ namespace KawaSquad
                     }
                     serverClient.pawns.AddRange(this.pawns);
                 }
-
                 ClientManager.clients.Remove(this.connectionID);
-
-                //DataSender.SendClientDisconnect(this.connectionID);
             }
         }
     }

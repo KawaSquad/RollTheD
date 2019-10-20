@@ -9,10 +9,7 @@ namespace KawaSquad
     {
         public class Pawn : MonoBehaviour
         {
-            [System.Serializable]
-            public class Server_PawnData
-            {
-                public enum PawnPackets
+            public enum PawnPackets
                 {
                     P_Base = 1,
 
@@ -21,6 +18,9 @@ namespace KawaSquad
                     P_Items = 12,
                 }
 
+            [System.Serializable]
+            public class Server_PawnData
+            {
                 public Guid server_Ref;
                 public int ID_Handler;
 
@@ -31,6 +31,9 @@ namespace KawaSquad
                 public PawnPackets pawnType;
                 public string classParsed;
             }
+
+            public PawnPackets pawnType = PawnPackets.P_Base;
+            [HideInInspector]
             public Server_PawnData serverData;
 
             private void Start()

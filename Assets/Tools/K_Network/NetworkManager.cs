@@ -16,9 +16,10 @@ namespace KawaSquad
             public Dictionary<Guid, Pawn> pawns = new Dictionary<Guid, Pawn>();
 
             public PlayerHandle prefabPlayer;
-            public Pawn prefabPawn;
             public CanvasGroup waitNetwork;
             public SObject_Player sessionData;
+
+            public List<Pawn> prefabsPawn;
 
             private Coroutine coKeepAlive;
 
@@ -134,19 +135,34 @@ namespace KawaSquad
             #region Pawn
             public void InstantiatePawn(Pawn.Server_PawnData data)
             {
-                Pawn newPawn = Instantiate(prefabPawn);
-                newPawn.serverData = data;
-
-                newPawn.SetPosition(data.position, data.rotation, data.scale);
-
-                pawns.Add(data.server_Ref, newPawn);
-                if (playersList.TryGetValue(data.ID_Handler, out PlayerHandle handler))
+                Pawn targetPawn = null;
+                for (int i = 0; i < prefabsPawn.Count; i++)
                 {
-                    handler.AssignedPawn(newPawn);
+                    if (prefabsPawn[i].pawnType == data.pawnType)
+                    {
+                        targetPawn = prefabsPawn[i];
+                        break;
+                    }
+                }
+                if (targetPawn != null)
+                {
+                    Pawn newPawn = Instantiate(targetPawn);
+                    newPawn.serverData = data;
+                    newPawn.SetPosition(data.position, data.rotation, data.scale);
+
+                    pawns.Add(data.server_Ref, newPawn);
+                    if (playersList.TryGetValue(data.ID_Handler, out PlayerHandle handler))
+                    {
+                        handler.AssignedPawn(newPawn);
+                    }
+                    else
+                    {
+                        Debug.LogError("Handler not created : " + data.ID_Handler);
+                    }
                 }
                 else
                 {
-                    Debug.LogError("Handler not created");
+                    Debug.LogError("Pawn type not listed");
                 }
             }
             public void AssignedPawn(int handler)
