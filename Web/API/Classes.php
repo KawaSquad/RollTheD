@@ -7,7 +7,10 @@ class CharacterList
 {
     public $characters;
 }
-
+class ListParse
+{
+    public $content;
+}
 class JsonFormat
 {
     public $success;

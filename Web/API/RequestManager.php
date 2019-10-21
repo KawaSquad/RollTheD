@@ -206,7 +206,8 @@ class RequestManager
             $jsonRequest->error= "Post error";
         }
         
-        $jsonRequest->success= $success;
+		$jsonRequest->success= $success;
+		// Comment : Cause of the create folder
 		// $jsonEncode =  (json_encode($jsonRequest));
         // echo $jsonEncode;
     }
@@ -254,6 +255,173 @@ class RequestManager
 		$jsonEncode =  (json_encode($jsonRequest));
         echo $jsonEncode;
 	}
+
+	function RequestClassesList()
+    {
+		$jsonRequest = new JsonFormat();
+        $success = false;
+
+		if($this->ConnectToDB())
+		{			
+			$req = self::$bdd->prepare('SELECT Class FROM t_Roll_Classes');
+			$req->execute();
+
+			$result = $req->fetchall();
+			$req->closeCursor();
+
+			if($result)
+			{
+				$list = new ListParse();
+				$list->content = $result;
+
+				$jsonRequest->content = json_encode($list);
+				if($jsonRequest->content)
+				{
+					$success = true;
+				}
+				else
+				{
+					$jsonRequest->error= "UTF8 ERROR";
+				}					
+			}
+			else
+			{
+				$jsonRequest->error= "No classes created yet";
+			}
+		}
+		else
+		{
+			$jsonRequest->error= "Connection Fail";
+		}
+		$jsonRequest->success= $success;
+		$jsonEncode =  (json_encode($jsonRequest));
+        echo $jsonEncode;
+	}
+	function RequestRacesList()
+    {
+		$jsonRequest = new JsonFormat();
+        $success = false;
+
+		if($this->ConnectToDB())
+		{			
+			$req = self::$bdd->prepare('SELECT Race FROM t_Roll_Races');
+			$req->execute();
+			$results = $req->fetchall();
+			$req->closeCursor();
+			
+			if($results)
+			{
+				$list = new ListParse();
+				$list->content = $results;
+				$jsonRequest->content = json_encode($list);
+				if($jsonRequest->content)
+				{
+					$success = true;
+				}
+				else
+				{
+					$jsonRequest->error= "UTF8 ERROR";
+				}			
+			else
+			{
+				$jsonRequest->error= "No races created yet";
+			}
+		}
+		else
+		{
+			$jsonRequest->error= "Connection Fail";
+		}
+		$jsonRequest->success= $success;
+		$jsonEncode =  (json_encode($jsonRequest));
+        echo $jsonEncode;
+	}
+
+	function NewCharacter()
+    {
+    	$jsonRequest = new JsonFormat();
+		$success = false;
+		
+		//Character
+		$character_name_Post = "";
+		$level_Post = "";
+		$hp_Post = "";
+		$hp_max_Post = "";
+		$gold_Post = "";
+
+		//Foreign key
+		$class_Post = "";
+		$race_Post = "";
+
+		//Stats
+		$stat_str_Post = "";
+		$stat_dex_Post = "";
+		$stat_int_Post = "";
+		$stat_con_Post = "";
+		$stat_wis_Post = "";
+		$stat_cha_Post = "";
+
+		try 
+		{
+            $character_name_Post = $_POST['character_name_Post'];
+            $level_Post = $_POST['level_Post'];
+            $hp_Post = $_POST['hp_Post'];
+			$hp_max_Post = $_POST['hp_max_Post'];
+			
+			$class_Post = $_POST['class_Post'];
+			$race_Post = $_POST['race_Post'];
+			
+            $stat_str_Post = $_POST['stat_str_Post'];
+            $stat_dex_Post = $_POST['stat_dex_Post'];
+            $stat_int_Post = $_POST['stat_int_Post'];
+            $stat_con_Post = $_POST['stat_con_Post'];
+            $stat_wis_Post = $_POST['stat_wis_Post'];
+			$stat_cha_Post = $_POST['stat_cha_Post'];			
+
+			if($this->ConnectToDB())
+			{	
+				//Check If exist 
+				
+				$req = self::$bdd->prepare('SELECT * FROM t_Roll_Character WHERE Character_Name = :characterNamePost');
+				$req->bindParam('characterNamePost',$character_name_Post);
+
+				$req->execute();
+				$result = $req->fetch();
+				$req->closeCursor();
+				
+				$characterClear = true;
+				
+				if($result)
+				{
+					$characterClear = false;
+					$jsonRequest->error= "Character already exist";
+				}
+
+				//Create new
+				if($characterClear)
+				{
+					// + HERE + //
+					$req = self::$bdd->prepare('INSERT INTO t_Roll_Character ( Name_Session, Master_Session,IP_Session) VALUES (:nameSessionPost,:masterSessionPost,:ipSessionPost)');
+	
+					$req->execute(array('nameSessionPost' => $nameSessionPost,'masterSessionPost' => $masterSessionPost,'ipSessionPost' => $ipSessionPost));
+					$result = $req->fetch();
+					$req->closeCursor();
+
+					$success = true;
+				}   
+			}
+			else
+            {
+                $jsonRequest->error= "Connection Fail";
+			}
+		}
+		catch (Exception $e)
+		{
+            $jsonRequest->error= "Post error";
+		}
+		$jsonRequest->success= $success;
+		$jsonEncode =  (json_encode($jsonRequest));
+        echo $jsonEncode;
+    }
 
 	function CreateFolder($jsonRequest)
 	{

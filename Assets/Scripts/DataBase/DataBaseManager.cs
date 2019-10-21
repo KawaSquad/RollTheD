@@ -110,6 +110,37 @@ public class DataBaseManager : MonoBehaviour
         }
     }
 
+    public void ClassesList(OnRequestEnd onRequestEnd, bool inBackground = false)
+    {
+        string url = API + "GetClasses.php";
+        WWWForm forms = new WWWForm();
+        if (inBackground)
+        {
+            StartCoroutine(RequestWeb(url, forms, 10f, "Refresh classes", onRequestEnd, inBackground));
+        }
+        else
+        {
+            if (coWebReq != null)
+                StopCoroutine(coWebReq);
+            coWebReq = StartCoroutine(RequestWeb(url, forms, 10f, "Refresh classes", onRequestEnd, inBackground));
+        }
+    }
+    public void RacesList(OnRequestEnd onRequestEnd, bool inBackground = false)
+    {
+        string url = API + "GetRaces.php";
+        WWWForm forms = new WWWForm();
+        if (inBackground)
+        {
+            StartCoroutine(RequestWeb(url, forms, 10f, "Refresh classes", onRequestEnd, inBackground));
+        }
+        else
+        {
+            if (coWebReq != null)
+                StopCoroutine(coWebReq);
+            coWebReq = StartCoroutine(RequestWeb(url, forms, 10f, "Refresh classes", onRequestEnd, inBackground));
+        }
+    }
+
     IEnumerator RequestWeb(string url, WWWForm forms, float timeOut, string loadingFeedback, OnRequestEnd onRequestEnd, bool inBackground = false)
     {
         UnityWebRequest webRequest = UnityWebRequest.Post(url, forms);

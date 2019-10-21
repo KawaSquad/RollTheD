@@ -9,8 +9,18 @@ public class LobbyManager : MonoBehaviour
     public Button_Character_Session sampleCharacter;
     public Transform listCharacterParent;
 
+    [Header("New character")]
+    public Dropdown dropClasses;
+    public Dropdown dropRaces;
+
+    public class JsonList
+    {
+        public List<string> values;
+    }
+
     [Header("Session data")]
     public SObject_Player sessionData;
+
 
     public void StartAsMaster()
     {
@@ -26,6 +36,7 @@ public class LobbyManager : MonoBehaviour
     }
     public void OpenNewCharcater()
     {
+        Refresh_Classes_Races();
         MenuManager.Instance.ActiveState(EMenuState.Lobby_Player_Character_Creation);
     }
     public void CreateNewCharcater()
@@ -71,5 +82,50 @@ public class LobbyManager : MonoBehaviour
     }
 
 
+    public void Refresh_Classes_Races()
+    {
+        dropClasses.ClearOptions();
+        dropRaces.ClearOptions();
 
+        if (DataBaseManager.Instance != null)
+            DataBaseManager.Instance.ClassesList(new DataBaseManager.OnRequestEnd(OnRequestClasses));
+    }
+
+
+    public void OnRequestClasses(JsonRequest requested)
+    {
+        if (requested.success == "true")
+        {
+            JsonList classesList = JsonUtility.FromJson<JsonList>(requested.content);
+            
+            List<Dropdown.OptionData> options = new List<Dropdown.OptionData>();
+            for (int i = 0; i < classesList.values.Count; i++)
+                options.Add(new Dropdown.OptionData(classesList.values[i]));
+            dropClasses.AddOptions(options);
+
+            if (DataBaseManager.Instance != null)
+                DataBaseManager.Instance.RacesList(new DataBaseManager.OnRequestEnd(OnRequestRaces));
+        }
+        else
+        {
+            Debug.LogError(requested.error);
+        }
+    }
+    public void OnRequestRaces(JsonRequest requested)
+    {
+        if (requested.success == "true")
+        {
+            JsonList racesList = JsonUtility.FromJson<JsonList>(requested.content);
+
+            List<Dropdown.OptionData> options = new List<Dropdown.OptionData>();
+            for (int i = 0; i < racesList.values.Count; i++)
+                options.Add(new Dropdown.OptionData(racesList.values[i]));
+            dropRaces.AddOptions(options);
+        }
+        else
+        {
+            Debug.LogError(requested.error);
+        }
+
+    }
 }
