@@ -5,5 +5,5 @@
     include ('RequestManager.php');
     
     $request = new RequestManager();
-    $request->NewSession($jsonRequest);
+    $request->NewCharacter();
 ?> 

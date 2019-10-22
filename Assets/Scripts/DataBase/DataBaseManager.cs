@@ -126,6 +126,18 @@ public class DataBaseManager : MonoBehaviour
         }
     }
 
+    public void CreateNewCharacter(WWWForm forms, OnRequestEnd onRequestEnd)
+    {
+        string url = API + "NewCharacter.php";
+
+        if (coWebReq != null)
+            StopCoroutine(coWebReq);
+        coWebReq = StartCoroutine(RequestWeb(url, forms, 10f, "Create new Character", onRequestEnd));
+    }
+
+
+
+
     IEnumerator RequestWeb(string url, WWWForm forms, float timeOut, string loadingFeedback, OnRequestEnd onRequestEnd, bool inBackground = false)
     {
         UnityWebRequest webRequest = UnityWebRequest.Post(url, forms);

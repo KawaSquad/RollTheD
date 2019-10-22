@@ -269,7 +269,7 @@ class RequestManager
 			$resultsClass = $reqClasses->fetchall();
 			$reqClasses->closeCursor();
 			
-			$reqRaces = self::$bdd->prepare('SELECT Race FROM t_Roll_Races');
+			$reqRaces = self::$bdd->prepare('SELECT Race FROM t_Roll_Races ORDER BY Race ASC');
 			$reqRaces->execute();
 			$resultsRaces = $reqRaces->fetchall();
 			$reqRaces->closeCursor();
@@ -343,6 +343,15 @@ class RequestManager
 		$class_Post = "";
 		$race_Post = "";
 
+		$account_Post = "";
+		$session_Post = "";
+
+		// $token_Post = "";
+		
+		//URl
+		$picture_url_Post = "";
+		$token_url_Post = "";
+
 		//Stats
 		$stat_str_Post = "";
 		$stat_dex_Post = "";
@@ -351,15 +360,45 @@ class RequestManager
 		$stat_wis_Post = "";
 		$stat_cha_Post = "";
 
-		try 
+		if(isset($_POST['character_name_Post']) && 
+		isset($_POST['level_Post']) && 
+		isset($_POST['hp_Post']) && 
+		isset($_POST['hp_max_Post']) && 
+		isset($_POST['gold_Post']) && 
+
+		isset($_POST['class_Post']) && 
+		isset($_POST['race_Post']) && 
+
+		isset($_POST['account_Post']) && 
+		isset($_POST['session_Post']) && 
+
+		isset($_POST['picture_url_Post']) && 
+		isset($_POST['token_url_Post']) && 
+		
+		isset($_POST['stat_str_Post']) && 
+		isset($_POST['stat_dex_Post']) && 
+		isset($_POST['stat_int_Post']) && 
+		isset($_POST['stat_con_Post']) && 
+		isset($_POST['stat_wis_Post']) && 
+		isset($_POST['stat_cha_Post']))
 		{
-            $character_name_Post = $_POST['character_name_Post'];
+
+			$character_name_Post = $_POST['character_name_Post'];
             $level_Post = $_POST['level_Post'];
             $hp_Post = $_POST['hp_Post'];
 			$hp_max_Post = $_POST['hp_max_Post'];
+			$gold_Post = $_POST['gold_Post'];
 			
 			$class_Post = $_POST['class_Post'];
 			$race_Post = $_POST['race_Post'];
+			
+			$account_Post = $_POST['account_Post'];
+			$session_Post = $_POST['session_Post'];
+			
+			$picture_url_Post = $_POST['picture_url_Post'];
+			$token_url_Post = $_POST['token_url_Post'];
+			
+			$token_Post = 0;//$_POST['token_Post'];
 			
             $stat_str_Post = $_POST['stat_str_Post'];
             $stat_dex_Post = $_POST['stat_dex_Post'];
@@ -367,14 +406,13 @@ class RequestManager
             $stat_con_Post = $_POST['stat_con_Post'];
             $stat_wis_Post = $_POST['stat_wis_Post'];
 			$stat_cha_Post = $_POST['stat_cha_Post'];			
-
+			
 			if($this->ConnectToDB())
 			{	
 				//Check If exist 
 				
 				$req = self::$bdd->prepare('SELECT * FROM t_Roll_Character WHERE Character_Name = :characterNamePost');
 				$req->bindParam('characterNamePost',$character_name_Post);
-
 				$req->execute();
 				$result = $req->fetch();
 				$req->closeCursor();
@@ -386,17 +424,43 @@ class RequestManager
 					$characterClear = false;
 					$jsonRequest->error= "Character already exist";
 				}
-
+				
 				//Create new
 				if($characterClear)
 				{
-					// + HERE + //
-					$req = self::$bdd->prepare('INSERT INTO t_Roll_Character ( Name_Session, Master_Session,IP_Session) VALUES (:nameSessionPost,:masterSessionPost,:ipSessionPost)');
-	
-					$req->execute(array('nameSessionPost' => $nameSessionPost,'masterSessionPost' => $masterSessionPost,'ipSessionPost' => $ipSessionPost));
-					$result = $req->fetch();
+					$req = self::$bdd->prepare('SELECT ID_Class FROM t_Roll_Classes WHERE Class = :className');
+					$req->bindParam('className',$class_Post);
+					$req->execute();
+					$resultClass = $req->fetch();
 					$req->closeCursor();
 
+					$req = self::$bdd->prepare('SELECT ID_Race FROM t_Roll_Races WHERE Race = :raceName');
+					$req->bindParam('raceName',$race_Post);
+					$req->execute();
+					$resultRace = $req->fetch();
+					$req->closeCursor();
+
+					$class_ID_Post = 1;
+					$race_ID_Post = 1;
+					
+					if($resultClass)
+						$class_ID_Post = mysql_fetch_row($resultClass);
+					if($resultRace)
+						$race_ID_Post = mysql_fetch_row($resultRace);
+					// + HERE + //
+
+					$req = self::$bdd->prepare('INSERT INTO t_Roll_Character (Name_Character, Level, HP_Character, HP_Max, Gold, ID_Class, ID_Race, ID_Account, ID_Session, ID_Token, Picture_Url, Token_Url, Strenght, Dexterity, Intelligent, Constitution, Charisma, Wisdom) 
+					VALUES  (:Name_Character_Post, :Level_Post, :HP_Character_Post, :HP_Max_Post, :Gold_Post, :ID_Class_Post, :ID_Race_Post, :ID_Account_Post, :ID_Session_Post, :ID_Token_Post, :Picture_Url_Post, :Token_Url_Post, :Strenght_Post, :Dexterity_Post, :Intelligent_Post, :Constitution_Post, :Charisma_Post, :Wisdom_Post)');
+					$req->execute(array('Name_Character_Post' => $character_name_Post,'Level_Post' => $level_Post,
+					'HP_Character_Post' => $hp_Post,'HP_Max_Post' => $hp_max_Post,'Gold_Post' => $gold_Post,
+					'ID_Class_Post' => $class_Post,'ID_Race_Post' => $race_Post,
+					'ID_Account_Post' => $account_Post,'ID_Session_Post' => $session_Post,
+					'ID_Token_Post' => $token_Post,'Picture_Url_Post' => $picture_url_Post,'Token_Url_Post' => $token_url_Post,
+					'Strenght_Post' => $stat_str_Post,'Dexterity_Post' => $stat_dex_Post,'Intelligent_Post' => $stat_int_Post,
+					'Constitution_Post' => $stat_con_Post,'Charisma_Post' => $stat_wis_Post,'Wisdom_Post' => $stat_cha_Post));
+
+					$addResult = $req->fetch();
+					$req->closeCursor();
 					$success = true;
 				}   
 			}
@@ -405,10 +469,11 @@ class RequestManager
                 $jsonRequest->error= "Connection Fail";
 			}
 		}
-		catch (Exception $e)
+		else
 		{
             $jsonRequest->error= "Post error";
 		}
+		
 		$jsonRequest->success= $success;
 		$jsonEncode =  (json_encode($jsonRequest));
         echo $jsonEncode;

@@ -12,6 +12,9 @@ public class Inputfield_Form : MonoBehaviour
     [SerializeField]
     private EVerification eVerification = EVerification.unknow;
 
+    [SerializeField]
+    private bool mKeepValue = false;
+
     public string Content
     {
         get
@@ -31,7 +34,8 @@ public class Inputfield_Form : MonoBehaviour
 
     private void Start()
     {
-        ResetField();
+        if(!mKeepValue)
+           ResetField();
     }
     public void ResetField()
     {
