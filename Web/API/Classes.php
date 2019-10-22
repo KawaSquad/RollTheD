@@ -9,7 +9,8 @@ class CharacterList
 }
 class ListParse
 {
-    public $content;
+    public $races;
+    public $classes;
 }
 class JsonFormat
 {

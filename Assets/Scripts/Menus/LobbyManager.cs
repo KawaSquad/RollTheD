@@ -13,9 +13,22 @@ public class LobbyManager : MonoBehaviour
     public Dropdown dropClasses;
     public Dropdown dropRaces;
 
+    [System.Serializable]
     public class JsonList
     {
-        public List<string> values;
+        public List<string> content;
+        public List<JsonClasses> classes;
+        public List<JsonRaces> races;
+    }
+    [System.Serializable]
+    public class JsonClasses
+    {
+        public string Class;
+    }
+    [System.Serializable]
+    public class JsonRaces
+    {
+        public string Race;
     }
 
     [Header("Session data")]
@@ -88,7 +101,7 @@ public class LobbyManager : MonoBehaviour
         dropRaces.ClearOptions();
 
         if (DataBaseManager.Instance != null)
-            DataBaseManager.Instance.ClassesList(new DataBaseManager.OnRequestEnd(OnRequestClasses));
+            DataBaseManager.Instance.ClassesRacesList(new DataBaseManager.OnRequestEnd(OnRequestClasses));
     }
 
 
@@ -96,36 +109,21 @@ public class LobbyManager : MonoBehaviour
     {
         if (requested.success == "true")
         {
-            JsonList classesList = JsonUtility.FromJson<JsonList>(requested.content);
+            JsonList contentList = JsonUtility.FromJson<JsonList>(requested.content);
             
-            List<Dropdown.OptionData> options = new List<Dropdown.OptionData>();
-            for (int i = 0; i < classesList.values.Count; i++)
-                options.Add(new Dropdown.OptionData(classesList.values[i]));
-            dropClasses.AddOptions(options);
+            List<Dropdown.OptionData> optionsClasses = new List<Dropdown.OptionData>();
+            for (int i = 0; i < contentList.classes.Count; i++)
+                optionsClasses.Add(new Dropdown.OptionData(contentList.classes[i].Class));
+            dropClasses.AddOptions(optionsClasses);
 
-            if (DataBaseManager.Instance != null)
-                DataBaseManager.Instance.RacesList(new DataBaseManager.OnRequestEnd(OnRequestRaces));
+            List<Dropdown.OptionData> optionsRaces = new List<Dropdown.OptionData>();
+            for (int i = 0; i < contentList.races.Count; i++)
+                optionsRaces.Add(new Dropdown.OptionData(contentList.races[i].Race));
+            dropRaces.AddOptions(optionsRaces);
         }
         else
         {
             Debug.LogError(requested.error);
         }
-    }
-    public void OnRequestRaces(JsonRequest requested)
-    {
-        if (requested.success == "true")
-        {
-            JsonList racesList = JsonUtility.FromJson<JsonList>(requested.content);
-
-            List<Dropdown.OptionData> options = new List<Dropdown.OptionData>();
-            for (int i = 0; i < racesList.values.Count; i++)
-                options.Add(new Dropdown.OptionData(racesList.values[i]));
-            dropRaces.AddOptions(options);
-        }
-        else
-        {
-            Debug.LogError(requested.error);
-        }
-
     }
 }

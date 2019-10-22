@@ -256,23 +256,29 @@ class RequestManager
         echo $jsonEncode;
 	}
 
-	function RequestClassesList()
+	function RequestClassesRacesList()
     {
+		
 		$jsonRequest = new JsonFormat();
         $success = false;
 
 		if($this->ConnectToDB())
 		{			
-			$req = self::$bdd->prepare('SELECT Class FROM t_Roll_Classes');
-			$req->execute();
-
-			$result = $req->fetchall();
-			$req->closeCursor();
-
-			if($result)
+			$reqClasses = self::$bdd->prepare('SELECT Class FROM t_Roll_Classes ORDER BY Class ASC');
+			$reqClasses->execute();
+			$resultsClass = $reqClasses->fetchall();
+			$reqClasses->closeCursor();
+			
+			$reqRaces = self::$bdd->prepare('SELECT Race FROM t_Roll_Races');
+			$reqRaces->execute();
+			$resultsRaces = $reqRaces->fetchall();
+			$reqRaces->closeCursor();
+			
+			if($resultsClass && $resultsRaces)
 			{
 				$list = new ListParse();
-				$list->content = $result;
+				$list->classes = $resultsClass;
+				$list->races = $resultsRaces;
 
 				$jsonRequest->content = json_encode($list);
 				if($jsonRequest->content)
@@ -281,6 +287,28 @@ class RequestManager
 				}
 				else
 				{
+					$comptClasses = 0;
+					foreach($resultsClass as $value)
+					{
+						$comptClasses++;
+						$valueEncode = json_encode($value);
+						if($valueEncode == false)
+						{
+							echo "Class : {$comptClasses} is not parsable";
+						}
+					}
+
+					$comptRaces = 0;
+					foreach($resultsRaces as $value)
+					{
+						$comptRaces++;
+						$valueEncode = json_encode($value);
+						if($valueEncode == false)
+						{
+							echo "Race : {$comptRaces} is not parsable";
+						}
+					}
+
 					$jsonRequest->error= "UTF8 ERROR";
 				}					
 			}
@@ -295,45 +323,8 @@ class RequestManager
 		}
 		$jsonRequest->success= $success;
 		$jsonEncode =  (json_encode($jsonRequest));
-        echo $jsonEncode;
-	}
-	function RequestRacesList()
-    {
-		$jsonRequest = new JsonFormat();
-        $success = false;
-
-		if($this->ConnectToDB())
-		{			
-			$req = self::$bdd->prepare('SELECT Race FROM t_Roll_Races');
-			$req->execute();
-			$results = $req->fetchall();
-			$req->closeCursor();
-			
-			if($results)
-			{
-				$list = new ListParse();
-				$list->content = $results;
-				$jsonRequest->content = json_encode($list);
-				if($jsonRequest->content)
-				{
-					$success = true;
-				}
-				else
-				{
-					$jsonRequest->error= "UTF8 ERROR";
-				}			
-			else
-			{
-				$jsonRequest->error= "No races created yet";
-			}
-		}
-		else
-		{
-			$jsonRequest->error= "Connection Fail";
-		}
-		$jsonRequest->success= $success;
-		$jsonEncode =  (json_encode($jsonRequest));
-        echo $jsonEncode;
+		echo $jsonEncode;
+		
 	}
 
 	function NewCharacter()
