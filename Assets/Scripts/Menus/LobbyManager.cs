@@ -51,8 +51,8 @@ public class LobbyManager : MonoBehaviour
         public int id_account;
         public int id_session;
 
-        public string url_picture = "null";
-        public string url_token= "null";
+        public string url_picture = "";
+        public string url_token= "";
 
         public int stat_str;
         public int stat_dex;
@@ -280,7 +280,7 @@ public class LobbyManager : MonoBehaviour
                 string urlPP = DataBaseManager.DataBase+ "Sessions/" + sessionData.Master_Session + "/Pictures/" + character.Picture_Url;
                 if (character.Picture_Url == "")
                     urlPP = "";
-                bSession.SetCharacter(character.Name_Character, character.Class_Character, character.ID_Account.ToString(), urlPP);
+                bSession.SetCharacter(character.Name_Character, character.Class, character.Race, character.ID_Account.ToString(), urlPP);
             }
 
             LoadingScreen.StopLoading();

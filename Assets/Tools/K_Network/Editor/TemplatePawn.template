@@ -1,0 +1,23 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using KawaSquad.Network;
+
+public class #CLASS_NAME# : Pawn
+{
+    public class #CLASS_NAME#_Data
+    {
+        public int id_Token = 0;
+    }
+    [HideInInspector]
+    public #CLASS_NAME#_Data data_#CLASS_NAME#;
+
+    public virtual void Initialize()
+    {
+        base.Initialize();
+    }
+    public virtual string GetClassParsed()
+    {
+        return JsonUtility.ToJson(data_#CLASS_NAME#);
+    }
+}

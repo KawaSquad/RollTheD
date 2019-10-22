@@ -20,10 +20,10 @@ public class Button_Character_Session : MonoBehaviour
     private string urlImage = "https://steven-sternberger.be/RollTheD/Ressources/unknow.png";
     private bool isDestroyed = false;
 
-    public void SetCharacter(string characterName, string characterClass, string characterAccount, string characterImage = "")
+    public void SetCharacter(string characterName, string characterClass, string characterRace, string characterAccount, string characterImage = "")
     {
         mFieldName.text = characterName;
-        mFieldClass.text = characterClass;
+        mFieldClass.text = characterRace + " / " + characterClass;
         mFieldAccount.text = characterAccount;
         if (characterImage != "")
         {
@@ -57,6 +57,12 @@ public class Button_Character_Session : MonoBehaviour
     {
         if(mImgLoading != null)
             mImgLoading.fillAmount = value;
+    }
+
+    public void OnCharacterSelected()
+    {
+        if(MenuManager.Instance != null)
+            MenuManager.Instance.ActiveState(EMenuState.Lobby_Player_Character_Preview);
     }
 
     private void OnDestroy()

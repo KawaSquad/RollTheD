@@ -164,7 +164,9 @@ public class AdventureManager : MonoBehaviour
             PlayerController.PlayerController_Data dataToParse = new PlayerController.PlayerController_Data();
             dataToParse.id_Character = character.ID_Character;
             dataToParse.id_Token = character.ID_Token;
-            dataToParse.className = character.Class_Character;
+
+            dataToParse.className = character.Class;
+            dataToParse.raceName = character.Race;
 
             data.classParsed = JsonUtility.ToJson(dataToParse);
 

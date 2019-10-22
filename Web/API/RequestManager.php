@@ -226,7 +226,7 @@ class RequestManager
 			
 			if($this->ConnectToDB())
 			{			
-				$req = self::$bdd->prepare('SELECT * FROM t_Roll_Character WHERE ID_Session = :ID_SessionPost');
+				$req = self::$bdd->prepare('SELECT * FROM t_Roll_Character INNER JOIN t_Roll_Classes ON t_Roll_Classes.ID_Class = t_Roll_Character.ID_Class INNER JOIN t_Roll_Races ON t_Roll_Races.ID_Race = t_Roll_Character.ID_Race WHERE ID_Session = :ID_SessionPost');
 				$req->bindParam('ID_SessionPost',$idSessionPost);
 				$req->execute();
 				

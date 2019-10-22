@@ -12,6 +12,7 @@ public class PlayerController : TokenPawn
         public int id_Character = 0;
         public int id_Token = 0;
         public string className = "novice";
+        public string raceName = "humain";
     }
     public PlayerController_Data playerController_Data;
 

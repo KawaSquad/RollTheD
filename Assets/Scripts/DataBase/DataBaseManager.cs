@@ -321,7 +321,12 @@ public class Content_Lobby
     public int ID_Session = 0;
     public int ID_Token = 0;
     public string Picture_Url = "";
+
     public string Name_Character = "Name";
-    public string Class_Character = "Name";
+
+    public string Class = "Class";
+    public string Race = "Race";
+
     public int HP_Character = 10;
+    public int HP_Max = 10;
 }
