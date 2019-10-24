@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Main/MapAdventure.unity
     guid: 8d7d2a27756e216428bd6a2d1590565c
-  - enabled: 0
-    path: Assets/Scenes/Beta/MapEditor.unity
-    guid: dd0e8cea9f506d6419bee8c9d85bb140
+  - enabled: 1
+    path: Assets/Scenes/Main/MapEditor.unity
+    guid: cfe65d5f60703274aab3f137fea7ea48
   m_configObjects: {}

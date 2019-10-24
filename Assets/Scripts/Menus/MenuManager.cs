@@ -65,6 +65,10 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+    public void ActiveState(int iMenuState)
+    {
+        ActiveState((EMenuState)iMenuState);
+    }
     public void ActiveState(EMenuState eMenuState)
     {
         currentMenuState = eMenuState;
@@ -138,10 +142,20 @@ public class MenuManager : MonoBehaviour
                 //logout
                 break;
 
-            //case EMenuState.GameMaster_Session:
-            //    break;
-            //case EMenuState.GameMaster_Editor:
-            //    break;
+
+            case EMenuState.Editor_Menu:
+                ActiveState(EMenuState.Editor_Menu);
+                break;
+            case EMenuState.Editor_New_Map:
+                ActiveState(EMenuState.Editor_Menu);
+                break;
+            case EMenuState.Editor_Save_Map:
+                ActiveState(EMenuState.Editor_Menu);
+                break;
+            case EMenuState.Editor_Load_Map:
+                ActiveState(EMenuState.Editor_Menu);
+                break;
+
             default:
                 Debug.LogError(currentMenuState.ToString() + " is not SET");
                 break;
@@ -168,4 +182,9 @@ public enum EMenuState
     GameMaster_New_Session = 22,
 
     Adventure_Start_Session = 30,
+
+    Editor_Menu = 40,
+    Editor_New_Map = 41,
+    Editor_Load_Map = 42,
+    Editor_Save_Map = 43,
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using KawaSquad.Tween;
+//using KawaSquad.Tween;
 using UnityEngine.EventSystems;
 
 public class ED_MapManager : MonoBehaviour
@@ -20,16 +20,16 @@ public class ED_MapManager : MonoBehaviour
     public Button bTileset;
 
     [Header("Popup new map")]
-    public TweenAlphagroup alphaNewMap;
+    //public TweenAlphagroup alphaNewMap;
     public InputField inpSizeX;
     public InputField inpSizeY;
 
     [Header("Popup save map")]
-    public TweenAlphagroup alphaSaveMap;
+    //public TweenAlphagroup alphaSaveMap;
     public InputField inpMapName;
 
     [Header("Popup load map")]
-    public TweenAlphagroup alphaLoadMap;
+    //public TweenAlphagroup alphaLoadMap;
     public ButtonMap bMapName;
     public Transform listMaps;
 
@@ -100,18 +100,7 @@ public class ED_MapManager : MonoBehaviour
         }
     }
 
-    public void OpenNewMap()
-    {
-        alphaNewMap.PlayForward();
-        alphaNewMap.AlphaGroup.interactable = true;
-        alphaNewMap.AlphaGroup.blocksRaycasts = true;
-    }
-    public void CloseNewMap()
-    {
-        alphaNewMap.PlayBackward();
-        alphaNewMap.AlphaGroup.interactable = false;
-        alphaNewMap.AlphaGroup.blocksRaycasts = false;
-    }
+
     public void CreateNewMap()
     {
         bool isChecked = true;
@@ -140,25 +129,13 @@ public class ED_MapManager : MonoBehaviour
             int.TryParse(inpSizeY.text, out sizeY);
 
             currentMap.CreateMap(new Vector2Int(sizeX, sizeY), tilesetMat);
-            CloseNewMap();
+            MenuManager.Instance.PreviousPanel();
         }
 
         UpdateToolsButtons();
         CenterMap();
     }
 
-    public void OpenSaveMap()
-    {
-        alphaSaveMap.PlayForward();
-        alphaSaveMap.AlphaGroup.interactable = true;
-        alphaSaveMap.AlphaGroup.blocksRaycasts = true;
-    }
-    public void CloseSaveMap()
-    {
-        alphaSaveMap.PlayBackward();
-        alphaSaveMap.AlphaGroup.interactable = false;
-        alphaSaveMap.AlphaGroup.blocksRaycasts = false;
-    }
     public void SaveMap()
     {
         string pathFolder = Path.Combine(Application.persistentDataPath, "Saves");
@@ -178,15 +155,11 @@ public class ED_MapManager : MonoBehaviour
         stream.Write(buffer,0, buffer.Length);
         stream.Close();
 
-        CloseSaveMap();
+        MenuManager.Instance.PreviousPanel();
     }
 
     public void OpenLoadMap()
     {
-        alphaLoadMap.PlayForward();
-        alphaLoadMap.AlphaGroup.interactable = true;
-        alphaLoadMap.AlphaGroup.blocksRaycasts = true;
-
         ButtonMap[] bMaps = listMaps.GetComponentsInChildren<ButtonMap>();
         for (int i = 0; i < bMaps.Length; i++)
         {
@@ -203,12 +176,7 @@ public class ED_MapManager : MonoBehaviour
             bMap.textMapName.text = bMap.mapName;
         }
     }
-    public void CloseLoadMap()
-    {
-        alphaLoadMap.PlayBackward();
-        alphaLoadMap.AlphaGroup.interactable = false;
-        alphaLoadMap.AlphaGroup.blocksRaycasts = false;
-    }
+
     public void LoadMap(string mapPath)
     {
         if(!File.Exists(mapPath))
@@ -231,7 +199,7 @@ public class ED_MapManager : MonoBehaviour
 
         CenterMap();
         UpdateToolsButtons();
-        CloseLoadMap();
+        MenuManager.Instance.PreviousPanel();
     }
 
     void CenterMap()
