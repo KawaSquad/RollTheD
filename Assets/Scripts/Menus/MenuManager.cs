@@ -146,8 +146,11 @@ public class MenuManager : MonoBehaviour
             case EMenuState.Editor_Menu:
                 ActiveState(EMenuState.Editor_Menu);
                 break;
-            case EMenuState.Editor_New_Map:
+            case EMenuState.Editor_New_Type_Map:
                 ActiveState(EMenuState.Editor_Menu);
+                break;
+            case EMenuState.Editor_Size_Map:
+                ActiveState(EMenuState.Editor_New_Type_Map);
                 break;
             case EMenuState.Editor_Save_Map:
                 ActiveState(EMenuState.Editor_Menu);
@@ -184,7 +187,11 @@ public enum EMenuState
     Adventure_Start_Session = 30,
 
     Editor_Menu = 40,
-    Editor_New_Map = 41,
-    Editor_Load_Map = 42,
-    Editor_Save_Map = 43,
+    Editor_New_Type_Map = 41,
+    Editor_Size_Map = 42,
+
+
+
+    Editor_Load_Map = 45,
+    Editor_Save_Map = 46,
 }
