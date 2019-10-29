@@ -4,12 +4,7 @@ using UnityEngine;
 
 public class TileData : MonoBehaviour
 {
-    public class Data
-    {
-        public int indexMap = 0;
-        public int indexTile = 0;
-    }
-    public Data data = new Data();
+    public JsonTileData data = new JsonTileData();
 
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
@@ -18,13 +13,13 @@ public class TileData : MonoBehaviour
     public void SetTile(int indexMap, int indexTile,Material material)
     {
         this.data.indexMap = indexMap;
-        this.data.indexTile = indexTile;
+        this.data.tileLayer.layer1 = indexTile;
 
         this.meshFilter = this.gameObject.AddComponent<MeshFilter>();
         this.meshRenderer = this.gameObject.AddComponent<MeshRenderer>();
         this.material = new Material(material);
         this.meshRenderer.sharedMaterial = this.material;
-        SetIndex(this.data.indexTile);
+        SetIndex(this.data.tileLayer.layer1);
 
         BoxCollider boxCollider = this.gameObject.AddComponent<BoxCollider>();
         boxCollider.center = new Vector3(0.5f, 0, 0.5f);
@@ -33,11 +28,22 @@ public class TileData : MonoBehaviour
 
     public void SetIndex(int indexTile)
     {
-        this.data.indexTile = indexTile;
+        this.data.tileLayer.layer1 = indexTile;
 
-        bool isEnabled = (indexTile != -1);
+        bool isEnabled = !(indexTile == -1 || indexTile == 255);
         meshRenderer.enabled = (isEnabled);
         if (isEnabled)
-            material.SetTexture("_MainTex", TilesetManager.instance.tiles[indexTile].texture);
+        {
+            try
+            {
+                TilesetManager.Tileset tileset = TilesetManager.instance.LayerTileset(0);
+                material.SetTexture("_MainTex", tileset.tiles[indexTile].texture);
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }   
+        }
     }
 }

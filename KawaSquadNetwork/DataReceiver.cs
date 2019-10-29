@@ -126,8 +126,9 @@ namespace KawaSquad
                 buffer.WriteBytes(data);
                 int packetID = buffer.ReadInteger();
                 string mapPath = buffer.ReadString();
+                string dataPath = buffer.ReadString();
                 buffer.Dispose();
-                ClientManager.LoadMap(connectionID, mapPath);
+                ClientManager.LoadMap(connectionID, mapPath, dataPath);
             }
             #endregion
 

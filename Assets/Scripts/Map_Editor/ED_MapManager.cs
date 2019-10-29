@@ -17,7 +17,10 @@ public class ED_MapManager : MonoBehaviour
     public Button bSaveMap;
     public Button bLoadMap;
     [Space()]
-    public Button bTileset;
+    public Button bTileset_1;
+    public Button bTileset_2;
+    public Button bLighting;
+    public Button bNavigation;
 
     [Header("Popup new map")]
     //public TweenAlphagroup alphaNewMap;
@@ -54,7 +57,10 @@ public class ED_MapManager : MonoBehaviour
     {
         bool mapExist = (currentMap != null);
         bSaveMap.gameObject.SetActive(mapExist);
-        bTileset.gameObject.SetActive(mapExist);
+        bTileset_1.gameObject.SetActive(mapExist);
+        bTileset_2.gameObject.SetActive(mapExist);
+        bLighting.gameObject.SetActive(mapExist);
+        bNavigation.gameObject.SetActive(mapExist);
     }
 
     private void Update()
@@ -75,7 +81,7 @@ public class ED_MapManager : MonoBehaviour
                     TileData mapData = hitInfo.collider.GetComponent<TileData>();
                     if(mapData != null)
                     {
-                        if (isLeft || mapData.data.indexTile != currentIndexTexture)
+                        if (isLeft || mapData.data.tileLayer.layer1 != currentIndexTexture)
                             mapData.SetIndex((isLeft) ? -1 : currentIndexTexture);
                     }
                 }
@@ -101,6 +107,13 @@ public class ED_MapManager : MonoBehaviour
     }
 
 
+    public void OpenNewMap()
+    {
+        if(MenuManager.Instance != null)
+        {
+            MenuManager.Instance.ActiveState(EMenuState.Editor_Size_Map);
+        }
+    }
     public void CreateNewMap()
     {
         bool isChecked = true;
@@ -129,7 +142,7 @@ public class ED_MapManager : MonoBehaviour
             int.TryParse(inpSizeY.text, out sizeY);
 
             currentMap.CreateMap(new Vector2Int(sizeX, sizeY), tilesetMat);
-            MenuManager.Instance.PreviousPanel();
+            MenuManager.Instance.ActiveState(EMenuState.Editor_Menu);
         }
 
         UpdateToolsButtons();
@@ -140,20 +153,31 @@ public class ED_MapManager : MonoBehaviour
     {
         string pathFolder = Path.Combine(Application.persistentDataPath, "Saves");
         string pathFile = Path.Combine(pathFolder, inpMapName.text + ".json");
+        string pathData = Path.Combine(pathFolder, inpMapName.text + ".png");
 
-        if(!Directory.Exists(pathFolder))
+        if (!Directory.Exists(pathFolder))
         {
             Directory.CreateDirectory(pathFolder);
         }
 
         string json = currentMap.ToJson;
         byte[] buffer = System.Text.Encoding.UTF8.GetBytes(json);
+        byte[] bufferData = currentMap.GetTextureData;
 
         if (File.Exists(pathFile))
             File.Delete(pathFile);
+
+
         FileStream stream = File.Create(pathFile);
         stream.Write(buffer,0, buffer.Length);
         stream.Close();
+
+        if (File.Exists(pathData))
+            File.Delete(pathData);
+
+        FileStream streamData = File.Create(pathData);
+        streamData.Write(bufferData, 0, bufferData.Length);
+        streamData.Close();
 
         MenuManager.Instance.PreviousPanel();
     }
@@ -167,24 +191,49 @@ public class ED_MapManager : MonoBehaviour
         }
 
         string pathFolder = Path.Combine(Application.persistentDataPath, "Saves");
-        string[] files = Directory.GetFiles(pathFolder);
+        if (!Directory.Exists(pathFolder))
+            Directory.CreateDirectory(pathFolder);
+
+        string[] files = Directory.GetFiles(pathFolder,"*.json");
         for (int i = 0; i < files.Length; i++)
         {
             ButtonMap bMap = Instantiate(bMapName,listMaps);
             bMap.mapName = Path.GetFileNameWithoutExtension(files[i]);
-            bMap.mapPath = files[i];
+            bMap.filePath = files[i];
+            bMap.dataPath = files[i].Replace("json", "png");
             bMap.textMapName.text = bMap.mapName;
         }
     }
 
-    public void LoadMap(string mapPath)
+    public void LoadMap(string filePath,string dataPath)
     {
-        if(!File.Exists(mapPath))
+        if(!File.Exists(filePath) || !File.Exists(dataPath))
         {
             return;
         }
-        string json = File.ReadAllText(mapPath);
-        MapDataMof.JsonMapData jsonMapData = JsonUtility.FromJson<MapDataMof.JsonMapData>(json);
+
+        string json = File.ReadAllText(filePath);
+        JsonMapData jsonMapData = JsonUtility.FromJson<JsonMapData>(json);
+
+        byte[] bufferData = File.ReadAllBytes(dataPath);
+        Texture2D textureData = new Texture2D(1, 1);
+        textureData.LoadImage(bufferData);
+        Color32[] pixelsData = textureData.GetPixels32();
+
+        for (int y = 0; y < jsonMapData.sizeMap.y; y++)
+        {
+            for (int x = 0; x < jsonMapData.sizeMap.x; x++)
+            {
+                int index = y * jsonMapData.sizeMap.x + x;
+                JsonTileData tile = new JsonTileData();
+                tile.indexMap = index;
+                tile.tileLayer.layer1 = pixelsData[index].r;
+                tile.tileLayer.layer2 = pixelsData[index].g;
+                tile.tileLayer.layer3 = pixelsData[index].b;
+                tile.tileLayer.layer4 = pixelsData[index].a;
+                jsonMapData.tileData[index] = tile;
+            }
+        }
 
         if (currentMap != null)
         {

@@ -37,30 +37,50 @@ public class MapLoader : MonoBehaviour
         instance = this;
     }
 
-    public void LoadMap(string mapPath, bool isLocalSave = true)
+    public void LoadMap(string filePath, string dataPath, bool isLocalSave = true)
     {
         if (isLocalSave)
         {
-            if (!File.Exists(mapPath))
+            if (!File.Exists(filePath)|| !File.Exists(dataPath))
             {
                 return;
             }
-            string json = File.ReadAllText(mapPath);
-            MapDataMof.JsonMapData jsonMapData = JsonUtility.FromJson<MapDataMof.JsonMapData>(json);
+            string json = File.ReadAllText(filePath);
+            JsonMapData jsonMapData = JsonUtility.FromJson<JsonMapData>(json);
+
+            byte[] bufferData = File.ReadAllBytes(dataPath);
+            Texture2D textureData = new Texture2D(1, 1);
+            textureData.LoadImage(bufferData);
+            Color32[] pixelsData = textureData.GetPixels32();
+
+            for (int y = 0; y < jsonMapData.sizeMap.y; y++)
+            {
+                for (int x = 0; x < jsonMapData.sizeMap.x; x++)
+                {
+                    int index = y * jsonMapData.sizeMap.x + x;
+                    JsonTileData tile = new JsonTileData();
+                    tile.indexMap = index;
+                    tile.tileLayer.layer1 = pixelsData[index].r;
+                    tile.tileLayer.layer2 = pixelsData[index].g;
+                    tile.tileLayer.layer3 = pixelsData[index].b;
+                    tile.tileLayer.layer4 = pixelsData[index].a;
+                    jsonMapData.tileData[index] = tile;
+                }
+            }
             GenrateMap(jsonMapData);
         }
         else
         {
-            DataBaseManager.Instance.DownloadSave(mapPath,new DataBaseManager.OnTextLoaded(MapDownloaded),null);
+            DataBaseManager.Instance.DownloadSave(filePath,new DataBaseManager.OnTextLoaded(MapDownloaded),null);
         }
     }
     void MapDownloaded(string json)
     {
-        MapDataMof.JsonMapData jsonMapData = JsonUtility.FromJson<MapDataMof.JsonMapData>(json);
+        JsonMapData jsonMapData = JsonUtility.FromJson<JsonMapData>(json);
         GenrateMap(jsonMapData);
     }
 
-    public void GenrateMap(MapDataMof.JsonMapData jsonMapData)
+    public void GenrateMap(JsonMapData jsonMapData)
     {
         if (currentMap != null)
         {
@@ -100,7 +120,8 @@ public class MapLoader : MonoBehaviour
 
             ButtonMap bMap = Instantiate(bMapName, listMaps);
             bMap.mapName = fileName;
-            bMap.mapPath = url_Map;
+            bMap.filePath = url_Map;
+            bMap.filePath = url_Map;
             bMap.textMapName.text = bMap.mapName;
         }
 

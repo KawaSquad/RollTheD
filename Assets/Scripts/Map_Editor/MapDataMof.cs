@@ -8,18 +8,6 @@ public class MapDataMof : MonoBehaviour
 
     public List<TileData> mapData;
     public bool isMapEditor = true;
-    [System.Serializable]
-    public class JsonMapData
-    {
-        public Vector2Int sizeMap;
-        [System.Serializable]
-        public class JsonTileData
-        {
-            public int indexMap = 0;
-            public int indexTile = 0;
-        }
-        public List<JsonTileData> mapData;
-    }
 
     public void CreateMap(Vector2Int sizeMap,Material tilesetMat)
     {
@@ -111,19 +99,20 @@ public class MapDataMof : MonoBehaviour
             {
                 int index = (jsonMapData.sizeMap.x * 2) * (y * 2) + (x * 2);
                 int indexMap = (jsonMapData.sizeMap.x) * y + x;
-                int indexTile = jsonMapData.mapData[indexMap].indexTile;
 
-                if (indexTile != -1)
+                int indexTile = jsonMapData.tileData[indexMap].tileLayer.layer1;
+
+                if (indexTile != -1 && indexTile != 255)
                 {
-
-                    TilesetManager.Tile tile = TilesetManager.instance.tiles[indexTile];
+                    TilesetManager.Tileset tileset = TilesetManager.instance.LayerTileset(0);
+                    TilesetManager.Tileset.Tile tile = tileset.tiles[indexTile];
 
                     GameObject goTile = new GameObject("Tile " + indexMap);
                     goTile.transform.parent = this.transform;
 
                     TileData tileData = goTile.AddComponent<TileData>();
                     tileData.data.indexMap = indexMap;
-                    tileData.data.indexTile = indexTile;
+                    tileData.data.tileLayer.layer1 = indexTile;
                     mapData.Add(tileData);
 
                     //UL
@@ -177,28 +166,78 @@ public class MapDataMof : MonoBehaviour
         get
         {
             JsonMapData data = new JsonMapData();
-            data.mapData = new List<JsonMapData.JsonTileData>();
+            data.tileData = new List<JsonTileData>();
             data.sizeMap = sizeMap;
 
             for (int i = 0; i < mapData.Count; i++)
             {
-                JsonMapData.JsonTileData jsonTile = new JsonMapData.JsonTileData();
+                JsonTileData jsonTile = new JsonTileData();
                 jsonTile.indexMap = mapData[i].data.indexMap;
-                jsonTile.indexTile = mapData[i].data.indexTile;
-                data.mapData.Add(jsonTile);
+                jsonTile.tileLayer.layer1 = mapData[i].data.tileLayer.layer1;
+                data.tileData.Add(jsonTile);
             }
             string json = JsonUtility.ToJson(data);
             return json;
         }
     }
 
+    public byte[] GetTextureData
+    {
+        get
+        {
+            Texture2D finalTexture = new Texture2D(sizeMap.x, sizeMap.y);
+            Color32[] pixelsData = finalTexture.GetPixels32();
+
+            for (int y = 0; y < sizeMap.y; y++)
+            {
+                for (int x = 0; x < sizeMap.x; x++)
+                {
+                    int index = y * sizeMap.x + x;
+                    byte r = (byte)mapData[index].data.tileLayer.layer1;
+                    byte g = (byte)mapData[index].data.tileLayer.layer2;
+                    byte b = (byte)mapData[index].data.tileLayer.layer3;
+                    byte a = (byte)mapData[index].data.tileLayer.layer4;
+                    pixelsData[index] = new Color32(r, g, b, a);
+                }
+            }
+
+            finalTexture.SetPixels32(pixelsData);
+            finalTexture.Apply();
+
+            byte[] buffer = finalTexture.EncodeToPNG();
+            return buffer;
+        }
+    }
+
     public void LoadMap(JsonMapData jsonData)
     {
-        for (int i = 0; i < jsonData.mapData.Count; i++)
+        for (int i = 0; i < jsonData.tileData.Count; i++)
         {
-            mapData[i].data.indexMap = jsonData.mapData[i].indexMap;
-            mapData[i].data.indexTile = jsonData.mapData[i].indexTile;
-            mapData[i].SetIndex(mapData[i].data.indexTile);
+            mapData[i].data.indexMap = jsonData.tileData[i].indexMap;
+            mapData[i].data.tileLayer.layer1 = jsonData.tileData[i].tileLayer.layer1;
+            mapData[i].SetIndex(mapData[i].data.tileLayer.layer1);
         }
+    }
+}
+
+[System.Serializable]
+public class JsonMapData
+{
+    public Vector2Int sizeMap;
+    public List<JsonTileData> tileData;
+}
+
+[System.Serializable]
+public class JsonTileData
+{
+    public int indexMap = 0;//0 -> (size map * size map)
+    public TileLayer tileLayer = new TileLayer();
+
+    public class TileLayer
+    {
+        public int layer1 = 0;//Tileset_1
+        public int layer2 = 0;//Tileset_2
+        public int layer3 = 0;//Light => ?
+        public int layer4 = 0;//Navigation
     }
 }

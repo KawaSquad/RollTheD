@@ -20,6 +20,7 @@ namespace KawaSquad
                 SaveManager.Load();
                 ClientManager.pawns = SaveManager.saveData.pawns;
                 ClientManager.currentMap = SaveManager.saveData.currentMap;
+                ClientManager.currentMapData = SaveManager.saveData.currentMapData;
                 Thread threadAutoSave = new Thread(new ThreadStart(AutoSave));
                 threadAutoSave.Start();
             }
@@ -32,6 +33,7 @@ namespace KawaSquad
                     Thread.Sleep(timeSleep);
                     SaveManager.saveData.pawns = ClientManager.pawns;
                     SaveManager.saveData.currentMap = ClientManager.currentMap;
+                    SaveManager.saveData.currentMapData = ClientManager.currentMapData;
                     SaveManager.Save();
                 }
             }

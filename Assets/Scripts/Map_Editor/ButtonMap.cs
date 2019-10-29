@@ -8,19 +8,20 @@ public class ButtonMap : MonoBehaviour
 {
     public Text textMapName;
     public string mapName = "Map_01";
-    public string mapPath = "Map_01.json";
+    public string filePath = "Map_01.json";
+    public string dataPath = "Map_01.png";
 
     public void OnClick()
     {
         if(ED_MapManager.instance != null)
-            ED_MapManager.instance.LoadMap(mapPath);
+            ED_MapManager.instance.LoadMap(filePath, dataPath);
         if (MapLoader.instance != null)
         {
-            MapLoader.instance.LoadMap(mapPath,false);
+            MapLoader.instance.LoadMap(filePath, dataPath, false);
 
             if(NetworkManager.instance != null)
             {
-                DataSender.SendLoadMap(mapPath);
+                DataSender.SendLoadMap(filePath, dataPath);
             }
         }
     }

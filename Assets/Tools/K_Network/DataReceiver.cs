@@ -128,10 +128,11 @@ namespace KawaSquad
                 buffer.WriteBytes(data);
                 int packetID = buffer.ReadInteger();
                 string mapPath = buffer.ReadString();
+                string dataPath = buffer.ReadString();
                 buffer.Dispose();
 
                 if (MapLoader.instance != null)
-                    MapLoader.instance.LoadMap(mapPath, false);
+                    MapLoader.instance.LoadMap(mapPath, dataPath, false);
                 else
                     Debug.LogError("instance is missing");
             }

@@ -91,11 +91,12 @@ namespace KawaSquad
             }
 
 
-            public static void SendLoadMap(string map)
+            public static void SendLoadMap(string mapFile, string mapData)
             {
                 ByteBuffer bufer = new ByteBuffer();
                 bufer.WriteInteger((int)ServerPackets.S_LOAD_MAP);
-                bufer.WriteString(map);
+                bufer.WriteString(mapFile);
+                bufer.WriteString(mapData);
                 ClientTCP.SendData(bufer.ToArray());
                 bufer.Dispose();
             }

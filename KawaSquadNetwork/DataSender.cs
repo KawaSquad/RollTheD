@@ -121,11 +121,12 @@ namespace KawaSquad
             #endregion
 
             #region Map
-            public static void SendLoadMap(int connectionID, string mapPath)
+            public static void SendLoadMap(int connectionID, string mapPath, string dataPath)
             {
                 ByteBuffer buffer = new ByteBuffer();
                 buffer.WriteInteger((int)ServerPackets.S_LOAD_MAP);
                 buffer.WriteString(mapPath);
+                buffer.WriteString(dataPath);
                 ClientManager.SendDataTo(connectionID, buffer.ToArray());
                 buffer.Dispose();
             }

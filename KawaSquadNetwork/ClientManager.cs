@@ -16,6 +16,7 @@ namespace KawaSquad
             public static Dictionary<int, Client> clients = new Dictionary<int, Client>();
             public static Dictionary<Guid, Pawn> pawns = new Dictionary<Guid, Pawn>();
             public static string currentMap = "";
+            public static string currentMapData = "";
 
             public static void CreateNewConnection(TcpClient tempClient)
             {
@@ -60,8 +61,8 @@ namespace KawaSquad
                     {
                         DataSender.SendNewPawn(connectionID, pawn.Value);
                     }
-                    if (currentMap != "")
-                        DataSender.SendLoadMap(connectionID, currentMap);
+                    if (currentMap != "" && currentMapData != "")
+                        DataSender.SendLoadMap(connectionID, currentMap, currentMapData);
                 }
                 catch (Exception)
                 {
@@ -148,14 +149,15 @@ namespace KawaSquad
                     throw new Exception("why ?");
                 }
             }
-            public static void LoadMap(int connectionID, string mapPath)
+            public static void LoadMap(int connectionID, string mapPath, string dataPath)
             {
                 currentMap = mapPath;
+                currentMapData = dataPath;
                 foreach (var client in clients)
                 {
                     //connectionID already got it
                     if(client.Key != connectionID)
-                        DataSender.SendLoadMap(client.Key, mapPath);
+                        DataSender.SendLoadMap(client.Key, mapPath, dataPath);
                 }
                 Debug.Log("Load map : " + mapPath, true);
             }
