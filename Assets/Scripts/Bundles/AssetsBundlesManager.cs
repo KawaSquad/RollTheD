@@ -45,6 +45,6 @@ public class AssetsBundlesManager : MonoBehaviour
     void OnBundleProgress(float value)
     {
         int percent = (int)(value * 100);
-        SetLoadingContent("LoadingScreen : " + percent.ToString("D2") + "%");
+        SetLoadingContent("Download asset bundle : " + percent.ToString("D2") + "%");
     }
 }

@@ -199,5 +199,5 @@ public enum EMenuState
 
     AssetBundle_Main = 60,
     AssetBundle_New = 61,
-    AssetBundle_Load = 61,
+    AssetBundle_Load = 62,
 }
