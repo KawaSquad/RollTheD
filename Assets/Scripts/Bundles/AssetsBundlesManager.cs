@@ -8,84 +8,43 @@ public class AssetsBundlesManager : MonoBehaviour
 {
     public static AssetsBundlesManager instance;
 
-    AssetBundle mAssetBundle;
-    public string mBundleType = "tileschunck";
-    public string mBundleUrl = "https://steven-sternberger.be/RollTheD/Sessions/NovaStorm/Bundles/tileschunck";
-    public bool isLocal = true;
+    public CanvasGroup maskLoader;
+    public Text textFeedback;
 
     private void Awake()
     {
         instance = this;
+        ActiveLoading(false);
     }
 
-    private void Start()
+    void ActiveLoading(bool isActive)
     {
-        if (isLocal)
-            mBundleUrl = Path.Combine(Application.dataPath, "StreamingAssets", mBundleType);
-
-        LoadAssetBundle(mBundleUrl, isLocal);
+        maskLoader.alpha = (isActive) ? 1f : 0f;
+        maskLoader.blocksRaycasts = isActive;
+        maskLoader.interactable = isActive;
     }
-
-    void LoadAssetBundle(string bundleUrl,bool isLocal)
+    void SetLoadingContent(string content = "")
     {
-        if(isLocal)
-        {
-            mAssetBundle = AssetBundle.LoadFromFile(bundleUrl);
-            OpenAssetBundle();
-        }
-        else
-            DataBaseManager.Instance.DownloadBundle(bundleUrl, new DataBaseManager.OnAssetBundleLoaded(OnBundleReceived), new DataBaseManager.OnDownloadProgress(OnBundleProgress));
-        //mAssetBundle = AssetBundle.LoadFromFile(bundleUrl);
-        //Debug.Log("Progress : " + (mAssetBundle != null));
+        textFeedback.text = content;
     }
 
-
-    void OpenAssetBundle()
+    public void LoadAssetBundle(string bundleUrl, DataBaseManager.OnAssetBundleLoaded onAssetBundleLoaded)
     {
-        Object[] objects =  mAssetBundle.LoadAllAssets();
-        for (int i = 0; i < objects.Length; i++)
-        {
-            Debug.Log("Object : " + objects[i].name);
-        }
-    }
-
-    IEnumerator CreateAllRessources()
-    {
-        AssetBundleRequest bundleRequest = mAssetBundle.LoadAllAssetsAsync();
-
-        while (!bundleRequest.isDone)
-        {
-            //Progress
-            float progress = bundleRequest.progress;
-            yield return 0;
-        }
-        Object[] objects = bundleRequest.allAssets;
-        for (int i = 0; i < objects.Length; i++)
-        {
-            if (objects[i].GetType() == (typeof(Texture2D)))
-            {
-                Texture2D texture = (Texture2D)objects[i];
-                Debug.Log("TEXTURE : " + texture.name);
-            }
-        }
-
-        yield break;
+        ActiveLoading(true);
+        DataBaseManager.OnAssetBundleLoaded isLoaded = new DataBaseManager.OnAssetBundleLoaded(OnBundleReceived);
+        isLoaded += onAssetBundleLoaded;
+        DataBaseManager.Instance.DownloadBundle(bundleUrl, isLoaded, new DataBaseManager.OnDownloadProgress(OnBundleProgress));
     }
 
 
-    void OnBundleProgress(float value)
-    {
-        Debug.Log("Progress : " + value);
-    }
     void OnBundleReceived(AssetBundle bundle)
     {
-        if(bundle != null)
-        {
-            mAssetBundle = bundle;
-            StartCoroutine(CreateAllRessources());
-            Debug.Log("AssetBundle : " + bundle.name);
-        }
-        else
-            Debug.Log("FAIL AssetBundle");
+        ActiveLoading(false);
+        SetLoadingContent();
+    }
+    void OnBundleProgress(float value)
+    {
+        int percent = (int)(value * 100);
+        SetLoadingContent("LoadingScreen : " + percent.ToString("D2") + "%");
     }
 }
