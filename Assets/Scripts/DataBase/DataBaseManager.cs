@@ -31,6 +31,7 @@ public class DataBaseManager : MonoBehaviour
     public delegate void OnImageLoaded(Texture2D textureRequested);
     public delegate void OnTextLoaded(string textRequested);
     public delegate void OnDownloadProgress(float value);
+    public delegate void OnAssetBundleLoaded(AssetBundle bundle);
 
     private void Awake()
     {
@@ -274,6 +275,81 @@ public class DataBaseManager : MonoBehaviour
         yield break;
     }
 
+
+
+    public void DownloadBundle(string url, OnAssetBundleLoaded onAssetBundleLoaded, OnDownloadProgress onDownloadProgress)
+    {
+        //if (coWebReq != null)
+        //    StopCoroutine(coWebReq);
+        //coWebReq = 
+        StartCoroutine(RequestBundle(url, 60f, onAssetBundleLoaded, onDownloadProgress));
+    }
+
+    IEnumerator RequestBundle(string url, float timeOut, OnAssetBundleLoaded onAssetBundleLoaded, OnDownloadProgress onDownloadProgress)
+    {
+        UnityWebRequest webRequest = UnityWebRequest.Get(url);
+        webRequest.chunkedTransfer = false;
+        webRequest.SetRequestHeader("Accept", "*/*");
+        webRequest.SetRequestHeader("Accept-Language", "en-US");
+        webRequest.SetRequestHeader("Content-Language", "en-US");
+        webRequest.SetRequestHeader("Accept-Encoding", "gzip, deflate");
+        webRequest.SetRequestHeader("User-Agent", "runscope/0.1");
+        UnityWebRequestAsyncOperation handler = webRequest.SendWebRequest();
+
+
+        float timeIn = 0f;
+        bool isAborted = false;
+        while (!handler.isDone)
+        {
+            timeIn += Time.deltaTime;
+            if (onDownloadProgress != null)
+                onDownloadProgress(handler.progress);
+            if (timeIn > timeOut)
+            {
+                //Security
+                isAborted = true;
+                webRequest.Abort();
+                break;
+            }
+            yield return null;
+        }
+
+        if (webRequest.isNetworkError || webRequest.isHttpError || isAborted)
+        {
+            Debug.Log(webRequest.error);
+            onAssetBundleLoaded(null);
+        }
+        else
+        {
+            AssetBundleCreateRequest bundleRequest = AssetBundle.LoadFromMemoryAsync(webRequest.downloadHandler.data);
+
+            timeIn = 0f;
+            isAborted = false;
+
+            while (!bundleRequest.isDone)
+            {
+                timeIn += Time.deltaTime;
+                if (onDownloadProgress != null)
+                    onDownloadProgress(bundleRequest.progress);
+                if (timeIn > timeOut)
+                {
+                    //Security
+                    isAborted = true;
+                    webRequest.Abort();
+                    break;
+                }
+                yield return null;
+            }
+
+            AssetBundle bundle = bundleRequest.assetBundle;
+            if (bundle == null)
+                Debug.Log("Bundle error");
+            onAssetBundleLoaded(bundle);
+
+        }
+
+        yield break;
+    }
 }
 [System.Serializable]
 public class JsonRequest

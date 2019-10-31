@@ -1,7 +1,10 @@
 ManifestFileVersion: 0
-CRC: 2659233328
+CRC: 677709156
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: tileschunck
+      Dependencies: {}
+    Info_1:
+      Name: pawn
       Dependencies: {}

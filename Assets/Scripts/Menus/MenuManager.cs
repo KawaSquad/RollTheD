@@ -194,4 +194,10 @@ public enum EMenuState
 
     Editor_Load_Map = 45,
     Editor_Save_Map = 46,
+
+
+
+    AssetBundle_Main = 60,
+    AssetBundle_New = 61,
+    AssetBundle_Load = 61,
 }
