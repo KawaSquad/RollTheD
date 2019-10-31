@@ -46,7 +46,6 @@ public class AdventureManager : MonoBehaviour
 
         HideCharacterList();
     }
-
     private void Update()
     {
         //Ping debug
@@ -141,7 +140,6 @@ public class AdventureManager : MonoBehaviour
         }
     }
 
-
     public void CreateCharacter(int connectionID, int id_Character, int id_Token)
     {
         Content_Lobby character = null;
@@ -174,7 +172,6 @@ public class AdventureManager : MonoBehaviour
         }
 
     }
-
     public void CreateEnemy(int connectionID, int id_Token)
     {
         Pawn.Server_PawnData data = new Pawn.Server_PawnData();
@@ -193,7 +190,6 @@ public class AdventureManager : MonoBehaviour
 
         DataSender.SendNewPawn(data);
     }
-
     public void CreateItem(int connectionID, int id_Token)
     {
         Pawn.Server_PawnData data = new Pawn.Server_PawnData();
@@ -212,7 +208,6 @@ public class AdventureManager : MonoBehaviour
 
         DataSender.SendNewPawn(data);
     }
-
 
     public void SessionCharacterList()
     {

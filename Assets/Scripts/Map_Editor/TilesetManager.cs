@@ -138,6 +138,7 @@ public class TilesetManager : MonoBehaviour
                 break;
         }
 
+        bool isDeployed = true;
         if (tileset_deployed != null)
         {
             Button[] buttons = listButton.GetComponentsInChildren<Button>();
@@ -146,9 +147,13 @@ public class TilesetManager : MonoBehaviour
                 Destroy(buttons[i].gameObject);
             }
 
+            if (tileset_deployed == tilesetSelected)
+                isDeployed = false;
+
             tileset_deployed = null;
         }
-        else
+
+        if (isDeployed)
         {
             for (int i = 0; i < tilesetSelected.tiles.Length; i++)
             {
