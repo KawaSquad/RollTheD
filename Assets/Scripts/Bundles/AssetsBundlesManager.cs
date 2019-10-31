@@ -20,10 +20,6 @@ public class AssetsBundlesManager : MonoBehaviour
 
     private void Start()
     {
-        //LoadAssetBundle(Path.GetFullPath(Path.Combine(Application.dataPath, "StreamingAssets", mBundleType)));
-        //if(mAssetBundle != null)    
-        //    OpenAssetBundle();
-
         if (isLocal)
             mBundleUrl = Path.Combine(Application.dataPath, "StreamingAssets", mBundleType);
 
@@ -50,12 +46,30 @@ public class AssetsBundlesManager : MonoBehaviour
         for (int i = 0; i < objects.Length; i++)
         {
             Debug.Log("Object : " + objects[i].name);
-
-            /*
-            Texture2D tex = (Texture2D)objects[i];
-            if(tex != null)
-            */
         }
+    }
+
+    IEnumerator CreateAllRessources()
+    {
+        AssetBundleRequest bundleRequest = mAssetBundle.LoadAllAssetsAsync();
+
+        while (!bundleRequest.isDone)
+        {
+            //Progress
+            float progress = bundleRequest.progress;
+            yield return 0;
+        }
+        Object[] objects = bundleRequest.allAssets;
+        for (int i = 0; i < objects.Length; i++)
+        {
+            if (objects[i].GetType() == (typeof(Texture2D)))
+            {
+                Texture2D texture = (Texture2D)objects[i];
+                Debug.Log("TEXTURE : " + texture.name);
+            }
+        }
+
+        yield break;
     }
 
 
@@ -68,8 +82,7 @@ public class AssetsBundlesManager : MonoBehaviour
         if(bundle != null)
         {
             mAssetBundle = bundle;
-            OpenAssetBundle();
-
+            StartCoroutine(CreateAllRessources());
             Debug.Log("AssetBundle : " + bundle.name);
         }
         else

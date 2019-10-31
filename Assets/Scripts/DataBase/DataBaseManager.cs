@@ -282,7 +282,7 @@ public class DataBaseManager : MonoBehaviour
         //if (coWebReq != null)
         //    StopCoroutine(coWebReq);
         //coWebReq = 
-        StartCoroutine(RequestBundle(url, 60f, onAssetBundleLoaded, onDownloadProgress));
+        StartCoroutine(RequestBundle(url, 3600f, onAssetBundleLoaded, onDownloadProgress));
     }
 
     IEnumerator RequestBundle(string url, float timeOut, OnAssetBundleLoaded onAssetBundleLoaded, OnDownloadProgress onDownloadProgress)
