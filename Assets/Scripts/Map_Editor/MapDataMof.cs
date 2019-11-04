@@ -8,12 +8,11 @@ public class MapDataMof : MonoBehaviour
 
     public List<TileData> mapData;
     public bool isMapEditor = true;
+    private int mTypeMap = 0;
+    
 
-    public void CreateMap(Vector2Int sizeMap,Material tilesetMat)
+    public Mesh CreateQuad()
     {
-        this.sizeMap = sizeMap;
-        mapData = new List<TileData>();
-
         Mesh meshQuad = new Mesh();
 
         Vector3[] vertices = new Vector3[4];//4 corners
@@ -43,15 +42,25 @@ public class MapDataMof : MonoBehaviour
         meshQuad.triangles = triangles;
 
         meshQuad.RecalculateNormals();
+        return meshQuad;
+    }
+
+    public void CreateMap(Vector2Int sizeMap, Material tilesetMat)
+    {
+        this.sizeMap = sizeMap;
+        //this.mTypeMap = mapType;
+
+        mapData = new List<TileData>();
+        Mesh meshQuad = CreateQuad();
 
         if (mapData != null)
         {
-/*
-            for (int i = 0; i < mapData.Count; i++)
-            {
-                Destroy(mapData[i].gameObject);
-            }
- */
+            /*
+                        for (int i = 0; i < mapData.Count; i++)
+                        {
+                            Destroy(mapData[i].gameObject);
+                        }
+             */
             mapData.Clear();
         }
 
@@ -66,11 +75,47 @@ public class MapDataMof : MonoBehaviour
                 go.transform.parent = this.transform;
 
                 TileData tile = go.AddComponent<TileData>();
-                tile.SetTile(index,0,tilesetMat);
+                tile.SetTile(index, 0, tilesetMat);
                 tile.meshFilter.mesh = meshQuad;
 
                 mapData.Add(tile);
             }
+        }
+    }
+
+    public void CreateEditorMap(Vector2Int sizeMap, int mapType, Material tilesetMat)
+    {
+        this.sizeMap = sizeMap;
+        mTypeMap = mapType;
+        mapData = new List<TileData>();
+
+        Mesh meshQuad = CreateQuad();
+
+        switch (mapType)
+        {
+            case 1:
+                CreateMap(sizeMap, tilesetMat);
+                break;
+            case 2:
+                //LATER
+                break;
+            case 3:
+                CreateMap(sizeMap, tilesetMat);
+                /*
+                GameObject go = new GameObject("FullMap");
+                go.transform.localPosition = new Vector3(0, 0, 0);
+                go.transform.localScale = new Vector3(sizeMap.x, 1, sizeMap.y);
+                go.transform.parent = this.transform;
+
+                TileData tile = go.AddComponent<TileData>();
+                tile.SetTile(0, 0, tilesetMat);
+                tile.meshFilter.mesh = meshQuad;
+
+                mapData.Add(tile);
+                 */
+                break;
+            default:
+                break;
         }
     }
 

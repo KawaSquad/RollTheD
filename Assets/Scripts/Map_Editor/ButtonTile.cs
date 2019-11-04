@@ -10,7 +10,7 @@ public class ButtonTile : MonoBehaviour
 
     public void OnClick()
     {
-        ED_MapManager.instance.currentIndexTexture = indexTexture;
+        MapEditorManager.instance.currentIndexTexture = indexTexture;
     }
 
     public void SetImage(Sprite img)

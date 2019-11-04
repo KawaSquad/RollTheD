@@ -6,9 +6,9 @@ using UnityEngine.UI;
 //using KawaSquad.Tween;
 using UnityEngine.EventSystems;
 
-public class ED_MapManager : MonoBehaviour
+public class MapEditorManager : MonoBehaviour
 {
-    public static ED_MapManager instance;
+    public static MapEditorManager instance;
 
     MapDataMof currentMap = null;
 
@@ -24,8 +24,8 @@ public class ED_MapManager : MonoBehaviour
 
     [Header("Popup new map")]
     //public TweenAlphagroup alphaNewMap;
-    public InputField inpSizeX;
-    public InputField inpSizeY;
+    public Inputfield_Form inpSizeX;
+    public Inputfield_Form inpSizeY;
 
     [Header("Popup save map")]
     //public TweenAlphagroup alphaSaveMap;
@@ -38,11 +38,18 @@ public class ED_MapManager : MonoBehaviour
 
     [Header("Map data")]
     public Material tilesetMat;
+    public TilesetManager.Tileset tilesetTile;
+    public Material chunckMat;
+    public TilesetManager.Tileset tilesetChunck;
+    public Material fullMat;
+    public TilesetManager.Tileset tilesetFull;
+
     public Camera cameraControl;
     Vector3 mousePos;
     public int currentIndexTexture = 0;
 
     public EventSystem ui_Eventsystem;
+    public static int mTypeMap = 0;
 
     private void Awake()
     {
@@ -107,19 +114,20 @@ public class ED_MapManager : MonoBehaviour
     }
 
 
-    public void OpenNewMap()
+    public void OpenNewMap(int typeMap)
     {
         if(MenuManager.Instance != null)
         {
+            mTypeMap = typeMap;
             MenuManager.Instance.ActiveState(EMenuState.Editor_Size_Map);
         }
     }
     public void CreateNewMap()
     {
         bool isChecked = true;
-        if (inpSizeX.text == "")
+        if (!inpSizeX.Validate())
             isChecked = false;
-        if (inpSizeY.text == "")
+        if (!inpSizeY.Validate())
             isChecked = false;
 
 
@@ -135,18 +143,45 @@ public class ED_MapManager : MonoBehaviour
 
             currentMap = inst.AddComponent<MapDataMof>();
             currentMap.isMapEditor = true;
+
             int sizeX = 1;
             int sizeY = 1;
 
-            int.TryParse(inpSizeX.text, out sizeX);
-            int.TryParse(inpSizeY.text, out sizeY);
+            int.TryParse(inpSizeX.Content, out sizeX);
+            int.TryParse(inpSizeY.Content, out sizeY);
 
-            currentMap.CreateMap(new Vector2Int(sizeX, sizeY), tilesetMat);
+            if(mTypeMap == 2)
+            {
+                Debug.Log("NotDoneYet");
+            }
+
+            Material materialSelected = null;
+            TilesetManager.Tileset tilesetTarget = null;
+            switch (mTypeMap)
+            {
+                case 1:
+                    materialSelected = tilesetMat;
+                    tilesetTarget = tilesetTile;
+                    break;
+                case 2:
+                    materialSelected = chunckMat;
+                    tilesetTarget = tilesetChunck;
+                    break;
+                case 3:
+                    materialSelected = fullMat;
+                    tilesetTarget = tilesetFull;
+                    break;
+                default:
+                    break;
+            }
+            //currentMap.CreateMap(new Vector2Int(sizeX, sizeY), tilesetMat);
+            TilesetManager.instance.SetTileset(0,tilesetTarget);
+            currentMap.CreateEditorMap(new Vector2Int(sizeX, sizeY), mTypeMap, materialSelected);
             MenuManager.Instance.ActiveState(EMenuState.Editor_Menu);
-        }
 
-        UpdateToolsButtons();
-        CenterMap();
+            UpdateToolsButtons();
+            CenterMap();
+        }
     }
 
     public void SaveMap()
@@ -243,7 +278,24 @@ public class ED_MapManager : MonoBehaviour
         GameObject inst = new GameObject("MapDataModif");
         inst.transform.parent = this.transform;
         currentMap = inst.AddComponent<MapDataMof>();
-        currentMap.CreateMap(new Vector2Int(jsonMapData.sizeMap.x, jsonMapData.sizeMap.y), tilesetMat);
+
+        Material materialSelected = null;
+        switch (mTypeMap)
+        {
+            case 1:
+                materialSelected = tilesetMat;
+                break;
+            case 2:
+                materialSelected = chunckMat;
+                break;
+            case 3:
+                materialSelected = fullMat;
+                break;
+            default:
+                break;
+        }
+        //currentMap.CreateMap(new Vector2Int(jsonMapData.sizeMap.x, jsonMapData.sizeMap.y), tilesetMat);
+        currentMap.CreateEditorMap(new Vector2Int(jsonMapData.sizeMap.x, jsonMapData.sizeMap.y),mTypeMap, materialSelected);
         currentMap.LoadMap(jsonMapData);
 
         CenterMap();

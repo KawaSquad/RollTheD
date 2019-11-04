@@ -117,6 +117,28 @@ public class TilesetManager : MonoBehaviour
         navigation.SplitTexture();
     }
 
+    public void SetTileset(int layerTielset, Tileset newTileset)
+    {
+        switch (layerTielset)
+        {
+            case 0:
+                tileset_1 = newTileset;
+                break;
+            case 1:
+                tileset_2 = newTileset;
+                break;
+            case 2:
+                lighting = newTileset;
+                break;
+            case 3:
+                navigation = newTileset;
+                break;
+            default:
+                break;
+        }
+        newTileset.SplitTexture();
+    }
+
     public void CreateButtons(int layer)
     {
         Tileset tilesetSelected = null;

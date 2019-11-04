@@ -13,8 +13,8 @@ public class ButtonMap : MonoBehaviour
 
     public void OnClick()
     {
-        if(ED_MapManager.instance != null)
-            ED_MapManager.instance.LoadMap(filePath, dataPath);
+        if(MapEditorManager.instance != null)
+            MapEditorManager.instance.LoadMap(filePath, dataPath);
         if (MapLoader.instance != null)
         {
             MapLoader.instance.LoadMap(filePath, dataPath, false);
